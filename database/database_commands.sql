@@ -15,12 +15,12 @@ CREATE TABLE IF NOT EXISTS usuarios (
 	status ENUM('ativo', 'inativo') DEFAULT 'Ativo' NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS reservatorio(
+CREATE TABLE IF NOT EXISTS reservatorios(
 	id_res INT PRIMARY KEY AUTO INCREMENT,
 	FOREIGN KEY (id_cliente) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
 	nome VARCHAR(100),
-	tipo ENUM('Torre de Resfriamento', 'Tanque de processo', 'Decantador', 'Reservatório de Água Bruta', 'Reservatório de Agua Tratada','Cisterna', 'Tanque Elevado'),
-	capacidade_litros DECIMAL(15,3) NOT NULL,
+	tipo ENUM('Torre de resfriamento', 'Tanque de processo', 'Decantador', 'Reservatório de água bruta', 'Reservatório de Agua Tratada','Cisterna', 'Tanque Elevado'),
+	capacidade DECIMAL(15,3) NOT NULL,
 	localizacao VARCHAR(255) NOT NULL,
 	nivel_min DECIMAL(8,2) NOT NULL,
 	nivel_max DECIMAL(15,2) NOT NULL,
@@ -29,5 +29,7 @@ CREATE TABLE IF NOT EXISTS reservatorio(
 
 CREATE TABLE IF NOT EXISTS setores(
 	id_setor INT PRIMARY KEY AUTO INCREMENT,
-	FOREIGN KEY (id
+	FOREIGN KEY (id_res) REFERENCES reservartorios(id_res) ON DELETE CASCADE,
+	nome VARCHAR(100) NOT NULL,
+	uso_setor ENUM('Linha de produção', 'Torres de resfriamento')
 );
