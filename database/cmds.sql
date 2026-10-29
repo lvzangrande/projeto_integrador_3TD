@@ -10,11 +10,16 @@ CREATE TABLE IF NOT EXISTS usuarios (
 	senha VARCHAR(255) NOT NULL,
 	telefone VARCHAR(20) NULL,
 	cnpj VARCHAR(20) NOT NULL,
-	categoria size ENUM('admin', 'filiado', 'cliente') NOT NULL,
-	tema size ENUM('claro', 'escuro') DEFAULT 'escuro'
-	status ENUM('Ativo', 'inativo') DEFAULT 'Ativo'
+	categoria ENUM('admin', 'filiado', 'cliente') NOT NULL,
+	tema ENUM('claro', 'escuro') DEFAULT 'escuro' NOT NULL,
+	status ENUM('ativo', 'inativo') DEFAULT 'Ativo' NOT NULL
 );
 
-CREATE TABLE IF NOT EXISTS are(
+CREATE TABLE IF NOT EXISTS reservatorio(
+	id_res INT PRIMARY KEY AUTO INCREMENT,
+	FOREIGN KEY (id_cliente) REFERENCES usuarios(id) ON DELETE CASCADE,
+	nome VARCHAR(100),
+	tipo ENUM('Torre de Resfriamento', 'Tanque de processo', 'Decantador', 'Reservatório de Água Bruta', 'Reservatório de Agua Tratada','Cisterna', 'Tanque Elevado'),
+	capacidade_litros FLOAT(20)
 
 );
