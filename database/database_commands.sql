@@ -21,26 +21,26 @@ CREATE TABLE IF NOT EXISTS reservatorios(
 	nivel_min DECIMAL(8,2) NOT NULL,
 	nivel_max DECIMAL(15,2) NOT NULL,
 	status ENUM('ativo', 'inativo') DEFAULT ativo
-	tipo ENUM('Torre de resfriamento', 'Tanque de processo', 'Decantador', 'Reservatório de água bruta', 'Reservatório de agua tratada','Cisterna', 'Tanque elevado'),
-	FOREIGN KEY (id_cliente) REFERENCES usuarios(id_cliente) ON DELETE CASCADE,
+	tipo ENUM('Torre de resfriamento', 'Tanque de processo', 'Decantador', 'Reservatório de água bruta', 'Reservatório de agua tratada','Cisterna', 'Tanque elevado', 'Outro'),
+	FOREIGN KEY (id_cliente) REFERENCES usuarios(id_cliente) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS setores(
 	id_setor INT PRIMARY KEY AUTO INCREMENT,
 	nome VARCHAR(100) NOT NULL,
 	consumo_max_dia DECIMAL(15,2) NOT NULL,
-	status ENUM('ativo', 'inativo')
-	uso_setor ENUM('Linha de produção', 'Torres de resfriamento/Caldeiras','Limpeza/Lavagem','Uso administrativo', 'Tratamento de efluentes','Agua de reúso')
-	FOREIGN KEY (id_res) REFERENCES reservatorios(id_res) ON DELETE CASCADE,
+	status ENUM('ativo', 'inativo'),
+	uso_setor ENUM('Linha de produção', 'Torres de resfriamento/Caldeiras','Limpeza/Lavagem','Uso administrativo', 'Tratamento de efluentes','Agua de reúso', 'Outro'),
+	FOREIGN KEY (id_res) REFERENCES reservatorios(id_res) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXIST medidores(
 	id_med INT PRIMARY KEY AUTO_INCREMENT,
 	num_serie VARCHAR(50) UNIQUE NOT NULL,
 	tipo ENUM('Nível','Vazão','Hidrômetro'),
-	origem ENUM('Real', 'Simulado')
+	origem ENUM('Real', 'Simulado'),
 	FOREIGN KEY(id_res) REFERENCES reservatorios(id_res) ON DELETE CASCADE,
-	FOREIGN KEY (id_setor) REFERENCES setores(id_setor) ON DELETE CASCADE,
+	FOREIGN KEY (id_setor) REFERENCES setores(id_setor) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS responsaveis(
@@ -48,21 +48,37 @@ CREATE TABLE IF NOT EXISTS responsaveis(
 	nome VARCHAR(100) NOT NULL,
 	funcao VARCHAR(50) NOT NULL,
 	telefone VARCHAR(20) NOT NULL,
-	email VARCHAR(100) NULL
+	email VARCHAR(100) NULL,
 	FOREIGN KEY cliente_id REFERENCES usuarios(cliente_id) ON DELETE CASCADE,
 	FOREIGN KEY id_res REFERENCES reservatorios(id_res) ON DELETE CASCADE,
-	FOREIGN KEY id_setor REFERENCES setores(id_setor) ON DELETE CASCADE,
+	FOREIGN KEY id_setor REFERENCES setores(id_setor) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS leituras(
 	id_leitura INT PRIMARY KEY AUTO_INCREMENT,
-	FOREIGN KEY id_med REFERENCES medidores(id_med) ON DELETE CASCADE,
 	valor DECIMAL(15,3),
-	momento_leitura DATETIME NOT NULL
-	origem ENUM('Manual', 'Importada', 'Simulada') NOT NULL
+	momento_leitura DATETIME NOT NULL,
+	origem ENUM('Manual', 'Importada', 'Simulada') NOT NULL,
+	FOREIGN KEY id_med REFERENCES medidores(id_med) ON DELETE CASCADE
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS ocorrencias(
 	id_oc INT PRIMARY KEY AUTO_INCREMENT,
-	FOREIGN KEY id
+	descricao TEXT NOT NULL,
+	volume_perdido DECIMAL(15,2) NULL,
+	momento_abertura DATETIME NOT NULL
+	status ENUM('Aberta', 'Em análise', 'Em reparo', 'Resolvida', 'Descartada')
+	severidade ENUM('Baixa', 'Média', 'Alta', 'Extrema'),
+	tipo ENUM('Vazamento visível', 'Vazamento Oculto', 'Consumo anormal', 'Falha de sensor', 'Transbordo', 'Outro'),
+	FOREIGN KEY id_res REFERENCES reservatorios(id_res) ON DELETE CASCADE,
+	FOREIGN KEY id_setor REFERENCES setores(id_setor) ON DELETE CASCADE,
+	FOREIGN KEY id_resp REFERENCES responsaveis(id_resp) ON DELETE CASCADE
 )ENGINE=InnoDB;
+
+CREATE TABLE IF NOT EXISTS alertas(
+	id_alerta INT PRIMARKY KEY AUTO_INCREMENT,
+
+	FOREIGN_KEY id_res REFERENCES reservatorios(id_res) ON DELETE CASCADE NULL,
+	FOREIGN KEY id_med REFERENCES medidores(id_med) ON DELETE CASCADE,
+	id_oc
+);
