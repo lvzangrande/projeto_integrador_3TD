@@ -2,7 +2,7 @@ import "./globals.css";
 
 export const metadata = {
   title: "Wapi",
-  description: "Template base com Next.js, Express e MySQL",
+  description: "wapi é um sistema de controle de água e vazamentos.",
 };
 
 export default function RootLayout({ children }) {
