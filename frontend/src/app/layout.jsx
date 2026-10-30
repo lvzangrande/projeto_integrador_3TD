@@ -1,7 +1,7 @@
 import "./globals.css";
 
 export const metadata = {
-  title: "Projeto Base",
+  title: "Wapi",
   description: "Template base com Next.js, Express e MySQL",
 };
 
