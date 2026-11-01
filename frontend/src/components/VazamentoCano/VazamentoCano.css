@@ -1,0 +1,62 @@
+.cano {
+  position: absolute;
+  left: 0;
+  top: 12%;
+  width: 100%;
+  height: auto;
+}
+
+.cano__gota {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: cano-gotejar 2.4s ease-in infinite;
+}
+
+.cano__ondulacao {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: cano-ondular 2.4s linear infinite;
+}
+
+@keyframes cano-gotejar {
+  0% {
+    transform: translateY(0) scale(0.25);
+    opacity: 0;
+    animation-timing-function: ease-out;
+  }
+  18% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    animation-timing-function: ease-in;
+  }
+  92% {
+    transform: translateY(285px) scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(290px) scale(0.6);
+    opacity: 0;
+  }
+}
+
+@keyframes cano-ondular {
+  0%,
+  88% {
+    transform: scale(0.2);
+    opacity: 0;
+  }
+  90% {
+    transform: scale(0.2);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+  }
+}
+
+@media (max-width: 900px) {
+  .cano {
+    display: none;
+  }
+}
