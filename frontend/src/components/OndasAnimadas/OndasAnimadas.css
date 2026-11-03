@@ -1,0 +1,67 @@
+.ondas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  pointer-events: none;
+}
+
+.ondas--dentro {
+  bottom: 0;
+}
+
+.ondas--acima {
+  bottom: 100%;
+}
+
+.ondas__flutuacao {
+  position: absolute;
+  left: 0;
+  bottom: calc(var(--folga-ondas) * -1);
+  width: 100%;
+  overflow: hidden;
+  animation: ondas-flutuar var(--duracao-flutuacao) ease-in-out var(--atraso) infinite;
+}
+
+.ondas__svg {
+  display: block;
+  max-width: none;
+  animation-duration: var(--duracao);
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.ondas__svg--esquerda {
+  animation-name: ondas-deslizar-esquerda;
+}
+
+.ondas__svg--direita {
+  animation-name: ondas-deslizar-direita;
+}
+
+@keyframes ondas-flutuar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes ondas-deslizar-esquerda {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-640px);
+  }
+}
+
+@keyframes ondas-deslizar-direita {
+  from {
+    transform: translateX(-640px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}

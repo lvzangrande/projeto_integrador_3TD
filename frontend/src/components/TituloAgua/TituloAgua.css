@@ -1,0 +1,50 @@
+/* Três camadas de fundo recortadas pelo texto:
+   1) onda da frente (azul profundo), 2) onda de trás (azul água), 3) cor "seca".
+   Cada onda é uma imagem com o dobro da altura do título; mover a posição
+   vertical sobe o nível da água e mover a horizontal faz a onda correr. */
+.titulo-agua {
+  font-size: clamp(3rem, 6vw, 6.75rem);
+  font-weight: 900;
+  line-height: 0.98;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  color: var(--cor-marinho-escuro);
+
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 480 200' preserveAspectRatio='none'%3E%3Cpath d='M0 100q60 -16 120 0t120 0t120 0t120 0V200H0Z' fill='%230B4F8A'/%3E%3C/svg%3E"),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 640 200' preserveAspectRatio='none'%3E%3Cpath d='M0 100q80 -22 160 0t160 0t160 0t160 0V200H0Z' fill='%2322A6D9'/%3E%3C/svg%3E"),
+    linear-gradient(var(--cor-marinho-escuro), var(--cor-marinho-escuro));
+  background-repeat: repeat-x, repeat-x, no-repeat;
+  background-size: 480px 200%, 640px 200%, 100% 100%;
+  background-position-x: 0, 0, 0;
+  background-position-y: 0%, 0%, 0%;
+  animation:
+    titulo-agua-encher 3.2s cubic-bezier(0.2, 0.7, 0.2, 1) 0.4s both,
+    titulo-agua-ondular 9s linear infinite;
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .titulo-agua {
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+@keyframes titulo-agua-encher {
+  from {
+    background-position-y: 0%, 0%, 0%;
+  }
+  to {
+    background-position-y: 60%, 66%, 0%;
+  }
+}
+
+@keyframes titulo-agua-ondular {
+  from {
+    background-position-x: 0, 0, 0;
+  }
+  to {
+    background-position-x: -480px, 640px, 0;
+  }
+}

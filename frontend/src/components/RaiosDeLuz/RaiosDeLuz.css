@@ -1,0 +1,39 @@
+.raios {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.raios__feixe {
+  position: absolute;
+  top: -15%;
+  left: var(--x);
+  width: var(--largura);
+  height: 130%;
+  transform-origin: 50% 0;
+  transform: rotate(var(--rotacao));
+  filter: blur(16px);
+  opacity: 0.2;
+  animation: raios-pulsar var(--duracao) ease-in-out var(--atraso) infinite;
+}
+
+.raios--clara .raios__feixe {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0) 75%);
+}
+
+.raios--profunda .raios__feixe {
+  background: linear-gradient(180deg, rgba(127, 211, 240, 0.55), rgba(127, 211, 240, 0) 70%);
+}
+
+@keyframes raios-pulsar {
+  0%,
+  100% {
+    opacity: 0.12;
+    transform: rotate(calc(var(--rotacao) - 2deg));
+  }
+  50% {
+    opacity: 0.55;
+    transform: rotate(calc(var(--rotacao) + 2deg));
+  }
+}

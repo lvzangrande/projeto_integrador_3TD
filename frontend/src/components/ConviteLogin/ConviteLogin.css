@@ -1,0 +1,64 @@
+.convite {
+  position: absolute;
+  inset: 0 0 auto 0;
+  z-index: 1;
+  height: var(--altura-convite);
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 24px 32px 0;
+  border-radius: 32px 32px 0 0;
+  color: var(--cor-azul-profundo);
+  background: var(--cor-branca);
+  /* some conforme a pessoa rola, revelando o formulário */
+  opacity: max(0, calc(1 - var(--progresso-rolagem) * 2.4));
+}
+
+.convite__icone {
+  width: 56px;
+  height: 56px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--cor-azul-palido);
+}
+
+.convite__icone svg {
+  width: 28px;
+  height: 28px;
+}
+
+.convite__textos {
+  display: flex;
+  flex-direction: column;
+}
+
+.convite__titulo {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--texto);
+}
+
+.convite__dica {
+  font-size: 16px;
+  color: var(--cor-texto-suave);
+}
+
+.convite__seta {
+  width: 32px;
+  height: 32px;
+  margin: 12px 0 0 auto;
+  animation: convite-saltar 1.8s ease-in-out infinite;
+}
+
+@keyframes convite-saltar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(8px);
+  }
+}
