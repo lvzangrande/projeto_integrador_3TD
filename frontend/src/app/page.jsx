@@ -1,13 +1,13 @@
-import "./page.css";
-import PonteiroParalaxe from "@/components/PonteiroParalaxe/PonteiroParalaxe";
-import ProgressoRolagem from "@/components/ProgressoRolagem/ProgressoRolagem";
-import AguaViva from "@/components/AguaViva/AguaViva";
-import BolhasSubindo from "@/components/BolhasSubindo/BolhasSubindo";
-import MedidorAgua from "@/components/MedidorAgua/MedidorAgua";
-import OndasAnimadas from "@/components/OndasAnimadas/OndasAnimadas";
-import RaiosDeLuz from "@/components/RaiosDeLuz/RaiosDeLuz";
-import VazamentoCano from "@/components/VazamentoCano/VazamentoCano";
-import TituloAgua from "@/components/TituloAgua/TituloAgua";
+import "./page.module.css";
+import PonteiroParalaxe from "@/components/Login/PonteiroParalaxe/PonteiroParalaxe";
+import ProgressoRolagem from "@/components/Login/ProgressoRolagem/ProgressoRolagem";
+import AguaViva from "@/components/Login/AguaViva/AguaViva";
+import BolhasSubindo from "@/components/Login/BolhasSubindo/BolhasSubindo";
+import MedidorAgua from "@/components/Login/MedidorAgua/MedidorAgua";
+import OndasAnimadas from "@/components/Login/OndasAnimadas/OndasAnimadas";
+import RaiosDeLuz from "@/components/Login/RaiosDeLuz/RaiosDeLuz";
+import VazamentoCano from "@/components/Login/VazamentoCano/VazamentoCano";
+import TituloAgua from "@/components/Login/TituloAgua/TituloAgua";
 
 export default function Inicio() {
   return (
