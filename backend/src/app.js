@@ -1,10 +1,11 @@
 import cors from "cors";
 import express from "express";
 import helmet from "helmet";
+import { resolve } from "node:path";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import healthRoutes from "./routes/healthRoutes.js";
-
+	
 const app = express();
 
 app.use(helmet());
