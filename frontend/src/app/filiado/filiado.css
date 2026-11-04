@@ -1,9 +1,78 @@
-.Card{
-    background-color: aqua;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-left: 500px;
-    margin-right: 500px;
+@import url('https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Roboto:wght@400;500;700&display=swap');
+
+:root {
+    --cor-marinho-escuro: #0b2a4a;
+    --cor-azul-profundo: #0b4f8a;
+    --cor-azul-agua: #22a6d9;
+    --cor-azul-claro: #7fd3f0;
+    --cor-azul-palido: #ddf1fb;
+    --cor-fundo-claro: #eaf6fd;
+    --cor-branca: #ffffff;
+    --cor-ceu-topo: #9edff6;
+    --cor-ceu-meio: #cdeefa;
+    --cor-abismo: #071e38;
+    --cor-texto-suave: #35546e;
+    --cor-linha-campo: #8fa8bc;
+    --cor-placeholder: #5b7389;
+    --fundo: #f6f7f9;
+    --texto: #0b2a4a;
+
+    --fonte-titulo: 'Barlow Condensed', 'Roboto', sans-serif;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: radial-gradient(circle at center, var(--cor-azul-palido) 0%, var(--cor-azul-agua) 50%, var(--cor-marinho-escuro) 100%);
+}
+
+.container {
+    font-family: 'Roboto', sans-serif;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 2.5rem 1.5rem 3rem;
+}
+
+.container > h1 {
+    margin: 0 0 2.5rem;
+    text-align: center;
+    font-family: var(--fonte-titulo);
+    font-size: clamp(2.25rem, 5vw, 3rem);
+    font-weight: 700;
+    line-height: 1;
+    letter-spacing: 0.01em;
+    color: var(--cor-abismo);
+}
+
+.Card {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+/* Último card ímpar (Histórico de Reuniões) ocupa a linha inteira */
+.Card > div:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 768px) {
+    .Card {
+        grid-template-columns: 1fr;
+    }
+
+    .Card > div:last-child:nth-child(odd) {
+        grid-column: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem 1rem 2rem;
+    }
+
+    .Card {
+        gap: 16px;
+    }
 }
