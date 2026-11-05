@@ -1,3 +1,5 @@
+import "./vazamentoCano.css";
+
 const POSICAO_BURACO = 380;
 const GOTAS = [
   { x: 380, atraso: 0 },
@@ -19,10 +21,19 @@ export default function VazamentoCano() {
       <rect x="230" y="20" width="36" height="124" rx="8" fill="#5b7389" />
       <rect x="500" y="20" width="36" height="124" rx="8" fill="#5b7389" />
       {[230, 500].map((x) =>
-        [34, 130].map((y) => <circle key={`${x}-${y}`} cx={x + 18} cy={y} r="5" fill="#8fa8bc" />)
+        [34, 130].map((y) => (
+          <circle key={`${x}-${y}`} cx={x + 18} cy={y} r="5" fill="#8fa8bc" />
+        ))
       )}
       <ellipse cx={POSICAO_BURACO} cy="118" rx="40" ry="12" fill="#0b2a4a" />
-      <ellipse cx={POSICAO_BURACO} cy="484" rx="62" ry="8" fill="#22a6d9" opacity="0.35" />
+      <ellipse
+        cx={POSICAO_BURACO}
+        cy="484"
+        rx="62"
+        ry="8"
+        fill="#22a6d9"
+        opacity="0.35"
+      />
 
       {GOTAS.map((gota) => (
         <ellipse
@@ -44,7 +55,11 @@ export default function VazamentoCano() {
           key={`gota-${gota.atraso}`}
           className="cano__gota"
           style={{ animationDelay: `${gota.atraso}s` }}
-          d={`M${gota.x} 134C${gota.x + 12} 158 ${gota.x + 18} 168 ${gota.x + 18} 178A18 18 0 0 1 ${gota.x - 18} 178C${gota.x - 18} 168 ${gota.x - 12} 158 ${gota.x} 134Z`}
+          d={`M${gota.x} 134C${gota.x + 12} 158 ${gota.x + 18} 168 ${
+            gota.x + 18
+          } 178A18 18 0 0 1 ${gota.x - 18} 178C${gota.x - 18} 168 ${
+            gota.x - 12
+          } 158 ${gota.x} 134Z`}
           fill="#22a6d9"
         />
       ))}

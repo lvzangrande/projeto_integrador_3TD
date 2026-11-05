@@ -1,3 +1,5 @@
+import "./raiosDeLuz.css";
+
 const FEIXES = [
   { x: 4, largura: 120, rotacao: 16, atraso: 0, duracao: 9 },
   { x: 20, largura: 70, rotacao: 12, atraso: -3, duracao: 7 },

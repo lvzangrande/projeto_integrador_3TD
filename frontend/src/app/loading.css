@@ -1,0 +1,23 @@
+/* Estilos exclusivos da página de carregamento (src/app/loading.jsx). */
+.pagina-carregando {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  background: linear-gradient(180deg, var(--cor-azul-profundo) 0%, #0a3560 45%, var(--cor-abismo) 100%);
+}
+
+.pagina-carregando__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.pagina-carregando__titulo {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 900;
+  color: #cfefff;
+}

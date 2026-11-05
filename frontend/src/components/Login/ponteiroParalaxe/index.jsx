@@ -10,6 +10,7 @@ export default function PonteiroParalaxe() {
     const aplicar = () => {
       quadroPendente = null;
       const raiz = document.querySelector(".pagina")?.style;
+      if (!raiz) return;
       raiz.setProperty("--ponteiro-x", posicao.x.toFixed(3));
       raiz.setProperty("--ponteiro-y", posicao.y.toFixed(3));
     };

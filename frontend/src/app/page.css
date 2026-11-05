@@ -1,3 +1,112 @@
+/* Estilos exclusivos da página inicial (src/app/page.jsx). */
+.pagina {
+  position: relative;
+  --progresso-rolagem: 0;
+  --ponteiro-x: 0;
+  --ponteiro-y: 0;
+}
+
+/* ══ primeira tela ═══════════════════════════════════════════════
+   A primeira tela fica parada: a seção de login sobe por cima dela. */
+.inicio {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100vh;
+  min-height: 720px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 78% 6%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, var(--cor-ceu-topo) 0%, var(--cor-ceu-meio) 45%, #eaf8fe 100%);
+}
+
+.inicio__cabecalho {
+  position: absolute;
+  top: clamp(20px, 3vh, 40px);
+  left: 8vw;
+  z-index: 3;
+}
+
+.inicio__logo {
+  width: clamp(190px, 14vw, 280px);
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.inicio__palco {
+  position: absolute;
+  inset: 0;
+  padding: 0 8vw 12vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4vw;
+}
+
+/* Ao rolar, o texto sai para a esquerda e a ilustração para a direita,
+   sumindo aos poucos. Ao subir, acontece o contrário. */
+.inicio__cabecalho,
+.inicio__conteudo,
+.inicio__ilustracao {
+  will-change: transform, opacity;
+  opacity: max(0, calc(1 - var(--progresso-rolagem) * 1.8));
+}
+
+.inicio__cabecalho,
+.inicio__conteudo {
+  transform: translateX(calc(var(--progresso-rolagem) * -160px));
+}
+
+.inicio__conteudo {
+  position: relative;
+  z-index: 3;
+  max-width: 52rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2.4vw, 36px);
+}
+
+.inicio__ilustracao {
+  position: relative;
+  z-index: 2;
+  flex: none;
+  width: clamp(300px, 28vw, 600px);
+  transform: translateX(calc(var(--progresso-rolagem) * 160px));
+}
+
+.inicio__descricao {
+  max-width: 34rem;
+  font-size: clamp(1.15rem, 1.5vw, 1.6rem);
+  line-height: 1.5;
+  color: var(--cor-texto-suave);
+}
+
+.inicio__dado {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.4vw, 24px);
+}
+
+.inicio__dado-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inicio__dado-valor {
+  font-size: clamp(2.5rem, 3.6vw, 4.25rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cor-azul-profundo);
+}
+
+.inicio__dado-texto {
+  font-size: clamp(1rem, 1.15vw, 1.3rem);
+  color: var(--cor-texto-suave);
+}
+
+/* ══ segunda tela: login ═════════════════════════════════════════ */
 .login {
   --altura-convite: 104px;
   position: relative;
@@ -11,11 +120,12 @@
     linear-gradient(180deg, var(--cor-azul-profundo) 0%, #0a3560 35%, var(--cor-abismo) 100%);
 }
 
-/* Água-vivas pequenas que moram no fundo do mar */
+/* Águas-vivas pequenas que moram no fundo do mar */
 .login__agua-viva {
   position: absolute;
   aspect-ratio: 400 / 600;
   pointer-events: none;
+  z-index: 2;
 }
 
 .login__agua-viva--grande {
@@ -39,6 +149,7 @@
   position: absolute;
   left: 8vw;
   bottom: 11vh;
+  z-index: 3;
   max-width: 40vw;
   font-size: clamp(2.25rem, 4.4vw, 4.75rem);
   font-weight: 900;
@@ -58,6 +169,7 @@
   top: calc(var(--altura-convite) * -1 + var(--progresso-rolagem) * (50% + var(--altura-convite)));
   transform: translateY(calc(var(--progresso-rolagem) * -50%));
   will-change: transform, top;
+  z-index: 4;
 }
 
 .login__cartao {
@@ -82,7 +194,6 @@
 }
 
 .login__logo-imagem {
-  display: block;
   width: clamp(170px, 12vw, 240px);
   height: auto;
   mix-blend-mode: multiply;
@@ -153,7 +264,6 @@
   border-bottom: 2px solid var(--cor-linha-campo);
   outline: none;
   background: transparent;
-  font-family: inherit;
   font-size: clamp(1rem, 1.1vw, 1.25rem);
   font-weight: 500;
   color: var(--texto);
@@ -173,7 +283,6 @@
   border: 0;
   background: none;
   cursor: pointer;
-  font-family: inherit;
   font-size: clamp(0.9rem, 0.95vw, 1.05rem);
   font-weight: 700;
   color: var(--cor-azul-profundo);
@@ -195,7 +304,6 @@
   border-radius: 999px;
   cursor: pointer;
   background: var(--cor-azul-profundo);
-  font-family: inherit;
   font-size: clamp(1.05rem, 1.15vw, 1.3rem);
   font-weight: 700;
   color: var(--cor-branca);
@@ -228,5 +336,114 @@
   }
   to {
     background-position-x: -240px;
+  }
+}
+
+/* ══ convite para rolar ══════════════════════════════════════════ */
+.convite {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 22px);
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 22px;
+  border: 1px solid rgba(207, 239, 255, 0.45);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(10px);
+  white-space: nowrap;
+  color: #eaf8fe;
+  animation: convite-flutuar 3.4s ease-in-out infinite;
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+.convite:hover {
+  background: rgba(34, 166, 217, 0.32);
+  border-color: var(--cor-azul-claro);
+}
+
+.convite__icone {
+  width: 26px;
+  height: 26px;
+  color: var(--cor-azul-claro);
+}
+
+.convite__icone svg {
+  width: 100%;
+  height: 100%;
+}
+
+.convite__textos {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.convite__titulo {
+  font-size: 1rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+}
+
+.convite__dica {
+  font-size: 0.78rem;
+  font-weight: 500;
+  color: #a9d8ee;
+}
+
+.convite__seta {
+  width: 18px;
+  height: 18px;
+  animation: convite-seta 1.8s ease-in-out infinite;
+}
+
+@keyframes convite-flutuar {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+  50% {
+    transform: translate(-50%, -6px);
+  }
+}
+
+@keyframes convite-seta {
+  0%,
+  100% {
+    transform: translateY(-2px);
+  }
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+/* ══ responsivo ══════════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .inicio__ilustracao {
+    display: none;
+  }
+
+  .inicio__cabecalho {
+    left: 24px;
+  }
+
+  .inicio__palco {
+    padding: 0 24px 14vh;
+  }
+
+  .login__posicao {
+    right: 50%;
+    transform: translate(50%, calc(var(--progresso-rolagem) * -50%));
+  }
+
+  .login__agua-viva,
+  .login__lema {
+    display: none;
+  }
+
+  .convite__dica {
+    display: none;
   }
 }

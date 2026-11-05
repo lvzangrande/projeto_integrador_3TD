@@ -11,7 +11,9 @@ export default function ProgressoRolagem() {
       const secaoInicio = document.getElementById("inicio");
       const alturaReferencia = secaoInicio ? secaoInicio.offsetHeight : window.innerHeight;
       const progresso = Math.min(Math.max(window.scrollY / alturaReferencia, 0), 1);
-      document.querySelector(".pagina")?.style.setProperty("--progresso-rolagem", progresso.toFixed(4));
+      document
+        .querySelector(".pagina")
+        ?.style.setProperty("--progresso-rolagem", progresso.toFixed(4));
     };
 
     const aoRolar = () => {

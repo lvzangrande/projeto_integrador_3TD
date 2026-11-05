@@ -1,74 +1,58 @@
+/* Bolhas subindo devagar, usadas como textura de fundo das duas seções. */
 .bolhas {
   position: absolute;
   inset: 0;
   overflow: hidden;
   pointer-events: none;
+  z-index: 1;
 }
 
 .bolhas__bolha {
   position: absolute;
-  left: var(--x);
-  width: var(--tamanho);
-  height: var(--tamanho);
+  bottom: -12%;
+  display: block;
   border-radius: 50%;
-  opacity: 0;
+  animation: bolhas-subir var(--duracao) linear var(--atraso) infinite;
+  will-change: transform, opacity;
 }
 
 .bolhas--clara .bolhas__bolha {
-  bottom: -60px;
-  background: radial-gradient(circle at 30% 30%, #fff 0, rgba(255, 255, 255, 0.55) 16%, rgba(255, 255, 255, 0.1) 62%);
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  box-shadow: inset 0 0 6px rgba(255, 255, 255, 0.55);
-  animation:
-    bolhas-subir var(--duracao) linear var(--atraso) infinite,
-    bolhas-balancar 5s ease-in-out var(--atraso) infinite;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.15) 72%
+  );
 }
 
 .bolhas--profunda .bolhas__bolha {
-  top: -30px;
-  background: radial-gradient(circle, rgba(207, 239, 255, 0.95), rgba(127, 211, 240, 0.15) 70%);
-  box-shadow: 0 0 10px rgba(127, 211, 240, 0.8);
-  animation:
-    bolhas-descer var(--duracao) linear var(--atraso) infinite,
-    bolhas-balancar 7s ease-in-out var(--atraso) infinite;
+  border: 1px solid rgba(127, 211, 240, 0.55);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(207, 239, 255, 0.85),
+    rgba(34, 166, 217, 0.12) 72%
+  );
 }
 
 @keyframes bolhas-subir {
   0% {
-    translate: 0 0;
+    transform: translate3d(0, 0, 0) scale(0.7);
     opacity: 0;
   }
-  10%,
-  85% {
-    opacity: 1;
+  12% {
+    opacity: var(--opacidade);
+  }
+  88% {
+    opacity: var(--opacidade);
   }
   100% {
-    translate: 0 -115vh;
+    transform: translate3d(var(--deriva), -118vh, 0) scale(1.15);
     opacity: 0;
   }
 }
 
-@keyframes bolhas-descer {
-  0% {
-    translate: 0 0;
-    opacity: 0;
-  }
-  10%,
-  85% {
-    opacity: 0.9;
-  }
-  100% {
-    translate: 0 115vh;
-    opacity: 0;
-  }
-}
-
-@keyframes bolhas-balancar {
-  0%,
-  100% {
-    transform: translateX(0);
-  }
-  50% {
-    transform: translateX(var(--balanco));
+@media (prefers-reduced-motion: reduce) {
+  .bolhas {
+    display: none;
   }
 }

@@ -1,0 +1,28 @@
+/* Estilos exclusivos da página de erro (src/app/error.jsx). */
+.pagina-erro {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 40px 24px;
+  background: linear-gradient(180deg, var(--cor-ceu-topo) 0%, #eaf8fe 100%);
+}
+
+.pagina-erro__conteudo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  text-align: center;
+}
+
+.pagina-erro__titulo {
+  font-size: clamp(1.75rem, 3vw, 2.5rem);
+  font-weight: 900;
+  color: var(--cor-azul-profundo);
+}
+
+.pagina-erro__texto {
+  font-size: clamp(1rem, 1.2vw, 1.15rem);
+  color: var(--cor-texto-suave);
+}
