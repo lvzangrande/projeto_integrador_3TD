@@ -1,4 +1,8 @@
 import mysql from "mysql2/promise";
+import 'dotenv/config';
+
+const obrigatorio = ['DB_HOST', 'DB_USER', 'DB_NAME'];
+const ausentes = obrigatorio.filter((campo) => !process.env[campo]?.trim());
 
 export const pool = mysql.createPool({
   host: process.env.DB_HOST,
@@ -14,4 +18,8 @@ export const pool = mysql.createPool({
 export async function checkDatabaseConnection() {
   const [rows] = await pool.query("SELECT 1 AS ok");
   return rows[0]?.ok === 1;
+}
+
+export function criarPool(){
+  return pool;
 }
