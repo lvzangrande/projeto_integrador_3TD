@@ -1,4 +1,4 @@
-import "./aguaViva.css";
+import "./AguaViva.css";
 
 // Tentáculos: posição, curva, comprimento e atraso de cada fio.
 const TENTACULOS = [

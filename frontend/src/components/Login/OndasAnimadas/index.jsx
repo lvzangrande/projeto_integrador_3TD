@@ -1,4 +1,4 @@
-import "./ondasAnimadas.css";
+import "./OndasAnimadas.css";
 
 const LARGURA_SEGMENTO = 320;
 const TOTAL_SEGMENTOS = 16;

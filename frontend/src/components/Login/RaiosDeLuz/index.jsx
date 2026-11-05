@@ -1,4 +1,4 @@
-import "./raiosDeLuz.css";
+import "./RaiosDeLuz.css";
 
 const FEIXES = [
   { x: 4, largura: 120, rotacao: 16, atraso: 0, duracao: 9 },

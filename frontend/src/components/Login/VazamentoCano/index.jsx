@@ -1,4 +1,4 @@
-import "./vazamentoCano.css";
+import "./VazamentoCano.css";
 
 const POSICAO_BURACO = 380;
 const GOTAS = [

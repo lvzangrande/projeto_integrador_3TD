@@ -1,15 +1,14 @@
 import "./page.css";
-import AguaViva from "@/components/login/aguaViva";
-import BolhasSubindo from "@/components/login/bolhasSubindo";
-import MedidorAgua from "@/components/login/medidorAgua";
-import OndasAnimadas from "@/components/login/ondasAnimadas";
-import PonteiroParalaxe from "@/components/login/ponteiroParalaxe";
-import ProgressoRolagem from "@/components/login/progressoRolagem";
-import RaiosDeLuz from "@/components/login/raiosDeLuz";
-import TituloAgua from "@/components/login/tituloAgua";
-import VazamentoCano from "@/components/login/vazamentoCano";
+import AguaViva from "@/components/Login/AguaViva";
+import BolhasSubindo from "@/components/Login/BolhasSubindo";
+import MedidorAgua from "@/components/Login/MedidorAgua";
+import OndasAnimadas from "@/components/Login/OndasAnimadas";
+import PonteiroParalaxe from "@/components/Login/ponteiroParalaxe";
+import ProgressoRolagem from "@/components/Login/progressoRolagem";
+import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
+import TituloAgua from "@/components/Login/TituloAgua";
+import VazamentoCano from "@/components/Login/VazamentoCano";
 
-// Conteúdo da página. Trocar pelos dados reais vindos da API.
 const litrosPoupadosPorDia = "000";
 const nivelDoReservatorio = 0.55;
 
@@ -22,19 +21,17 @@ const textos = {
     "Acesse sua conta para acompanhar o consumo e os alertas da sua rede.",
 };
 
-export default function Inicio() {
+export default async function Inicio() {
   return (
     <main className="pagina">
       <ProgressoRolagem />
       <PonteiroParalaxe />
 
-      {/* ── primeira tela ─────────────────────────────────────────── */}
       <section id="inicio" className="inicio">
         <RaiosDeLuz variante="clara" />
         <BolhasSubindo variante="clara" quantidade={26} semente={11} />
 
         <header className="inicio__cabecalho">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             className="inicio__logo"
             src="/logo-wapi.png"
@@ -68,7 +65,6 @@ export default function Inicio() {
         </div>
       </section>
 
-      {/* ── segunda tela: login ───────────────────────────────────── */}
       <section id="login" className="login">
         <OndasAnimadas posicao="acima" />
         <RaiosDeLuz variante="profunda" />
@@ -118,7 +114,6 @@ export default function Inicio() {
             </a>
 
             <div className="login__logo">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 className="login__logo-imagem"
                 src="/logo-wapi.png"
@@ -133,7 +128,6 @@ export default function Inicio() {
               <p className="login__subtitulo">{textos.subtitulo}</p>
             </div>
 
-            {/* Tela visual do login. O envio do formulário ainda não está implementado. */}
             <form className="login__formulario" noValidate>
               <div className="login__campo">
                 <label className="login__rotulo" htmlFor="usuario">

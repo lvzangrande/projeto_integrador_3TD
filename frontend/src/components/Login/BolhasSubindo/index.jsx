@@ -1,4 +1,4 @@
-import "./bolhasSubindo.css";
+import "./BolhasSubindo.css";
 
 // Gerador determinístico: a mesma semente produz sempre o mesmo conjunto de bolhas.
 function criarGerador(semente) {

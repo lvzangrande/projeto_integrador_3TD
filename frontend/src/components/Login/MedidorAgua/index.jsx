@@ -1,4 +1,4 @@
-import "./medidorAgua.css";
+import "./MedidorAgua.css";
 
 const RAIO = 56;
 const CENTRO = 65;
