@@ -171,6 +171,15 @@
     overflow-x: auto;
   }
   
+  .rg-card.is-loading .rg-table tbody {
+    opacity: 0.5;
+    transition: opacity 0.15s;
+  }
+  
+  .rg-tipo--outro {
+    --tone: var(--muted);
+  }
+  
   .rg-table {
     width: 100%;
     min-width: 1000px; /* só rola na horizontal em telas realmente estreitas */

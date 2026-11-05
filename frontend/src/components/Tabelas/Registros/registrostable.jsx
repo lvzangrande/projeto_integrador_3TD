@@ -1,9 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import "./registrostable.css";
 
-/* ---------- Tipos de registro ---------- */
+/* ---------- Aparência por tipo ----------
+ * As chaves devem corresponder ao valor de `tipo` retornado pela API
+ * (acentos e maiúsculas são ignorados: "Reunião" → "reuniao").
+ * Tipos desconhecidos usam o visual padrão, sem quebrar a tabela.
+ */
 const TIPOS = {
   reuniao: { label: "Reunião", icon: "users" },
   vistoria: { label: "Vistoria", icon: "eye" },
@@ -12,107 +16,9 @@ const TIPOS = {
   treinamento: { label: "Treinamento", icon: "book" },
 };
 
-/* ---------- Dados de exemplo (substituir pela resposta da API) ---------- */
-const registros = [
-  {
-    id: 1,
-    tipo: "reuniao",
-    pauta: "Alinhamento semanal de operação",
-    cliente: { nome: "Prefeitura de Mauá", empresa: "Contrato municipal" },
-    dataHora: "05/11/2026 – 14:30",
-    resumo: "Revisão dos níveis dos reservatórios da semana e definição das prioridades de manutenção preventiva para as ETAs Centro e Sul.",
-  },
-  {
-    id: 2,
-    tipo: "ocorrencia",
-    pauta: "Queda de pressão no Reservatório Norte",
-    cliente: { nome: "Condomínio Vila Verde", empresa: "Região Norte" },
-    dataHora: "05/11/2026 – 11:10",
-    resumo: "Identificada queda de pressão na saída do reservatório. Suspeita de vazamento na adutora principal, equipe isolou o trecho.",
-  },
-  {
-    id: 3,
-    tipo: "vistoria",
-    pauta: "Inspeção de rotina – Reservatório Leste",
-    cliente: { nome: "Indústria Aquatec", empresa: "Região Leste" },
-    dataHora: "04/11/2026 – 16:45",
-    resumo: "Estrutura em boas condições. Pequena infiltração observada na junta da tampa de inspeção, sem risco imediato.",
-  },
-  {
-    id: 4,
-    tipo: "manutencao",
-    pauta: "Troca de bomba dosadora – ETA Centro",
-    cliente: { nome: "Hospital São Lucas", empresa: "Região Centro" },
-    dataHora: "04/11/2026 – 09:00",
-    resumo: "Substituição da bomba dosadora de cloro por unidade nova. Testes de vazão realizados com resultados dentro do esperado.",
-  },
-  {
-    id: 5,
-    tipo: "treinamento",
-    pauta: "Capacitação em segurança de ETA",
-    cliente: { nome: "Cooperativa Água Viva", empresa: "Região Sul" },
-    dataHora: "03/11/2026 – 15:20",
-    resumo: "Treinamento sobre manuseio de produtos químicos e protocolos de emergência, com participação de 18 operadores.",
-  },
-  {
-    id: 6,
-    tipo: "reuniao",
-    pauta: "Planejamento de expansão da rede Sul",
-    cliente: { nome: "Prefeitura de Mauá", empresa: "Contrato municipal" },
-    dataHora: "03/11/2026 – 10:05",
-    resumo: "Discussão sobre cronograma e orçamento da expansão da rede. Definidos responsáveis por levantamento topográfico e licenciamento.",
-  },
-  {
-    id: 7,
-    tipo: "ocorrencia",
-    pauta: "Turbidez acima do limite na entrada",
-    cliente: { nome: "Indústria Aquatec", empresa: "Região Leste" },
-    dataHora: "02/11/2026 – 17:40",
-    resumo: "Turbidez da água bruta elevou-se após chuvas intensas. Ajuste de coagulante realizado e monitoramento reforçado a cada hora.",
-  },
-  {
-    id: 8,
-    tipo: "vistoria",
-    pauta: "Verificação de sensores de nível",
-    cliente: { nome: "Condomínio Vila Verde", empresa: "Região Norte" },
-    dataHora: "02/11/2026 – 08:30",
-    resumo: "Sensores dos reservatórios Norte e Leste aferidos. Um dos sensores apresentou desvio de 3% e foi recalibrado.",
-  },
-  {
-    id: 9,
-    tipo: "manutencao",
-    pauta: "Limpeza programada – Reservatório Norte",
-    cliente: { nome: "Hospital São Lucas", empresa: "Região Centro" },
-    dataHora: "31/10/2026 – 13:15",
-    resumo: "Esvaziamento parcial e limpeza das paredes internas. Nenhum dano estrutural encontrado durante o procedimento.",
-  },
-  {
-    id: 10,
-    tipo: "treinamento",
-    pauta: "Uso do novo painel de monitoramento",
-    cliente: { nome: "Cooperativa Água Viva", empresa: "Região Sul" },
-    dataHora: "30/10/2026 – 15:00",
-    resumo: "Apresentação das novas funcionalidades do painel e exercícios práticos de leitura de alertas com a equipe de plantão.",
-  },
-  {
-    id: 11,
-    tipo: "reuniao",
-    pauta: "Revisão de indicadores mensais",
-    cliente: { nome: "Prefeitura de Mauá", empresa: "Contrato municipal" },
-    dataHora: "29/10/2026 – 09:45",
-    resumo: "Análise de vazão, perdas e atendimento às metas do mês. Pontos de atenção levantados na região Norte.",
-  },
-  {
-    id: 12,
-    tipo: "ocorrencia",
-    pauta: "Falha de comunicação na telemetria",
-    cliente: { nome: "Indústria Aquatec", empresa: "Região Leste" },
-    dataHora: "28/10/2026 – 12:20",
-    resumo: "Perda intermitente de sinal da telemetria na ETA Sul. Roteador substituído e comunicação restabelecida após testes.",
-  },
-];
+const TIPO_PADRAO = { label: "Outro", icon: "tag" };
 
-const POR_PAGINA = 5;
+const ATRASO_BUSCA_MS = 400;
 
 /* ---------- Ícones (SVG inline, sem dependências) ---------- */
 function Icon({ children, size = 22, ...props }) {
@@ -218,14 +124,50 @@ const ICONES_TIPO = {
   alert: IconAlert,
   wrench: IconWrench,
   book: IconBook,
+  tag: IconTag,
 };
 
-/* ---------- Utilitários ---------- */
+/* ---------- Utilitários (tolerantes a dados incompletos) ---------- */
+function normalizarTipo(valor) {
+  return String(valor ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .trim()
+    .toLowerCase();
+}
+
+function infoTipo(valor) {
+  const chave = normalizarTipo(valor);
+  if (TIPOS[chave]) return { chave, ...TIPOS[chave] };
+  // tipo desconhecido: mostra o texto original da API
+  return { chave: "outro", ...TIPO_PADRAO, label: valor ? String(valor) : TIPO_PADRAO.label };
+}
+
+function normalizarCliente(cliente) {
+  if (!cliente) return { nome: "—", empresa: "" };
+  if (typeof cliente === "string") return { nome: cliente, empresa: "" };
+  return { nome: cliente.nome || "—", empresa: cliente.empresa || "" };
+}
+
 function iniciais(nome) {
-  const partes = nome.trim().split(/\s+/);
-  const primeira = partes[0]?.[0] ?? "";
+  const partes = String(nome ?? "").trim().split(/\s+/).filter(Boolean);
+  if (partes.length === 0 || nome === "—") return "?";
+  const primeira = partes[0][0];
   const ultima = partes.length > 1 ? partes[partes.length - 1][0] : "";
   return (primeira + ultima).toUpperCase();
+}
+
+/* Aceita ISO 8601 / timestamp / Date (formata em dd/mm/aaaa – hh:mm, fuso de São Paulo)
+ * ou uma string já formatada (ex.: "03/11/2026 – 10:05"), exibida como veio. */
+function formatarDataHora(valor) {
+  if (!valor) return "—";
+  if (typeof valor === "string" && /^\d{2}\/\d{2}\/\d{4}/.test(valor)) return valor;
+  const d = valor instanceof Date ? valor : new Date(valor);
+  if (Number.isNaN(d.getTime())) return String(valor);
+  const fuso = "America/Sao_Paulo";
+  const data = d.toLocaleDateString("pt-BR", { timeZone: fuso });
+  const hora = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: fuso });
+  return `${data} – ${hora}`;
 }
 
 function listaPaginas(total, atual) {
@@ -240,23 +182,68 @@ function listaPaginas(total, atual) {
 }
 
 /* ---------- Componente ----------
- * A filtragem (busca, tipo e período) será feita pela API do backend.
- * Os controles abaixo apenas guardam o valor digitado/selecionado no estado,
- * prontos para serem enviados como parâmetros da requisição.
+ *
+ * Props:
+ *  - registros   Array da página atual, vindo da API:
+ *                { id, tipo, pauta, cliente: { nome, empresa? } | "Nome", dataHora, resumo }
+ *  - total       Total de registros que atendem aos filtros (todas as páginas)
+ *  - porPagina   Itens por página — deve ser igual ao limite usado na API (padrão 5)
+ *  - carregando  true enquanto a requisição está em andamento
+ *  - erro        Mensagem de erro (string) para exibir no lugar da lista
+ *  - onChange    ({ busca, tipo, pagina }) => void
+ *                Chamado na montagem e sempre que busca (com atraso), tipo ou página mudam.
+ *                `tipo` é null para "Todos". Faça a requisição aqui.
+ *  - onAcoes     (registro) => void, ao clicar em "•••"
+ *
+ * A filtragem e a paginação acontecem na API; o componente só exibe o que recebe.
  */
-export default function RegistrosTable() {
+export default function RegistrosTable({
+  registros = [],
+  total,
+  porPagina = 5,
+  carregando = false,
+  erro = null,
+  onChange,
+  onAcoes,
+}) {
   const [busca, setBusca] = useState("");
+  const [buscaAplicada, setBuscaAplicada] = useState("");
   const [tipo, setTipo] = useState("todos");
   const [pagina, setPagina] = useState(1);
 
-  // TODO: substituir por dados vindos da API (ex.: fetch com busca, tipo e pagina)
-  const total = registros.length;
-  const totalPaginas = Math.max(1, Math.ceil(total / POR_PAGINA));
-  const paginaAtual = Math.min(pagina, totalPaginas);
-  const inicio = (paginaAtual - 1) * POR_PAGINA;
-  const linhas = registros.slice(inicio, inicio + POR_PAGINA);
+  const onChangeRef = useRef(onChange);
+  onChangeRef.current = onChange;
+
+  // Atraso na busca para não chamar a API a cada tecla
+  useEffect(() => {
+    if (busca === buscaAplicada) return;
+    const id = setTimeout(() => {
+      setBuscaAplicada(busca);
+      setPagina(1);
+    }, ATRASO_BUSCA_MS);
+    return () => clearTimeout(id);
+  }, [busca, buscaAplicada]);
+
+  // Avisa o componente pai sempre que os parâmetros de consulta mudam
+  useEffect(() => {
+    onChangeRef.current?.({
+      busca: buscaAplicada.trim(),
+      tipo: tipo === "todos" ? null : tipo,
+      pagina,
+    });
+  }, [buscaAplicada, tipo, pagina]);
+
+  const totalRegistros = Number.isFinite(total) ? total : registros.length;
+  const totalPaginas = Math.max(1, Math.ceil(totalRegistros / porPagina));
+  const inicio = (pagina - 1) * porPagina;
+  const fim = inicio + registros.length;
 
   const irPara = (p) => setPagina(Math.min(Math.max(p, 1), totalPaginas));
+
+  const escolherTipo = (chave) => {
+    setTipo(chave);
+    setPagina(1);
+  };
 
   return (
     <main className="rg-page">
@@ -299,7 +286,7 @@ export default function RegistrosTable() {
             type="button"
             className={`rg-chip ${tipo === "todos" ? "is-active" : ""}`}
             aria-pressed={tipo === "todos"}
-            onClick={() => setTipo("todos")}
+            onClick={() => escolherTipo("todos")}
           >
             <IconFilter size={18} />
             Todos
@@ -312,7 +299,7 @@ export default function RegistrosTable() {
                 type="button"
                 className={`rg-chip ${tipo === chave ? "is-active" : ""}`}
                 aria-pressed={tipo === chave}
-                onClick={() => setTipo(chave)}
+                onClick={() => escolherTipo(chave)}
               >
                 <Ico size={18} />
                 {t.label}
@@ -322,7 +309,7 @@ export default function RegistrosTable() {
         </div>
 
         {/* Tabela */}
-        <section className="rg-card">
+        <section className={`rg-card ${carregando ? "is-loading" : ""}`} aria-busy={carregando}>
           <div className="rg-scroll">
             <table className="rg-table">
               <thead>
@@ -337,61 +324,80 @@ export default function RegistrosTable() {
               </thead>
 
               <tbody>
-                {linhas.length === 0 && (
+                {erro && (
                   <tr>
-                    <td colSpan={6} className="rg-empty">
-                      Nenhum registro encontrado.
-                    </td>
+                    <td colSpan={6} className="rg-empty">{erro}</td>
                   </tr>
                 )}
 
-                {linhas.map((r) => {
-                  const t = TIPOS[r.tipo];
-                  const IcoTipo = ICONES_TIPO[t.icon];
-                  const alerta = r.tipo === "ocorrencia";
+                {!erro && carregando && registros.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="rg-empty">Carregando registros...</td>
+                  </tr>
+                )}
 
-                  return (
-                    <tr key={r.id} className={alerta ? "rg-row rg-row--alert" : "rg-row"}>
-                      <td>
-                        <span className={`rg-tipo rg-tipo--${r.tipo}`}>
-                          <IcoTipo size={22} />
-                          {t.label}
-                        </span>
-                      </td>
+                {!erro && !carregando && registros.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="rg-empty">Nenhum registro encontrado.</td>
+                  </tr>
+                )}
 
-                      <td>
-                        <span className="rg-pauta">{r.pauta}</span>
-                      </td>
+                {!erro &&
+                  registros.map((r, i) => {
+                    const t = infoTipo(r.tipo);
+                    const IcoTipo = ICONES_TIPO[t.icon];
+                    const cliente = normalizarCliente(r.cliente);
+                    const alerta = t.chave === "ocorrencia";
+                    const pauta = r.pauta || "—";
+                    const resumo = r.resumo || "—";
 
-                      <td>
-                        <span className="rg-user">
-                          <span className="rg-avatar" aria-hidden="true">{iniciais(r.cliente.nome)}</span>
-                          <span className="rg-user__info">
-                            <span>{r.cliente.nome}</span>
-                            <span className="rg-user__role">{r.cliente.empresa}</span>
+                    return (
+                      <tr key={r.id ?? `${inicio}-${i}`} className={alerta ? "rg-row rg-row--alert" : "rg-row"}>
+                        <td>
+                          <span className={`rg-tipo rg-tipo--${t.chave}`}>
+                            <IcoTipo size={22} />
+                            {t.label}
                           </span>
-                        </span>
-                      </td>
+                        </td>
 
-                      <td>
-                        <span className="rg-cell">
-                          <IconClock size={26} className="rg-muted" />
-                          {r.dataHora}
-                        </span>
-                      </td>
+                        <td>
+                          <span className="rg-pauta">{pauta}</span>
+                        </td>
 
-                      <td className="rg-td-wrap">
-                        <p className="rg-resumo" title={r.resumo}>{r.resumo}</p>
-                      </td>
+                        <td>
+                          <span className="rg-user">
+                            <span className="rg-avatar" aria-hidden="true">{iniciais(cliente.nome)}</span>
+                            <span className="rg-user__info">
+                              <span>{cliente.nome}</span>
+                              {cliente.empresa && <span className="rg-user__role">{cliente.empresa}</span>}
+                            </span>
+                          </span>
+                        </td>
 
-                      <td className="rg-center">
-                        <button type="button" className="rg-more" aria-label={`Ações para ${r.pauta}`}>
-                          •••
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                })}
+                        <td>
+                          <span className="rg-cell">
+                            <IconClock size={26} className="rg-muted" />
+                            {formatarDataHora(r.dataHora)}
+                          </span>
+                        </td>
+
+                        <td className="rg-td-wrap">
+                          <p className="rg-resumo" title={resumo}>{resumo}</p>
+                        </td>
+
+                        <td className="rg-center">
+                          <button
+                            type="button"
+                            className="rg-more"
+                            aria-label={`Ações para ${pauta}`}
+                            onClick={() => onAcoes?.(r)}
+                          >
+                            •••
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
               </tbody>
             </table>
           </div>
@@ -400,32 +406,32 @@ export default function RegistrosTable() {
           <footer className="rg-footer">
             <p className="rg-count">
               <IconInfo size={24} />
-              {total === 0
-                ? "Mostrando 0 de 0 registros"
-                : `Mostrando ${inicio + 1}–${Math.min(inicio + POR_PAGINA, total)} de ${total} registros`}
+              {registros.length === 0
+                ? `Mostrando 0 de ${totalRegistros} registros`
+                : `Mostrando ${inicio + 1}–${fim} de ${totalRegistros} registros`}
             </p>
 
             <nav className="rg-pager" aria-label="Paginação">
               <button
                 type="button"
                 className="rg-page-btn"
-                onClick={() => irPara(paginaAtual - 1)}
-                disabled={paginaAtual === 1}
+                onClick={() => irPara(pagina - 1)}
+                disabled={pagina === 1}
                 aria-label="Página anterior"
               >
                 <IconChevronLeft size={20} />
               </button>
 
-              {listaPaginas(totalPaginas, paginaAtual).map((p, i) =>
+              {listaPaginas(totalPaginas, pagina).map((p, i) =>
                 p === "…" ? (
                   <span key={`e${i}`} className="rg-ellipsis">...</span>
                 ) : (
                   <button
                     key={p}
                     type="button"
-                    className={`rg-page-btn ${paginaAtual === p ? "is-active" : ""}`}
+                    className={`rg-page-btn ${pagina === p ? "is-active" : ""}`}
                     onClick={() => irPara(p)}
-                    aria-current={paginaAtual === p ? "page" : undefined}
+                    aria-current={pagina === p ? "page" : undefined}
                   >
                     {p}
                   </button>
@@ -435,8 +441,8 @@ export default function RegistrosTable() {
               <button
                 type="button"
                 className="rg-page-btn"
-                onClick={() => irPara(paginaAtual + 1)}
-                disabled={paginaAtual === totalPaginas}
+                onClick={() => irPara(pagina + 1)}
+                disabled={pagina === totalPaginas}
                 aria-label="Próxima página"
               >
                 <IconChevronRight size={20} />
