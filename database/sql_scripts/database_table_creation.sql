@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS usuarios(
 	id_usuario INT PRIMARY KEY AUTO_INCREMENT,
 	nome VARCHAR(100) NOT NULL,
 	email VARCHAR(100) UNIQUE NOT NULL,
-	senha VARCHAR(80) NOT NULL, -- verify to see if hash characters won't be too low
+	senha TEXT NOT NULL, 
 	cnpj VARCHAR(20) NOT NULL,
 	telefone VARCHAR(20) NULL,
 	categoria ENUM('Admin', 'Filiado', 'Cliente') DEFAULT 'Cliente' NOT NULL,

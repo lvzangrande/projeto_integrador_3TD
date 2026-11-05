@@ -3,6 +3,8 @@ import express from "express";
 import helmet from "helmet";
 import { resolve } from "node:path";
 
+import { reservoirRoutes, configurateReservoirSecurity} from './routes/reservoirRoutes.js'
+
 import { errorHandler } from "./middlewares/errorHandler.js";
 import healthRoutes from "./routes/healthRoutes.js";
 	
