@@ -31,6 +31,9 @@ export function criarHealthController({ healthService }) {
       const healthNovo = await healthService.criar(req.body);
       res.status(201).json({ sucesso: true, dados: healthNovo });
     } catch (erro) {
+      if (erro instanceof TypeError) {
+        return res.status(400).json({ erro: erro.message });
+      }
       next(erro);
     }
   }

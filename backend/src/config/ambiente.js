@@ -26,6 +26,6 @@ export function carregarAmbiente(arquivoDeConfiguracao){
             node: process.version,
             sistema: `${process.platform} ${process.arch}`,
             diretorio: process.cwd(),
-            portaConfigurada: configuracao.porta
+            portaConfigurada: config.porta
         })
     }
