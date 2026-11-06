@@ -30,3 +30,4 @@ Thumbs.db
 
 # docker/mysql local data
 mysql-data/
+backend/.gitignore
