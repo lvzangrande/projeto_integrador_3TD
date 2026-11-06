@@ -1,3 +1,11 @@
+<<<<<<< HEAD
 /.env
 /node_modules
+<<<<<<< HEAD
 /AGENTS
+=======
+=======
+/node_modules
+/.env
+>>>>>>> backend
+>>>>>>> b583395a44dc614455bd82e42ed7a13b84b3537b
