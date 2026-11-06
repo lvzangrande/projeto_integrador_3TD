@@ -1,4 +1,4 @@
-export default class Health {
+export default class Usuario {
   constructor({ nome, email, senha, cnpj, telefone, categoria, tema, status }) {
     if (typeof nome !== "string" || nome.trim() === "") {
       throw new TypeError("Nome é obrigatório.");
