@@ -1,0 +1,94 @@
+.erro-cena {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.erro-cena__chuva {
+  position: absolute;
+  inset: -12% -4%;
+  opacity: 0.56;
+  transform: skewX(-12deg);
+}
+
+.erro-cena__gota {
+  position: absolute;
+  top: -12%;
+  left: calc((var(--gota-pos, 1) * 1%));
+  width: 1px;
+  height: clamp(22px, 4vh, 38px);
+  border-radius: 50%;
+  background: linear-gradient(transparent, rgba(157, 226, 255, 0.75));
+  box-shadow: 0 0 7px rgba(91, 187, 232, 0.24);
+  animation: erro-chuva-cair var(--duracao, 1.25s) linear infinite;
+  animation-delay: var(--atraso, 0s);
+}
+
+.erro-cena__gota:nth-child(1) { --gota-pos: 2; --duracao: 1.12s; --atraso: -0.25s; }
+.erro-cena__gota:nth-child(2) { --gota-pos: 5; --duracao: 1.48s; --atraso: -1.1s; }
+.erro-cena__gota:nth-child(3) { --gota-pos: 8; --duracao: 1.26s; --atraso: -0.8s; }
+.erro-cena__gota:nth-child(4) { --gota-pos: 11; --duracao: 1.64s; --atraso: -1.4s; }
+.erro-cena__gota:nth-child(5) { --gota-pos: 14; --duracao: 1.3s; --atraso: -0.6s; }
+.erro-cena__gota:nth-child(6) { --gota-pos: 17; --duracao: 1.55s; --atraso: -1.2s; }
+.erro-cena__gota:nth-child(7) { --gota-pos: 20; --duracao: 1.18s; --atraso: -0.5s; }
+.erro-cena__gota:nth-child(8) { --gota-pos: 23; --duracao: 1.42s; --atraso: -1.3s; }
+.erro-cena__gota:nth-child(9) { --gota-pos: 26; --duracao: 1.7s; --atraso: -0.7s; }
+.erro-cena__gota:nth-child(10) { --gota-pos: 29; --duracao: 1.22s; --atraso: -1.5s; }
+.erro-cena__gota:nth-child(11) { --gota-pos: 32; --duracao: 1.56s; --atraso: -0.95s; }
+.erro-cena__gota:nth-child(12) { --gota-pos: 35; --duracao: 1.34s; --atraso: -0.35s; }
+.erro-cena__gota:nth-child(13) { --gota-pos: 38; --duracao: 1.18s; --atraso: -1.25s; }
+.erro-cena__gota:nth-child(14) { --gota-pos: 41; --duracao: 1.58s; --atraso: -0.85s; }
+.erro-cena__gota:nth-child(15) { --gota-pos: 44; --duracao: 1.25s; --atraso: -1.45s; }
+.erro-cena__gota:nth-child(16) { --gota-pos: 47; --duracao: 1.44s; --atraso: -0.4s; }
+.erro-cena__gota:nth-child(17) { --gota-pos: 50; --duracao: 1.68s; --atraso: -1.1s; }
+.erro-cena__gota:nth-child(18) { --gota-pos: 53; --duracao: 1.24s; --atraso: -0.65s; }
+.erro-cena__gota:nth-child(19) { --gota-pos: 56; --duracao: 1.52s; --atraso: -1.3s; }
+.erro-cena__gota:nth-child(20) { --gota-pos: 59; --duracao: 1.16s; --atraso: -0.9s; }
+.erro-cena__gota:nth-child(21) { --gota-pos: 62; --duracao: 1.42s; --atraso: -1.55s; }
+.erro-cena__gota:nth-child(22) { --gota-pos: 65; --duracao: 1.62s; --atraso: -0.45s; }
+.erro-cena__gota:nth-child(23) { --gota-pos: 68; --duracao: 1.28s; --atraso: -1.05s; }
+.erro-cena__gota:nth-child(24) { --gota-pos: 71; --duracao: 1.55s; --atraso: -0.75s; }
+.erro-cena__gota:nth-child(25) { --gota-pos: 74; --duracao: 1.2s; --atraso: -1.4s; }
+.erro-cena__gota:nth-child(26) { --gota-pos: 77; --duracao: 1.66s; --atraso: -0.2s; }
+.erro-cena__gota:nth-child(27) { --gota-pos: 80; --duracao: 1.36s; --atraso: -1.25s; }
+.erro-cena__gota:nth-child(28) { --gota-pos: 83; --duracao: 1.48s; --atraso: -0.55s; }
+.erro-cena__gota:nth-child(29) { --gota-pos: 86; --duracao: 1.17s; --atraso: -1.05s; }
+.erro-cena__gota:nth-child(30) { --gota-pos: 89; --duracao: 1.58s; --atraso: -0.3s; }
+.erro-cena__gota:nth-child(31) { --gota-pos: 92; --duracao: 1.32s; --atraso: -1.45s; }
+.erro-cena__gota:nth-child(32) { --gota-pos: 95; --duracao: 1.49s; --atraso: -0.7s; }
+.erro-cena__gota:nth-child(33) { --gota-pos: 98; --duracao: 1.21s; --atraso: -1.3s; }
+.erro-cena__gota:nth-child(34) { --gota-pos: 4; --duracao: 1.37s; --atraso: -0.9s; }
+.erro-cena__gota:nth-child(35) { --gota-pos: 31; --duracao: 1.61s; --atraso: -0.15s; }
+.erro-cena__gota:nth-child(36) { --gota-pos: 58; --duracao: 1.27s; --atraso: -1.35s; }
+.erro-cena__gota:nth-child(37) { --gota-pos: 76; --duracao: 1.53s; --atraso: -0.6s; }
+.erro-cena__gota:nth-child(38) { --gota-pos: 91; --duracao: 1.19s; --atraso: -1.1s; }
+
+.erro-cena__brilho {
+  position: absolute;
+  right: 10%;
+  bottom: -38%;
+  left: 10%;
+  height: 68%;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(21, 137, 188, 0.26), transparent 67%);
+  animation: erro-cena-respirar 6s ease-in-out infinite;
+}
+
+@keyframes erro-chuva-cair {
+  from { transform: translate3d(0, -8vh, 0); }
+  to { transform: translate3d(-5vw, 120vh, 0); }
+}
+
+@keyframes erro-cena-respirar {
+  0%, 100% { opacity: 0.5; transform: scale(0.94); }
+  50% { opacity: 1; transform: scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .erro-cena__gota,
+  .erro-cena__brilho {
+    animation: none;
+  }
+}

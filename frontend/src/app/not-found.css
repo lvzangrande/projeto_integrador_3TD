@@ -1,28 +1,93 @@
-/* Estilos exclusivos da página 404 (src/app/not-found.jsx). */
 .pagina-nao-encontrada {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-  padding: 40px 24px;
-  background: linear-gradient(180deg, var(--cor-ceu-topo) 0%, #eaf8fe 100%);
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  padding: 120px 24px 48px;
+  color: #f4fbff;
+  background:
+    radial-gradient(ellipse at 78% 75%, rgba(17, 151, 205, 0.34), transparent 36%),
+    radial-gradient(ellipse at 8% 15%, rgba(36, 119, 176, 0.4), transparent 38%),
+    linear-gradient(135deg, #0b3559 0%, #082746 55%, #061d35 100%);
+}
+
+.pagina-nao-encontrada__cabecalho {
+  position: absolute;
+  z-index: 2;
+  top: 28px;
+  left: clamp(24px, 6vw, 68px);
+}
+
+.pagina-nao-encontrada__marca img {
+  width: clamp(100px, 11vw, 124px);
+  height: auto;
+  mix-blend-mode: screen;
 }
 
 .pagina-nao-encontrada__conteudo {
+  position: relative;
+  z-index: 1;
   display: flex;
+  width: min(100%, 640px);
   flex-direction: column;
   align-items: center;
-  gap: 24px;
+  gap: 13px;
   text-align: center;
 }
 
+.pagina-nao-encontrada__codigo {
+  color: #d5f2ff;
+  font-size: clamp(5.8rem, 17vw, 7.4rem);
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  line-height: 0.95;
+  text-shadow: 0 0 36px rgba(66, 193, 235, 0.18);
+}
+
+.pagina-nao-encontrada__rotulo {
+  margin: 4px 0 2px;
+  color: #a8dbef;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.19em;
+  text-transform: uppercase;
+}
+
 .pagina-nao-encontrada__titulo {
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: 900;
-  color: var(--cor-azul-profundo);
+  font-size: clamp(1.6rem, 4vw, 2.15rem);
+  font-weight: 700;
+  line-height: 1.2;
+  text-wrap: balance;
 }
 
 .pagina-nao-encontrada__texto {
-  font-size: clamp(1rem, 1.2vw, 1.15rem);
-  color: var(--cor-texto-suave);
+  color: #c5dfed;
+  font-size: 1rem;
+}
+
+.pagina-nao-encontrada__botao {
+  display: inline-flex;
+  min-height: 46px;
+  align-items: center;
+  justify-content: center;
+  margin-top: 7px;
+  padding: 0 23px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 9px;
+  color: #fff;
+  background: #24a8d2;
+  font-size: 0.92rem;
+  font-weight: 700;
+}
+
+.pagina-nao-encontrada__botao:hover {
+  background: #31b8df;
+  box-shadow: 0 8px 22px rgba(22, 164, 210, 0.28);
+}
+
+.pagina-nao-encontrada__botao:focus-visible,
+.pagina-nao-encontrada__marca:focus-visible {
+  outline: 3px solid #a9e9ff;
+  outline-offset: 5px;
 }

@@ -22,6 +22,7 @@ const textos = {
 };
 
 export default async function Inicio() {
+  await new Promise((resolve) => setTimeout(resolve, 9000)); 
   return (
     <main className="pagina">
       <ProgressoRolagem />

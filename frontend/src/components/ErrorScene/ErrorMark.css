@@ -1,0 +1,40 @@
+.erro-marca {
+  display: grid;
+  width: 76px;
+  height: 76px;
+  place-items: center;
+  filter: drop-shadow(0 0 15px rgba(255, 190, 74, 0.2));
+  animation: erro-marca-brilhar 3.4s ease-in-out infinite;
+}
+
+.erro-marca svg {
+  width: 68px;
+  height: 68px;
+  overflow: visible;
+}
+
+.erro-marca__triangulo {
+  fill: #f3b84b;
+  stroke: #ffe2a0;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.erro-marca__haste {
+  stroke: #173653;
+  stroke-linecap: round;
+  stroke-width: 5.5;
+}
+
+.erro-marca__ponto {
+  fill: #173653;
+}
+
+@keyframes erro-marca-brilhar {
+  0%, 100% { transform: translateY(0); opacity: 0.9; }
+  50% { transform: translateY(-3px); opacity: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .erro-marca { animation: none; }
+}
