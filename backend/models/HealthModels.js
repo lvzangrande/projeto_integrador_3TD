@@ -12,6 +12,8 @@ export function criarHealthModel({ pool }) {
     return linhas[0] || null;
   }
 
+// aAAAAAAAAaA
+
   async function criar(health) {
     const sql = `
       INSERT INTO usuarios
