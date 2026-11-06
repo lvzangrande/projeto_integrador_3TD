@@ -4,14 +4,14 @@ import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { pool } from "./config/database.js";
-import { criarHealthModel } from "../models/HealthModels.js";
-import { criarHealthService } from "../services/HealthService.js";
-import { criarHealthController } from "./controllers/HealthController.js";
-import { criarHealthRoutes } from "./routes/healthRoutes.js";
+import { criarUsuarioModel } from "../models/UsuarioModels.js";
+import { criarUsuarioService } from "../services/UsuarioService.js";
+import { criarUsuarioController } from "./controllers/UsuarioController.js";
+import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 
-const healthModel = criarHealthModel({ pool });
-const healthService = criarHealthService({ healthModel });
-const healthController = criarHealthController({ healthService });
+const usuarioModel = criarUsuarioModel({ pool });
+const usuarioService = criarUsuarioService({ usuarioModel });
+const usuarioController = criarUsuarioController({ usuarioService });
 
 const app = express();
 
@@ -27,7 +27,7 @@ app.get("/", (request, response) => {
   response.json({ message: "API do projeto base" });
 });
 
-app.use("/health", criarHealthRoutes({ healthController }));
+app.use("/usuario", criarUsuarioRoutes({ usuarioController }));
 
 app.use((req, res) => {
   res.status(404).json({

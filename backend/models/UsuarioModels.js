@@ -1,4 +1,4 @@
-export function criarHealthModel({ pool }) {
+export function criarUsuarioModel({ pool }) {
   async function listarTodos() {
     const [linhas] = await pool.query("SELECT * FROM usuarios");
     return linhas;
@@ -12,23 +12,21 @@ export function criarHealthModel({ pool }) {
     return linhas[0] || null;
   }
 
-// aAAAAAAAAaA
-
-  async function criar(health) {
+  async function criar(usuario) {
     const sql = `
       INSERT INTO usuarios
         (nome, email, senha, cnpj, telefone, categoria, tema, status)
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `;
     const valores = [
-      health.nome,
-      health.email,
-      health.senha,
-      health.cnpj,
-      health.telefone,
-      health.categoria,
-      health.tema,
-      health.status,
+      usuario.nome,
+      usuario.email,
+      usuario.senha,
+      usuario.cnpj,
+      usuario.telefone,
+      usuario.categoria,
+      usuario.tema,
+      usuario.status,
     ];
     const [resultado] = await pool.query(sql, valores);
     return buscarPorId(resultado.insertId);

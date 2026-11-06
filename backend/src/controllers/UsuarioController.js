@@ -1,9 +1,9 @@
-export function criarHealthController({ healthService }) {
+export function criarUsuarioController({ usuarioService }) {
 
   async function listar(req, res, next) {
     try {
-      const health = await healthService.listar();
-      res.status(200).json({ sucesso: true, dados: health });
+      const usuario = await usuarioService.listar();
+      res.status(200).json({ sucesso: true, dados: usuario });
     } catch (erro) {
       next(erro);
     }
@@ -11,8 +11,8 @@ export function criarHealthController({ healthService }) {
 
   async function buscar(req, res, next) {
     try {
-      const health = await healthService.buscarPorId(req.params.id);
-      res.status(200).json({ sucesso: true, dados: health });
+      const usuario = await usuarioService.buscarPorId(req.params.id);
+      res.status(200).json({ sucesso: true, dados: usuario });
     } catch (erro) {
       if (erro instanceof TypeError) {
         return res.status(400).json({ erro: erro.message });
@@ -28,8 +28,8 @@ export function criarHealthController({ healthService }) {
 
   async function criar(req, res, next) {
     try {
-      const healthNovo = await healthService.criar(req.body);
-      res.status(201).json({ sucesso: true, dados: healthNovo });
+      const usuarioNovo = await usuarioService.criar(req.body);
+      res.status(201).json({ sucesso: true, dados: usuarioNovo });
     } catch (erro) {
       if (erro instanceof TypeError) {
         return res.status(400).json({ erro: erro.message });
