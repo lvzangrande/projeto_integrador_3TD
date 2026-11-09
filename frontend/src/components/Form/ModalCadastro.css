@@ -1,0 +1,139 @@
+/* ModalCadastro — cartão com cabeçalho, corpo e rodapé */
+
+.cf-card {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    background:
+      radial-gradient(700px 260px at 100% 0%, rgba(20, 150, 230, 0.2), transparent 70%),
+      linear-gradient(180deg, #06233f, #041a30);
+    border: 1px solid rgba(80, 170, 230, 0.35);
+    border-radius: 28px;
+    box-shadow:
+      0 0 0 1px rgba(20, 184, 238, 0.08),
+      0 24px 70px rgba(0, 10, 30, 0.55),
+      0 0 40px rgba(20, 150, 230, 0.12);
+  }
+  
+  /* Pontos decorativos nos cantos */
+  .cf-dots i {
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(120, 200, 255, 0.55);
+    box-shadow: 0 0 6px rgba(79, 214, 255, 0.6);
+  }
+  .cf-dots i:nth-child(1) { top: 14px; left: 14px; }
+  .cf-dots i:nth-child(2) { top: 14px; right: 14px; }
+  .cf-dots i:nth-child(3) { bottom: 14px; left: 14px; }
+  .cf-dots i:nth-child(4) { bottom: 14px; right: 14px; }
+  
+  /* ---------- Cabeçalho ---------- */
+  .cf-card__header {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 28px 32px 22px;
+    border-bottom: 1px solid var(--cf-line);
+  }
+  
+  .cf-avatar {
+    flex-shrink: 0;
+    width: 84px;
+    height: 84px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #cfeeff;
+    background: radial-gradient(circle at 35% 30%, #12527f, #082c4b 70%);
+    border: 2px solid rgba(80, 200, 255, 0.6);
+    box-shadow:
+      0 0 0 4px rgba(20, 184, 238, 0.1),
+      0 0 24px rgba(20, 184, 238, 0.35);
+  }
+  
+  .cf-card__titulo {
+    margin: 0;
+    font-size: 2.1rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+  }
+  
+  .cf-card__sub {
+    margin: 6px 0 0;
+    color: var(--cf-cyan-soft);
+    font-size: 1.05rem;
+  }
+  
+  /* ---------- Corpo ---------- */
+  .cf-card__body {
+    padding: 0 32px;
+  }
+  
+  /* ---------- Rodapé ---------- */
+  .cf-card__footer {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 14px;
+    padding: 18px 32px 24px;
+    border-top: 1px solid var(--cf-line);
+  }
+  
+  .cf-onda {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 45%;
+    height: 70px;
+    pointer-events: none;
+    /* suaviza o fim da onda em vez de um corte seco */
+    -webkit-mask-image: linear-gradient(90deg, #000 55%, transparent);
+    mask-image: linear-gradient(90deg, #000 55%, transparent);
+  }
+  
+  .cf-card__footer > *:not(.cf-onda) {
+    position: relative;
+    z-index: 1;
+  }
+  
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 720px) {
+    .cf-card__header {
+      padding: 22px 20px 18px;
+      gap: 16px;
+    }
+  
+    .cf-avatar {
+      width: 64px;
+      height: 64px;
+    }
+  
+    .cf-avatar svg {
+      width: 30px;
+      height: 30px;
+    }
+  
+    .cf-card__titulo {
+      font-size: 1.5rem;
+    }
+  
+    .cf-card__sub {
+      font-size: 0.95rem;
+    }
+  
+    .cf-card__body {
+      padding: 0 20px;
+    }
+  
+    .cf-card__footer {
+      padding: 16px 20px 22px;
+    }
+  }

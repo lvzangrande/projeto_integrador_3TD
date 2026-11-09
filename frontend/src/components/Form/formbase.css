@@ -1,0 +1,38 @@
+/* ============================================================
+ * Base compartilhada do formulário de cliente (prefixo cf-)
+ * Variáveis de cor/tipografia usadas por todos os componentes,
+ * para que cada um funcione isolado, sem depender do ModalCadastro.
+ * Importado por cada componente (o bundler carrega uma única vez).
+ * ============================================================ */
+
+ :root {
+    --cf-text: #e8f3fc;
+    --cf-label: #cfe6f7;
+    --cf-muted: #7fb2d6;
+    --cf-cyan: #14b8ee;
+    --cf-cyan-soft: #4fd6ff;
+    --cf-line: rgba(80, 160, 220, 0.22);
+    --cf-field-bg: rgba(5, 26, 46, 0.85);
+    --cf-field-border: rgba(60, 170, 230, 0.5);
+    --cf-danger: #ff8a9b;
+  }
+  
+  .cf-card,
+  .cf-secao,
+  .cf-campo {
+    color: var(--cf-text);
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+  }
+  
+  /* Texto só para leitores de tela */
+  .cf-sr {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }

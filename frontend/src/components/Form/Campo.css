@@ -1,0 +1,86 @@
+/* Campo e CampoSenha — rótulo, caixa com ícone, botão do olho e erro */
+
+.cf-campo {
+    min-width: 0;
+  }
+  
+  .cf-label {
+    display: block;
+    margin-bottom: 6px;
+    color: var(--cf-label);
+    font-size: 0.85rem;
+  }
+  
+  .cf-input {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    height: 48px;
+    padding: 0 16px;
+    background: var(--cf-field-bg);
+    border: 1px solid var(--cf-field-border);
+    border-radius: 12px;
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  
+  .cf-input:focus-within {
+    border-color: var(--cf-cyan);
+    box-shadow: 0 0 0 3px rgba(20, 184, 238, 0.25);
+  }
+  
+  .cf-input.has-error {
+    border-color: var(--cf-danger);
+  }
+  
+  .cf-input.has-error:focus-within {
+    box-shadow: 0 0 0 3px rgba(255, 138, 155, 0.22);
+  }
+  
+  .cf-input__icone {
+    flex-shrink: 0;
+    color: var(--cf-muted);
+  }
+  
+  .cf-input input {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    background: transparent;
+    border: 0;
+    outline: 0;
+    color: var(--cf-text);
+    font: inherit;
+    font-size: 0.95rem;
+  }
+  
+  .cf-input input::placeholder {
+    color: #6f9bbd;
+  }
+  
+  /* Botão mostrar/ocultar senha */
+  .cf-olho {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px;
+    background: transparent;
+    border: 0;
+    border-radius: 8px;
+    color: var(--cf-muted);
+    cursor: pointer;
+    transition: color 0.15s, background 0.15s;
+  }
+  
+  .cf-olho:hover,
+  .cf-olho:focus-visible {
+    color: var(--cf-text);
+    background: rgba(80, 160, 220, 0.2);
+    outline: none;
+  }
+  
+  .cf-erro {
+    margin: 6px 0 0;
+    color: var(--cf-danger);
+    font-size: 0.8rem;
+  }
