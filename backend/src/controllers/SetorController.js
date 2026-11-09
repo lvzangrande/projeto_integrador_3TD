@@ -1,9 +1,9 @@
-export function criarSetorController({ SetorService }) {
+export function criarSetorController({ setorService }) {
 	
   async function listar(req, res, next) {
     try {
-      const usuario = await setorService.listar();
-      res.status(200).json({ sucesso: true, dados: usuario });
+      const setor = await setorService.listar();
+      res.status(200).json({ sucesso: true, dados: setor });
     } catch (erro) {
       next(erro);
     }
@@ -11,8 +11,8 @@ export function criarSetorController({ SetorService }) {
 
   async function buscar(req, res, next) {
     try {
-      const usuario = await setorService.buscarPorId(req.params.id);
-      res.status(200).json({ sucesso: true, dados: usuario });
+      const setor = await setorService.buscarPorId(req.params.id);
+      res.status(200).json({ sucesso: true, dados: setor });
     } catch (erro) {
       if (erro instanceof TypeError) {
         return res.status(401).json({ erro: erro.message });
@@ -25,3 +25,19 @@ export function criarSetorController({ SetorService }) {
       next(erro);
     }
   }
+
+  
+  async function criar(req, res, next) {
+    try {
+      const setorNovo = await setorService.criar(req.body);
+      res.status(201).json({ sucesso: true, dados: setorNovo });
+    } catch (erro) {
+      if (erro instanceof TypeError) {
+        return res.status(400).json({ erro: erro.message });
+      }
+      next(erro);
+    }
+  }
+
+  return { listar, buscar, criar };
+}

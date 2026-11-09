@@ -9,9 +9,27 @@ import { criarUsuarioService } from "../services/UsuarioService.js";
 import { criarUsuarioController } from "./controllers/UsuarioController.js";
 import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 
+import { criarSetorModel } from "../models/SetorModels.js";
+import { criarSetorService } from "../services/SetorService.js";
+import { criarSetorController } from "./controllers/SetorController.js";
+import { criarSetorRoutes } from "./routes/setorRoutes.js";
+
+import { criarMedidoresModel } from "../models/MedidoresModel.js";
+import { criarMedidoresService } from "../services/MedidoresService.js";
+import { criarMedidoresController } from "./controllers/MedidoresController.js";
+import { criarMedidoresRoutes } from "./routes/medidoresRoutes.js";
+
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
 const usuarioController = criarUsuarioController({ usuarioService });
+
+const setorModel = criarSetorModel({ pool });
+const setorService = criarSetorService({ setorModel });
+const setorController = criarSetorController({ setorService });
+
+const medidorModel = criarMedidoresModel({ pool });
+const medidorService = criarMedidoresService({ medidorModel });
+const medidorController = criarMedidoresController({ medidorService });
 
 const app = express();
 
@@ -28,6 +46,9 @@ app.get("/", (request, response) => {
 });
 
 app.use("/usuario", criarUsuarioRoutes({ usuarioController }));
+app.use("/setor", criarSetorRoutes({ setorController }));
+app.use("/medidores", criarMedidoresRoutes({ medidorController }));
+
 
 app.use((req, res) => {
   res.status(404).json({
