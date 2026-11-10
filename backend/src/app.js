@@ -19,6 +19,11 @@ import { criarMedidoresService } from "../services/MedidoresService.js";
 import { criarMedidoresController } from "./controllers/MedidoresController.js";
 import { criarMedidoresRoutes } from "./routes/medidoresRoutes.js";
 
+import { criarOcorrenciasModel } from "../models/OcorrenciasModel.js";
+import { criarOcorrenciasService } from "../services/OcorrenciasService.js";
+import { criarOcorrenciasController } from "./controllers/OcorrenciasController.js";
+import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
+
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
 const usuarioController = criarUsuarioController({ usuarioService });
@@ -30,6 +35,10 @@ const setorController = criarSetorController({ setorService });
 const medidorModel = criarMedidoresModel({ pool });
 const medidorService = criarMedidoresService({ medidorModel });
 const medidorController = criarMedidoresController({ medidorService });
+
+const ocorrenciasModel = criarOcorrenciasModel({ pool });
+const ocorrenciasService = criarOcorrenciasService({ ocorrenciasModel });
+const ocorrenciasController = criarOcorrenciasController({ ocorrenciasService });
 
 const app = express();
 
@@ -48,7 +57,7 @@ app.get("/", (request, response) => {
 app.use("/usuario", criarUsuarioRoutes({ usuarioController }));
 app.use("/setor", criarSetorRoutes({ setorController }));
 app.use("/medidores", criarMedidoresRoutes({ medidorController }));
-
+app.use("/ocorrencias", criarOcorrenciasRoutes({ ocorrenciasController }));
 
 app.use((req, res) => {
   res.status(404).json({
