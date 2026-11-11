@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
 import ClienteForm from "@/components/Form/Clienteform";
 
 export default function CadastrarCliente() {
@@ -34,11 +35,15 @@ export default function CadastrarCliente() {
   };
 
   return (
+    <main>
+    <BotaoVoltar/>
+
     <ClienteForm
       onSubmit={cadastrar}
       onCancel={() => router.back()}
       enviando={enviando}
       erroEnvio={erroEnvio}
     />
+    </main>
   );
 }
