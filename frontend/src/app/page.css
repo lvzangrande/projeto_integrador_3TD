@@ -1,8 +1,3 @@
-html:has(.pagina) {
-  scroll-behavior: smooth;
-  scroll-snap-type: y mandatory;
-}
-
 .pagina {
   position: relative;
   --ponteiro-x: 0;
@@ -16,8 +11,6 @@ html:has(.pagina) {
   height: 100vh;
   min-height: 720px;
   overflow: hidden;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   background:
     radial-gradient(ellipse 70% 55% at 78% 6%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%),
     linear-gradient(180deg, var(--cor-ceu-topo) 0%, var(--cor-ceu-meio) 45%, #eaf8fe 100%);
@@ -103,8 +96,6 @@ html:has(.pagina) {
 .sobre {
   position: relative;
   z-index: 2;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   padding: clamp(72px, 9vw, 132px) 8vw;
   color: var(--texto);
   background: linear-gradient(180deg, #f4fbfe 0%, #ffffff 100%);
@@ -221,8 +212,6 @@ html:has(.pagina) {
 .login {
   position: relative;
   z-index: 2;
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
   height: 100vh;
   min-height: 720px;
   background:
@@ -530,8 +519,3 @@ html:has(.pagina) {
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  html:has(.pagina) {
-    scroll-behavior: auto;
-  }
-}

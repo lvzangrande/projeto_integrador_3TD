@@ -4,7 +4,7 @@ import BolhasSubindo from "@/components/Login/BolhasSubindo";
 import MedidorAgua from "@/components/Login/MedidorAgua";
 import OndasAnimadas from "@/components/Login/OndasAnimadas";
 import PonteiroParalaxe from "@/components/Login/ponteiroParalaxe";
-import ProgressoRolagem from "@/components/Login/progressoRolagem";
+import RolagemLenis from "@/components/Login/RolagemLenis";
 import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
 import TituloAgua from "@/components/Login/TituloAgua";
 import VazamentoCano from "@/components/Login/VazamentoCano";
@@ -24,7 +24,7 @@ const textos = {
 export default async function Inicio() {
   return (
     <main className="pagina">
-      <ProgressoRolagem />
+      <RolagemLenis />
       <PonteiroParalaxe />
 
       <section id="inicio" className="inicio">

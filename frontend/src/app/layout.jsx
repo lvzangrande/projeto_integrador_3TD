@@ -1,4 +1,5 @@
 import "./globals.css";
+import "lenis/dist/lenis.css";
 
 export const metadata = {
   title: "Wapi",
@@ -7,7 +8,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" data-scroll-behavior="smooth">
+    <html lang="pt-BR">
       <head>
         <link
           rel="stylesheet"
