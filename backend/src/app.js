@@ -60,6 +60,15 @@ const reunioesModel = criarReunioesModel({pool});
 const reunioesService = criarReunioesService({reunioesModel});
 const reunioesController = criarReunioesController({reunioesService});
 
+import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
+import { criarReservatoriosService } from "../services/ReservatoriosService.js";
+import { criarReservatoriosController } from "./controllers/ReservatoriosController.js";
+import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
+
+const reservatoriosModel = criarReservatoriosModel({pool});
+const reservatoriosService = criarReservatoriosService({reservatoriosModel});
+const reservatoriosController = criarReservatoriosController({reservatoriosService});
+
 
 app.use(helmet());
 app.use(
@@ -79,6 +88,7 @@ app.use("/medidores", criarMedidoresRoutes({ medidorController }));
 app.use("/ocorrencias", criarOcorrenciasRoutes({ ocorrenciasController }));
 app.use("/leituras", criarLeiturasRoutes({leituraController}));
 app.use("/reunioes", criarReunioesRoutes({reunioesController}));
+app.use("/reservatorios", criarReservatoriosRoutes({reservatoriosController}))
 
 app.use((req, res) => {
   res.status(404).json({

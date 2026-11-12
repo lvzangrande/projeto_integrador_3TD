@@ -6,7 +6,7 @@ export function criarOcorrenciasService({ ocorrenciasModel }) {
   }
 
   async function buscarPorId(idRecebido) {
-    const id = Number(idRecebido);5
+    const id = Number(idRecebido);
     if (!Number.isInteger(id) || id <= 0) {
       throw new TypeError("ID deve ser um número inteiro positivo");
     }
