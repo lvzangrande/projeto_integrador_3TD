@@ -1,9 +1,10 @@
-import { Router } from "express";
+import express from 'express';
 
-import { healthCheck } from "../controllers/healthController.js";
+export function criarHealthRoutes({healthController}){
+    const router = express.Router();
 
-const router = Router();
-
-router.get("/", healthCheck);
-
-export default router;
+    router.get('/',healthController.listar);
+    router.get('/:id',healthController.buscar);
+    router.post('/', healthController.criar);
+    return router
+}
