@@ -12,16 +12,9 @@ import VazamentoCano from "@/components/Login/VazamentoCano";
 const litrosPoupadosPorDia = "000";
 const nivelDoReservatorio = 0.55;
 
-const textos = {
-  titulo: "Sistema de controle de água",
-  descricao: "Acompanhe o caminho da água, entenda seu consumo e encontre oportunidades para cuidar melhor de cada recurso.",
-  lema: "Cada gota conta.",
-  boasVindas: "Bem-vindo de volta",
-  subtitulo:
-    "Acesse sua conta para acompanhar o consumo, consultar indicadores e receber alertas da sua rede.",
-};
-
 export default async function Inicio() {
+  //await new Promise((resolve) => setTimeout(resolve, 9000));
+  //throw new Error("Erro de teste");
   return (
     <main className="pagina">
       <RolagemLenis />
@@ -32,19 +25,13 @@ export default async function Inicio() {
         <BolhasSubindo variante="clara" quantidade={26} semente={11} />
 
         <header className="inicio__cabecalho">
-          <img
-            className="inicio__logo"
-            src="/logo-wapi.png"
-            alt="WAPI"
-            width="220"
-            height="93"
-          />
+          <img className="logo" src="/logo-wapi.png" alt="WAPI"/>
         </header>
 
         <div className="inicio__palco">
           <div className="inicio__conteudo">
-            <TituloAgua>{textos.titulo}</TituloAgua>
-            <p className="inicio__descricao">{textos.descricao}</p>
+            <TituloAgua>Sistema de controle de água</TituloAgua>
+            <p className="inicio__descricao">Acompanhe o caminho da água, entenda seu consumo e encontre oportunidades para cuidar melhor de cada recurso.</p>
 
             <div className="inicio__dado">
               <MedidorAgua nivel={nivelDoReservatorio} />
@@ -137,7 +124,7 @@ export default async function Inicio() {
         </div>
 
         <VazamentoCano />
-        <p className="login__lema">{textos.lema}</p>
+        <p className="login__lema">Cada gota conta.</p>
 
         <div className="login__posicao">
           <div className="login__cartao">
@@ -152,8 +139,8 @@ export default async function Inicio() {
             </div>
 
             <div className="login__boas-vindas">
-              <h2 className="login__titulo">{textos.boasVindas}</h2>
-              <p className="login__subtitulo">{textos.subtitulo}</p>
+              <h2 className="login__titulo">Bem-vindo de volta</h2>
+              <p className="login__subtitulo">Acesse sua conta para continuar</p>
             </div>
 
             <form className="login__formulario" noValidate>

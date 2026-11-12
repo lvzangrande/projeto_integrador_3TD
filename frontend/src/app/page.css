@@ -23,10 +23,12 @@
   z-index: 3;
 }
 
-.inicio__logo {
-  width: clamp(190px, 14vw, 280px);
+.logo {
+  width: 350px;
   height: auto;
-  mix-blend-mode: multiply;
+  margin-bottom: 80px;
+  margin-top: -20px;
+  margin-left: -100px;
 }
 
 .inicio__palco {
