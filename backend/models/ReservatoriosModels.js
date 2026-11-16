@@ -16,7 +16,7 @@ export function criarReservatoriosModel({ pool }) {
     const sql = `
       INSERT INTO reservatorios
         (nome,capacidade,nivel_min,nivel_max,status,tipo)
-      VALUES (?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?)
     `;
     const valores = [
       reservatorios.nome,
