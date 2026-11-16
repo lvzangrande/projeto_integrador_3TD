@@ -7,548 +7,120 @@ import OceanBackground from "./OceanBackground";
 
 const sections = [
   { id: "visao", label: "Visão global" },
+  { id: "usuarios", label: "Usuários" },
   { id: "reservatorios", label: "Reservatórios" },
-  { id: "rede", label: "Rede" },
-  { id: "qualidade", label: "Qualidade" },
-  { id: "consumo", label: "Consumo" },
-  { id: "alertas", label: "Alertas", badge: "2" },
+  { id: "setores", label: "Setores" },
+  { id: "medidores", label: "Medidores" },
+  { id: "responsaveis", label: "Responsáveis" },
+  { id: "leituras", label: "Leituras" },
+  { id: "ocorrencias", label: "Ocorrências" },
+  { id: "alertas", label: "Alertas" },
+  { id: "acessos", label: "Histórico de acesso" },
+  { id: "reunioes", label: "Reuniões" },
   { id: "relatorios", label: "Relatórios" },
-  { id: "configuracoes", label: "Configurações" },
 ];
-const reservoirs = [
-  {
-    name: "Reservatório Centro",
-    area: "São Paulo · Centro",
-    level: 92,
-    state: "Normal",
-  },
-  {
-    name: "Reservatório Norte",
-    area: "São Paulo · Santana",
-    level: 78,
-    state: "Normal",
-  },
-  {
-    name: "Reservatório Sul",
-    area: "São Paulo · Santo Amaro",
-    level: 65,
-    state: "Normal",
-  },
-  {
-    name: "Reservatório Leste",
-    area: "São Paulo · Tatuapé",
-    level: 54,
-    state: "Normal",
-  },
-  {
-    name: "Reservatório Oeste",
-    area: "São Paulo · Lapa",
-    level: 41,
-    state: "Atenção",
-  },
-  {
-    name: "Reservatório Industrial",
-    area: "Guarulhos · Cumbica",
-    level: 37,
-    state: "Atenção",
-  },
-  {
-    name: "Reservatório Rural",
-    area: "Mairiporã · Terra Preta",
-    level: 28,
-    state: "Crítico",
-  },
-];
-const alerts = [
-  {
-    type: "Crítico",
-    title: "Nível abaixo do limite",
-    place: "Reservatório Rural",
-    time: "há 4 min",
-    icon: "!",
-  },
-  {
-    type: "Crítico",
-    title: "Pressão irregular na rede",
-    place: "Setor Industrial · Linha 04",
-    time: "há 12 min",
-    icon: "!",
-  },
-  {
-    type: "Atenção",
-    title: "Nível em queda",
-    place: "Reservatório Industrial",
-    time: "há 26 min",
-    icon: "↓",
-  },
-];
-const pageTitles = {
-  visao: ["Visão global", "Acompanhe a operação da sua rede em tempo real."],
+const pageTitles = Object.fromEntries(sections.map(({ id, label }) => [id, [label, "Gestão administrativa WaterControl."]]));
+const initialData = {
+  usuarios: [
+    { id: 1, nome: "Administrador Sistema", email: "admin@watercontrol.com.br", documento: "12.345.678/0001-90", telefone: "(11) 99999-1001", categoria: "Admin", tema: "Escuro", status: "Ativo" },
+    { id: 2, nome: "Carlos Mendes", email: "carlos@empresa.com", documento: "23.456.789/0001-01", telefone: "(11) 99999-1002", categoria: "Filiado", tema: "Claro", status: "Ativo" },
+    { id: 3, nome: "Ana Oliveira", email: "ana@empresa.com", documento: "34.567.890/0001-12", telefone: "(11) 99999-1003", categoria: "Filiado", tema: "Escuro", status: "Ativo" },
+    { id: 4, nome: "Roberto Santos", email: "roberto@empresa.com", documento: "45.678.901/0001-23", telefone: "(21) 99999-1004", categoria: "Cliente", tema: "Claro", status: "Ativo" },
+    { id: 5, nome: "Mariana Costa", email: "mariana@empresa.com", documento: "56.789.012/0001-34", telefone: "(31) 99999-1005", categoria: "Cliente", tema: "Escuro", status: "Inativo" },
+  ],
   reservatorios: [
-    "Reservatórios",
-    "Níveis, capacidade e situação operacional.",
+    { id: 1, nome: "Reservatório Principal", cliente: "Roberto Santos", tipo: "Reservatório de água bruta", capacidade: 50000, localizacao: "Rua Industrial, 120 · São Paulo/SP", nivel: 72, nivel_min: 10, nivel_max: 90, status: "Ativo" },
+    { id: 2, nome: "Tanque de Produção A", cliente: "Roberto Santos", tipo: "Tanque de processo", capacidade: 15000, localizacao: "Rua Industrial, 150 · São Paulo/SP", nivel: 38, nivel_min: 10, nivel_max: 90, status: "Ativo" },
+    { id: 3, nome: "Cisterna Norte", cliente: "Mariana Costa", tipo: "Cisterna", capacidade: 10000, localizacao: "Av. Central, 450 · Campinas/SP", nivel: 26, nivel_min: 15, nivel_max: 90, status: "Ativo" },
   ],
-  rede: ["Rede de distribuição", "Status dos setores e pressão da rede."],
-  qualidade: [
-    "Qualidade da água",
-    "Indicadores de monitoramento da qualidade.",
+  setores: [
+    { id: 1, nome: "Linha de Produção Principal", reservatorio: "Reservatório Principal", tipo: "Linha de produção", consumo_max_dia: 12000, status: "Ativo" },
+    { id: 2, nome: "Limpeza Industrial", reservatorio: "Reservatório Principal", tipo: "Limpeza/Lavagem", consumo_max_dia: 3000, status: "Ativo" },
+    { id: 3, nome: "Processamento Químico", reservatorio: "Tanque de Produção A", tipo: "Linha de produção", consumo_max_dia: 5000, status: "Ativo" },
   ],
-  consumo: ["Consumo de água", "Volume distribuído e tendências de consumo."],
-  alertas: ["Central de alertas", "Ocorrências que precisam da sua atenção."],
-  relatorios: ["Relatórios", "Resumo operacional e dados da sua rede."],
-  configuracoes: ["Configurações", "Preferências e parâmetros do sistema."],
+  medidores: [
+    { id: 1, serie: "MED-001", tipo: "Vazão", origem: "Real", reservatorio: "Reservatório Principal", setor: "Linha de Produção Principal", status: "Ativo" },
+    { id: 2, serie: "MED-002", tipo: "Nível", origem: "Simulado", reservatorio: "Tanque de Produção A", setor: "—", status: "Ativo" },
+    { id: 3, serie: "MED-003", tipo: "Hidrômetro", origem: "Real", reservatorio: "Reservatório Principal", setor: "Limpeza Industrial", status: "Ativo" },
+  ],
+  responsaveis: [
+    { id: 1, nome: "Roberto Santos", cliente: "Roberto Santos", funcao: "Gestor de operações", telefone: "(21) 99999-1004", email: "roberto@empresa.com", reservatorio: "Reservatório Principal", setor: "—" },
+    { id: 2, nome: "Mariana Costa", cliente: "Mariana Costa", funcao: "Engenheira ambiental", telefone: "(31) 99999-1005", email: "mariana@empresa.com", reservatorio: "Cisterna Norte", setor: "—" },
+  ],
+  leituras: [
+    { id: 1, medidor: "MED-001", reservatorio: "Reservatório Principal", setor: "Linha de Produção Principal", valor: 1380.75, unidade: "L", data_hora: "2026-11-16T10:00", origem: "Manual" },
+    { id: 2, medidor: "MED-002", reservatorio: "Tanque de Produção A", setor: "—", valor: 38, unidade: "%", data_hora: "2026-11-16T09:30", origem: "Simulada" },
+    { id: 3, medidor: "MED-003", reservatorio: "Reservatório Principal", setor: "Limpeza Industrial", valor: 850.25, unidade: "m³", data_hora: "2026-11-16T09:00", origem: "Importada" },
+  ],
+  ocorrencias: [
+    { id: 1, tipo: "Vazamento visível", severidade: "Alta", reservatorio: "Reservatório Principal", setor: "Linha de Produção Principal", descricao: "Vazamento próximo à tubulação principal.", volume_perdido: 150, status: "Aberta", abertura: "2026-11-16T08:30", responsavel: "Roberto Santos", acao_corretiva: "" },
+    { id: 2, tipo: "Consumo anormal", severidade: "Média", reservatorio: "Tanque de Produção A", setor: "Processamento Químico", descricao: "Consumo acima da média durante a noite.", volume_perdido: 80, status: "Em análise", abertura: "2026-11-15T22:00", responsavel: "—", acao_corretiva: "" },
+    { id: 3, tipo: "Falha de sensor", severidade: "Baixa", reservatorio: "Cisterna Norte", setor: "—", descricao: "Leitura inconsistente identificada.", volume_perdido: 0, status: "Resolvida", abertura: "2026-11-14T13:15", responsavel: "Mariana Costa", acao_corretiva: "Sensor reiniciado e aferido." },
+  ],
+  alertas: [
+    { id: 1, tipo: "Nível mínimo", severidade: "Crítico", reservatorio: "Cisterna Norte", medidor: "MED-002", ocorrencia: "—", status: "Ativo", data_hora: "2026-11-16T08:18" },
+    { id: 2, tipo: "Consumo excedido", severidade: "Atenção", reservatorio: "Reservatório Principal", medidor: "MED-001", ocorrencia: "#1 · Vazamento visível", status: "Reconhecido", data_hora: "2026-11-16T07:46" },
+  ],
+  acessos: [
+    { id: 1, usuario: "Carlos Mendes", evento: "Login", data_hora: "2026-11-16T08:05", ip: "192.168.0.24" },
+    { id: 2, usuario: "Roberto Santos", evento: "Login", data_hora: "2026-11-16T08:12", ip: "192.168.0.31" },
+    { id: 3, usuario: "Mariana Costa", evento: "Falha de autenticação", data_hora: "2026-11-15T17:42", ip: "192.168.0.45" },
+  ],
+  reunioes: [
+    { id: 1, cliente: "Roberto Santos", filiado: "Carlos Mendes", tipo: "Reunião", data_hora: "2026-11-12T14:00", pauta: "Análise de consumo industrial", resumo: "Avaliação dos indicadores de consumo.", proximos_passos: "Revisar os limites dos setores." },
+    { id: 2, cliente: "Mariana Costa", filiado: "Ana Oliveira", tipo: "Entrevista", data_hora: "2026-11-10T10:30", pauta: "Levantamento operacional", resumo: "Mapeamento dos processos de abastecimento.", proximos_passos: "Documentar pontos de medição." },
+  ],
 };
-
-function Icon({ name, size = 18 }) {
-  const paths = {
-    search: (
-      <>
-        <circle cx="11" cy="11" r="7" />
-        <path d="m16 16 4 4" />
-      </>
-    ),
-    bell: (
-      <>
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
-        <path d="M10 21h4" />
-      </>
-    ),
-    drop: (
-      <>
-        <path d="M12 22a8 8 0 0 0 8-8c0-4-8-13-8-13S4 10 4 14a8 8 0 0 0 8 8Z" />
-        <path d="M8 15a4 4 0 0 0 4 4" />
-      </>
-    ),
-    clock: (
-      <>
-        <circle cx="12" cy="12" r="9" />
-        <path d="M12 7v5l3 2" />
-      </>
-    ),
-    more: (
-      <>
-        <circle cx="5" cy="12" r="1" />
-        <circle cx="12" cy="12" r="1" />
-        <circle cx="19" cy="12" r="1" />
-      </>
-    ),
-  };
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.7"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      aria-hidden="true"
-    >
-      {paths[name]}
-    </svg>
-  );
+const configs = {
+  usuarios: { title: "Gestão de usuários", intro: "Cadastre usuários, ajuste perfis e inative contas sem apagar o histórico.", readOnly: false, fields: [
+    ["nome", "Nome / razão social", "text", true], ["email", "E-mail", "email", true], ["documento", "CPF/CNPJ", "text", true], ["telefone", "Telefone", "text"], ["categoria", "Perfil", "select", true, ["Admin", "Filiado", "Cliente"]], ["tema", "Tema", "select", true, ["Claro", "Escuro"]], ["status", "Status", "select", true, ["Ativo", "Inativo"]], ["senha", "Senha inicial", "password"]
+  ], columns: [["nome", "Nome"], ["email", "E-mail"], ["categoria", "Perfil"], ["tema", "Tema"], ["status", "Status"]] },
+  reservatorios: { title: "Reservatórios", intro: "Cadastre unidades, capacidade e faixas operacionais.", fields: [["nome", "Nome", "text", true], ["cliente", "Cliente", "select", true, "clientes"], ["tipo", "Tipo", "select", true, ["Torre de resfriamento", "Tanque de processo", "Decantador", "Reservatório de água bruta", "Reservatório de água tratada", "Cisterna", "Tanque elevado"]], ["capacidade", "Capacidade (L)", "number", true], ["localizacao", "Localização", "text"], ["nivel", "Nível atual (%)", "number", true], ["nivel_min", "Nível mínimo (%)", "number", true], ["nivel_max", "Nível máximo (%)", "number", true], ["status", "Status", "select", true, ["Ativo", "Inativo"]]], columns: [["nome", "Reservatório"], ["cliente", "Cliente"], ["nivel", "Nível %"], ["nivel_min", "Mín. %"], ["nivel_max", "Máx. %"], ["status", "Status"]] },
+  setores: { title: "Setores", intro: "Organize áreas de consumo por reservatório e configure o limite diário (m³).", fields: [["nome", "Nome", "text", true], ["reservatorio", "Reservatório", "select", true, "reservatorios"], ["tipo", "Tipo de uso", "select", true, ["Linha de produção", "Torres de resfriamento/Caldeiras", "Limpeza/Lavagem", "Uso administrativo", "Tratamento de efluentes", "Água de reúso"]], ["consumo_max_dia", "Consumo máximo diário (m³)", "number", true], ["status", "Status", "select", true, ["Ativo", "Inativo"]]], columns: [["nome", "Setor"], ["reservatorio", "Reservatório"], ["tipo", "Uso"], ["consumo_max_dia", "Limite m³/dia"], ["status", "Status"]] },
+  medidores: { title: "Medidores", intro: "Vincule cada equipamento a um reservatório ou setor ativo.", fields: [["serie", "Número de série", "text", true], ["tipo", "Tipo", "select", true, ["Nível", "Vazão", "Hidrômetro"]], ["origem", "Origem", "select", true, ["Real", "Simulado"]], ["reservatorio", "Reservatório", "select", false, "reservatorios"], ["setor", "Setor", "select", false, "setores"], ["status", "Status", "select", true, ["Ativo", "Inativo"]]], columns: [["serie", "Série"], ["tipo", "Tipo"], ["origem", "Origem"], ["reservatorio", "Reservatório"], ["setor", "Setor"], ["status", "Status"]] },
+  responsaveis: { title: "Responsáveis", intro: "Associe contatos a clientes, reservatórios e setores.", fields: [["nome", "Nome", "text", true], ["cliente", "Cliente", "select", true, "clientes"], ["funcao", "Função", "text"], ["telefone", "Telefone", "text"], ["email", "E-mail", "email"], ["reservatorio", "Reservatório", "select", false, "reservatorios"], ["setor", "Setor", "select", false, "setores"]], columns: [["nome", "Responsável"], ["cliente", "Cliente"], ["funcao", "Função"], ["telefone", "Telefone"], ["reservatorio", "Reservatório"], ["setor", "Setor"]] },
+  leituras: { title: "Histórico de leituras", intro: "Consulta administrativa com filtros por medidor, reservatório, setor e período. Leituras não podem ser apagadas.", readOnly: true, fields: [], columns: [["medidor", "Medidor"], ["reservatorio", "Reservatório"], ["setor", "Setor"], ["valor", "Valor"], ["unidade", "Unidade"], ["data_hora", "Data e hora"], ["origem", "Origem"]] },
+  ocorrencias: { title: "Ocorrências e alertas", intro: "Acompanhe anomalias pelo ciclo Aberta → Em análise → Em reparo → Resolvida. Para resolver, registre a ação corretiva.", fields: [["tipo", "Tipo", "select", true, ["Vazamento visível", "Vazamento oculto", "Consumo anormal", "Falha de sensor", "Transbordo", "Outro"]], ["severidade", "Severidade", "select", true, ["Baixa", "Média", "Alta", "Extrema"]], ["reservatorio", "Reservatório", "select", true, "reservatorios"], ["setor", "Setor", "select", false, "setores"], ["descricao", "Descrição", "textarea", true], ["volume_perdido", "Volume perdido estimado (L)", "number"], ["abertura", "Data de abertura", "datetime-local", true], ["responsavel", "Responsável", "select", false, "responsaveis"], ["status", "Status", "select", true, ["Aberta", "Em análise", "Em reparo", "Resolvida", "Descartada"]], ["acao_corretiva", "Ação corretiva (obrigatória ao resolver)", "textarea"]], columns: [["tipo", "Ocorrência"], ["severidade", "Severidade"], ["reservatorio", "Reservatório"], ["setor", "Setor"], ["abertura", "Abertura"], ["status", "Status"]] },
+  alertas: { title: "Central de alertas", intro: "Consulte alertas gerados por limites ou anomalias e registre ciência alterando o status para Reconhecido.", fields: [["tipo", "Tipo", "select", true, ["Nível mínimo", "Nível máximo", "Consumo excedido", "Anomalia"]], ["severidade", "Severidade", "select", true, ["Informativo", "Atenção", "Crítico"]], ["reservatorio", "Reservatório", "select", true, "reservatorios"], ["medidor", "Medidor", "select", false, "medidores"], ["ocorrencia", "Ocorrência relacionada", "text"], ["status", "Status", "select", true, ["Ativo", "Reconhecido", "Resolvido"]], ["data_hora", "Data e hora", "datetime-local", true]], columns: [["tipo", "Alerta"], ["severidade", "Severidade"], ["reservatorio", "Reservatório"], ["medidor", "Medidor"], ["status", "Status"], ["data_hora", "Data e hora"]] },
+  acessos: { title: "Histórico de acesso", intro: "Histórico de usuário, evento, data/hora e IP.", readOnly: true, fields: [], columns: [["usuario", "Usuário"], ["evento", "Evento"], ["data_hora", "Data e hora"], ["ip", "IP"]] },
+  reunioes: { title: "Reuniões e entrevistas", intro: "Registros vinculados a um cliente e ao Filiado responsável.", fields: [["cliente", "Cliente", "select", true, "clientes"], ["filiado", "Filiado", "select", true, "filiados"], ["tipo", "Tipo", "select", true, ["Reunião", "Entrevista"]], ["data_hora", "Data e hora", "datetime-local", true], ["pauta", "Pauta", "textarea", true], ["resumo", "Resumo", "textarea"], ["proximos_passos", "Próximos passos", "textarea"]], columns: [["cliente", "Cliente"], ["filiado", "Filiado"], ["tipo", "Tipo"], ["data_hora", "Data e hora"], ["pauta", "Pauta"]] },
+};
+function Icon({ name, size = 18 }) { const paths = { search: <><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></>, bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>, drop: <><path d="M12 22a8 8 0 0 0 8-8c0-4-8-13-8-13S4 10 4 14a8 8 0 0 0 8 8Z"/><path d="M8 15a4 4 0 0 0 4 4"/></>, more: <><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></> }; return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">{paths[name]}</svg>; }
+function ConsumptionChart() { return <div className="chart-wrap" role="img" aria-label="Gráfico de consumo de água ao longo do dia"><div className="chart-y-label">m³</div><div className="chart-y-axis"><span>3,0</span><span>2,5</span><span>2,0</span><span>1,5</span><span>1,0</span><span>0,5</span><span>0,0</span></div><div className="chart-plot"><div className="chart-grid">{Array.from({length:7},(_,i)=><i key={i}/>)}</div><svg viewBox="0 0 720 250" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="waterFill" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stopColor="#27c0cf" stopOpacity=".30"/><stop offset="100%" stopColor="#27c0cf" stopOpacity=".035"/></linearGradient></defs><path className="chart-area" d="M0 202 C30 204 42 206 66 209 S106 214 132 211 S170 208 198 188 S240 150 264 119 S302 92 330 98 S370 83 396 81 S435 61 462 39 S505 26 530 44 S567 67 594 64 S628 75 654 79 S692 71 720 56 L720 250 L0 250 Z"/><path className="chart-line" d="M0 202 C30 204 42 206 66 209 S106 214 132 211 S170 208 198 188 S240 150 264 119 S302 92 330 98 S370 83 396 81 S435 61 462 39 S505 26 530 44 S567 67 594 64 S628 75 654 79 S692 71 720 56"/><circle cx="462" cy="39" r="4" className="chart-dot"/></svg><div className="chart-x-axis"><span>00:00</span><span>04:00</span><span>08:00</span><span>12:00</span><span>16:00</span><span>20:00</span><span>24:00</span></div></div></div>; }
+function formatValue(value) {
+  if (value == null || value === "") return "—";
+  if (typeof value === "string" && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/.test(value)) {
+    const hasZone = /(?:Z|[+-]\d{2}:?\d{2})$/i.test(value);
+    const date = new Date(hasZone ? value : `${value}-03:00`);
+    if (!Number.isNaN(date.getTime())) return new Intl.DateTimeFormat("pt-BR", { dateStyle: "short", timeStyle: "short", timeZone: "America/Sao_Paulo" }).format(date);
+  }
+  return String(value);
 }
-
-function ConsumptionChart() {
-  return (
-    <div
-      className="chart-wrap"
-      role="img"
-      aria-label="Gráfico de consumo de água ao longo do dia"
-    >
-      <div className="chart-y-label">ML</div>
-      <div className="chart-y-axis">
-        <span>3,0</span>
-        <span>2,5</span>
-        <span>2,0</span>
-        <span>1,5</span>
-        <span>1,0</span>
-        <span>0,5</span>
-        <span>0,0</span>
-      </div>
-      <div className="chart-plot">
-        <div className="chart-grid">
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-          <i />
-        </div>
-        <svg
-          viewBox="0 0 720 250"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <defs>
-            <linearGradient id="waterFill" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0%" stopColor="#27c0cf" stopOpacity=".30" />
-              <stop offset="100%" stopColor="#27c0cf" stopOpacity=".035" />
-            </linearGradient>
-          </defs>
-          <path
-            className="chart-area"
-            d="M0 202 C30 204 42 206 66 209 S106 214 132 211 S170 208 198 188 S240 150 264 119 S302 92 330 98 S370 83 396 81 S435 61 462 39 S505 26 530 44 S567 67 594 64 S628 75 654 79 S692 71 720 56 L720 250 L0 250 Z"
-          />
-          <path
-            className="chart-line"
-            d="M0 202 C30 204 42 206 66 209 S106 214 132 211 S170 208 198 188 S240 150 264 119 S302 92 330 98 S370 83 396 81 S435 61 462 39 S505 26 530 44 S567 67 594 64 S628 75 654 79 S692 71 720 56"
-          />
-          <circle cx="462" cy="39" r="4" className="chart-dot" />
-        </svg>
-        <div className="chart-x-axis">
-          <span>00:00</span>
-          <span>04:00</span>
-          <span>08:00</span>
-          <span>12:00</span>
-          <span>16:00</span>
-          <span>20:00</span>
-          <span>24:00</span>
-        </div>
-      </div>
-    </div>
-  );
+function toKey(value) { return String(value || "").normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase(); }
+function RecordsView({ section, records, updateRecords, data, notify }) {
+  const config = configs[section]; const [query, setQuery] = useState(""); const [statusFilter, setStatusFilter] = useState(""); const [minimumLevel, setMinimumLevel] = useState(""); const [readingFilters, setReadingFilters] = useState({ medidor: "", reservatorio: "", setor: "", origem: "", inicio: "", fim: "" }); const [editing, setEditing] = useState(null); const [form, setForm] = useState({}); const [error, setError] = useState("");
+  const choices = (field) => field === "clientes" ? data.usuarios.filter(x=>x.categoria==="Cliente").map(x=>x.nome) : field === "filiados" ? data.usuarios.filter(x=>x.categoria==="Filiado").map(x=>x.nome) : (data[field] || []).map(x=>x.nome || x.serie);
+  const fields = config.fields;
+  const visible = useMemo(() => records.filter(row => (!query || JSON.stringify(row).toLowerCase().includes(query.toLowerCase())) && (!statusFilter || row.status === statusFilter) && (section !== "reservatorios" || !minimumLevel || Number(row.nivel) >= Number(minimumLevel)) && (section !== "leituras" || ((!readingFilters.medidor || row.medidor === readingFilters.medidor) && (!readingFilters.reservatorio || row.reservatorio === readingFilters.reservatorio) && (!readingFilters.setor || row.setor === readingFilters.setor) && (!readingFilters.origem || row.origem === readingFilters.origem) && (!readingFilters.inicio || row.data_hora.slice(0,10) >= readingFilters.inicio) && (!readingFilters.fim || row.data_hora.slice(0,10) <= readingFilters.fim)))), [records, query, statusFilter, section, readingFilters, minimumLevel]);
+  function startCreate() { setEditing("novo"); setForm(Object.fromEntries(fields.map(([key])=>[key,key==="status"?"Ativo":key==="origem"?"Simulado":key==="data_hora"||key==="abertura"?new Date().toISOString().slice(0,16):""]))); setError(""); }
+  function startEdit(row) { setEditing(row.id); setForm({...row, senha:""}); setError(""); }
+  function save(event) { event.preventDefault(); const next={...form}; if (section==="reservatorios" && (!(Number(next.nivel_min)<Number(next.nivel_max)) || Number(next.nivel_max)>100 || Number(next.nivel_min)<0 || Number(next.capacidade)<=0)) return setError("Informe capacidade válida e limites 0 ≤ mínimo < máximo ≤ 100%."); if (section==="medidores" && !next.reservatorio && !next.setor) return setError("Vincule o medidor a um reservatório ou a um setor."); if (section==="ocorrencias" && next.status==="Resolvida" && !next.acao_corretiva?.trim()) return setError("Registre a ação corretiva antes de resolver a ocorrência."); if (section==="usuarios" && next.senha) { next.senhaDemoDefinida=true; delete next.senha; } else delete next.senha; const duplicate=records.some(r=>r.id!==editing && ((section==="usuarios" && r.email.toLowerCase()===String(next.email).toLowerCase()) || (section==="medidores" && r.serie.toLowerCase()===String(next.serie).toLowerCase()))); if(duplicate) return setError("Já existe registro com esse e-mail ou número de série."); if(editing==="novo") next.id=Math.max(0,...records.map(r=>Number(r.id)||0))+1; updateRecords(editing==="novo"?[next,...records]:records.map(r=>r.id===editing?next:r)); setEditing(null); notify(editing==="novo"?"Registro adicionado.":"Alterações salvas."); }
+  function inactivate(row) { if (!window.confirm("Inativar este registro? O histórico será preservado e o registro não será apagado.")) return; const changed=records.map(r=>r.id===row.id?("status" in r?{...r,status:"Inativo"}:section==="ocorrencias"?{...r,status:"Descartada"}:r):r); updateRecords(changed); }
+  function exportText() { const body=[config.title, `Gerado em ${new Date().toLocaleString("pt-BR")}`, "", ...visible.map(row=>config.columns.map(([key,label])=>`${label}: ${formatValue(row[key])}`).join(" | "))].join("\n"); const link=document.createElement("a"); link.href=URL.createObjectURL(new Blob([body],{type:"text/plain;charset=utf-8"})); link.download=`watercontrol-${section}.txt`; link.click(); URL.revokeObjectURL(link.href); }
+  return <section className="panel section-panel admin-records"><div className="panel-heading"><div><p className="eyebrow">{visible.length} REGISTRO(S) </p><h2>{config.title}</h2><p className="admin-intro">{config.intro}</p></div><div className="record-tools"><label className="search-box"><Icon name="search" size={17}/><input value={query} onChange={e=>setQuery(e.target.value)} placeholder="Buscar nesta lista" aria-label="Buscar registros"/></label>{!config.readOnly && <button className="admin-action" onClick={startCreate}>＋ Novo cadastro</button>}{(section==="leituras"||section==="ocorrencias") && <button className="admin-action secondary" onClick={exportText}>Exportar .txt</button>}</div></div>
+    <div className="record-filters"><span>Exibindo {visible.length} de {records.length}</span>{records.some(r=>r.status) && <label>Filtrar status <select value={statusFilter} onChange={e=>setStatusFilter(e.target.value)}><option value="">Todos</option>{[...new Set(records.map(r=>r.status).filter(Boolean))].map(s=><option key={s}>{s}</option>)}</select></label>}{section==="reservatorios" && <label>Nível mínimo (%) <input type="number" min="0" max="100" placeholder="0–100" value={minimumLevel} onChange={e=>setMinimumLevel(e.target.value)}/></label>}{section==="leituras" && <><label>Medidor <select value={readingFilters.medidor} onChange={e=>setReadingFilters({...readingFilters,medidor:e.target.value})}><option value="">Todos</option>{[...new Set(records.map(r=>r.medidor))].map(v=><option key={v}>{v}</option>)}</select></label><label>Reservatório <select value={readingFilters.reservatorio} onChange={e=>setReadingFilters({...readingFilters,reservatorio:e.target.value})}><option value="">Todos</option>{[...new Set(records.map(r=>r.reservatorio))].map(v=><option key={v}>{v}</option>)}</select></label><label>Setor <select value={readingFilters.setor} onChange={e=>setReadingFilters({...readingFilters,setor:e.target.value})}><option value="">Todos</option>{[...new Set(records.map(r=>r.setor))].map(v=><option key={v}>{v}</option>)}</select></label><label>Origem <select value={readingFilters.origem} onChange={e=>setReadingFilters({...readingFilters,origem:e.target.value})}><option value="">Todas</option><option>Manual</option><option>Simulada</option><option>Importada</option></select></label><label>De <input aria-label="Data inicial" type="date" value={readingFilters.inicio} onChange={e=>setReadingFilters({...readingFilters,inicio:e.target.value})}/></label><label>Até <input aria-label="Data final" type="date" value={readingFilters.fim} onChange={e=>setReadingFilters({...readingFilters,fim:e.target.value})}/></label></>}</div>
+    <div className="table-scroll"><table className="admin-table"><thead><tr>{config.columns.map(([key,label])=><th key={key}>{label}</th>)}{!config.readOnly&&<th>Ações</th>}</tr></thead><tbody>{visible.map(row=><tr key={row.id}>{config.columns.map(([key])=><td key={key}>{key==="status"?<span className={`record-status ${toKey(row[key])}`}>{row[key]}</span>:formatValue(row[key])}</td>)}{!config.readOnly&&<td className="row-actions"><button type="button" onClick={()=>startEdit(row)}>Editar</button>{("status" in row||section==="ocorrencias")&&<button type="button" onClick={()=>inactivate(row)}>{section==="ocorrencias"?"Descartar":"Inativar"}</button>}</td>}</tr>)}</tbody></table>{visible.length===0&&<div className="empty-state">Nenhum registro encontrado para os filtros selecionados.</div>}</div>
+    {editing!==null&&<div className="admin-modal-backdrop" role="presentation" onMouseDown={e=>{if(e.target===e.currentTarget)setEditing(null)}}><form className="admin-modal panel" onSubmit={save}><div className="panel-heading"><div><p className="eyebrow">{editing==="novo"?"NOVO REGISTRO":"EDITAR REGISTRO"}</p><h2>{config.title}</h2></div><button className="icon-button" type="button" onClick={()=>setEditing(null)} aria-label="Fechar">×</button></div><div className="admin-form-grid">{fields.map(([key,label,type="text",required=false,options])=>{let values=Array.isArray(options)?options:typeof options==="string"?choices(options):null;return <label key={key} className={type==="textarea"?"wide":""}>{label}{type==="select"?<select required={required} value={form[key]??""} onChange={e=>setForm({...form,[key]:e.target.value})}><option value="">Selecione…</option>{values?.map(v=><option key={v}>{v}</option>)}</select>:type==="textarea"?<textarea required={required} rows="3" value={form[key]??""} onChange={e=>setForm({...form,[key]:e.target.value})}/>:<input type={type} required={required} min={type==="number"?0:undefined} value={form[key]??""} onChange={e=>setForm({...form,[key]:e.target.value})}/>}</label>})}</div>{error&&<p className="admin-form-error" role="alert">{error}</p>}<div className="admin-modal-actions"><button className="admin-action secondary" type="button" onClick={()=>setEditing(null)}>Cancelar</button><button className="admin-action" type="submit">Salvar</button></div></form></div>}</section>;
 }
-
-function ReservoirList({ compact = false, query = "" }) {
-  const list = useMemo(
-    () =>
-      reservoirs.filter((r) =>
-        `${r.name} ${r.area}`.toLowerCase().includes(query.toLowerCase()),
-      ),
-    [query],
-  );
-  return (
-    <div className={`reservoir-list ${compact ? "compact" : ""}`}>
-      {list.map((item) => (
-        <div className="reservoir-row" key={item.name}>
-          <div className="reservoir-label">
-            <span>{item.name}</span>
-            {!compact && <small>{item.area}</small>}
-          </div>
-          <div className="level-track">
-            <span
-              className={
-                item.level < 35 ? "low" : item.level < 45 ? "warning" : ""
-              }
-              style={{ width: `${item.level}%` }}
-            />
-          </div>
-          <strong className={item.level < 35 ? "level-low" : ""}>
-            {item.level}%
-          </strong>
-          {!compact && (
-            <span className={`mini-status ${item.state.toLowerCase()}`}>
-              {item.state}
-            </span>
-          )}
-        </div>
-      ))}
-      {list.length === 0 && (
-        <div className="empty-state">Nenhum reservatório encontrado.</div>
-      )}
-    </div>
-  );
-}
-function AlertList({ limit }) {
-  return (
-    <div className="alert-list">
-      {alerts.slice(0, limit).map((alert) => (
-        <article
-          className={`alert-row ${alert.type.toLowerCase()}`}
-          key={alert.title}
-        >
-          <span className="alert-symbol">{alert.icon}</span>
-          <div className="alert-copy">
-            <div className="alert-heading">
-              <strong>{alert.title}</strong>
-              <span className={`severity ${alert.type.toLowerCase()}`}>
-                {alert.type}
-              </span>
-            </div>
-            <p>{alert.place}</p>
-          </div>
-          <time>{alert.time}</time>
-        </article>
-      ))}
-    </div>
-  );
-}
-function GlobalView() {
-  return (
-    <>
-      <section className="metric-grid" aria-label="Indicadores principais">
-        <article className="metric-card">
-          <span className="metric-icon">
-            <Icon name="drop" size={20} />
-          </span>
-          <div>
-            <p>Consumo hoje</p>
-            <strong>
-              12,48 <small>ML</small>
-            </strong>
-            <span className="metric-note">
-              <b>↘ 4,2%</b> vs. ontem
-            </span>
-          </div>
-        </article>
-        <article className="metric-card">
-          <span className="metric-icon">
-            <span className="tank-icon">▤</span>
-          </span>
-          <div>
-            <p>Reservatórios ativos</p>
-            <strong>
-              7 <small>/ 7</small>
-            </strong>
-            <span className="metric-note">
-              <b>100%</b> da capacidade monitorada
-            </span>
-          </div>
-        </article>
-        <article className="metric-card">
-          <span className="metric-icon alert-metric">
-            <Icon name="bell" size={20} />
-          </span>
-          <div>
-            <p>Alertas críticos</p>
-            <strong className="metric-critical">2</strong>
-            <span className="metric-note">
-              <b className="attention">3 alertas</b> aguardando análise
-            </span>
-          </div>
-        </article>
-      </section>
-      <section className="content-grid">
-        <article className="panel chart-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">DISTRIBUIÇÃO · ÚLTIMAS 24H</p>
-              <h2>Consumo de água</h2>
-            </div>
-            <button className="select-button" type="button">
-              Hoje <span>⌄</span>
-            </button>
-          </div>
-          <div className="chart-legend">
-            <span />
-            <b>Consumo total</b>
-            <span className="legend-value">12,48 ML</span>
-          </div>
-          <ConsumptionChart />
-        </article>
-        <article className="panel levels-panel">
-          <div className="panel-heading">
-            <div>
-              <p className="eyebrow">CAPACIDADE EM TEMPO REAL</p>
-              <h2>Nível dos reservatórios</h2>
-            </div>
-            <button
-              className="icon-button"
-              aria-label="Mais opções"
-              type="button"
-            >
-              <Icon name="more" />
-            </button>
-          </div>
-          <ReservoirList compact />
-          <button
-            className="text-link"
-            onClick={() =>
-              window.dispatchEvent(
-                new CustomEvent("wapi-section", { detail: "reservatorios" }),
-              )
-            }
-          >
-            Ver todos os reservatórios <span>→</span>
-          </button>
-        </article>
-      </section>
-      <section className="panel alerts-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">MONITORAMENTO DA REDE</p>
-            <h2>
-              Alertas recentes <span className="count-pill">3</span>
-            </h2>
-          </div>
-          <button
-            className="text-link"
-            onClick={() =>
-              window.dispatchEvent(
-                new CustomEvent("wapi-section", { detail: "alertas" }),
-              )
-            }
-          >
-            Ver central de alertas <span>→</span>
-          </button>
-        </div>
-        <AlertList limit={2} />
-      </section>
-    </>
-  );
-}
-function SectionView({ section }) {
-  const [query, setQuery] = useState("");
-  if (section === "reservatorios")
-    return (
-      <section className="panel section-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">7 UNIDADES MONITORADAS</p>
-            <h2>Nível e situação operacional</h2>
-          </div>
-          <label className="search-box">
-            <Icon name="search" size={17} />
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="Buscar reservatório"
-            />
-          </label>
-        </div>
-        <ReservoirList query={query} />
-      </section>
-    );
-  if (section === "alertas")
-    return (
-      <section className="panel section-panel">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">3 OCORRÊNCIAS ATIVAS</p>
-            <h2>Alertas da rede</h2>
-          </div>
-          <span className="live-pill">
-            <i /> Ao vivo
-          </span>
-        </div>
-        <AlertList limit={3} />
-      </section>
-    );
-  const detail = {
-    rede: {
-      stat: "98,7%",
-      label: "Disponibilidade da rede",
-      secondary: "6 setores operando normalmente",
-      icon: "↗",
-    },
-    qualidade: {
-      stat: "Dentro do padrão",
-      label: "Qualidade monitorada",
-      secondary: "Última leitura há 2 minutos",
-      icon: "✓",
-    },
-    consumo: {
-      stat: "12,48 ML",
-      label: "Consumo acumulado hoje",
-      secondary: "4,2% abaixo de ontem",
-      icon: "↘",
-    },
-    relatorios: {
-      stat: "Relatório diário",
-      label: "Resumo de operação",
-      secondary: "Dados atualizados até agora",
-      icon: "↓",
-    },
-    configuracoes: {
-      stat: "Monitoramento ativo",
-      label: "Preferências do sistema",
-      secondary: "Fuso horário · Brasília (GMT−3)",
-      icon: "⚙",
-    },
-  }[section] || {
-    stat: "Em operação",
-    label: "Status do sistema",
-    secondary: "Dados atualizados em tempo real",
-    icon: "✓",
-  };
-  return (
-    <div className="section-overview">
-      <section className="panel section-highlight">
-        <div className="highlight-symbol">{detail.icon}</div>
-        <p className="eyebrow">{pageTitles[section][0].toUpperCase()}</p>
-        <h2>{detail.stat}</h2>
-        <p>{detail.label}</p>
-        <span className="highlight-note">
-          <i />
-          {detail.secondary}
-        </span>
-      </section>
-      <section className="panel section-chart">
-        <div className="panel-heading">
-          <div>
-            <p className="eyebrow">RESUMO OPERACIONAL</p>
-            <h2>Atividade de hoje</h2>
-          </div>
-          <span className="date-label">11 NOV 2026</span>
-        </div>
-        <ConsumptionChart />
-      </section>
-    </div>
-  );
-}
+function Dashboard({ data, go }) { const activeReservoirs=data.reservatorios.filter(r=>r.status==="Ativo"); const open=data.ocorrencias.filter(o=>!["Resolvida","Descartada"].includes(o.status)); const critical=open.filter(o=>["Alta","Extrema"].includes(o.severidade)); const consumption=data.leituras.filter(l=>l.unidade==="m³").reduce((sum,l)=>sum+Number(l.valor),0); return <><section className="metric-grid" aria-label="Indicadores principais"><article className="metric-card"><span className="metric-icon"><Icon name="drop" size={20}/></span><div><p>Leituras registradas</p><strong>{data.leituras.length} <small>registros</small></strong><span className="metric-note"><b>{consumption.toLocaleString("pt-BR")} m³</b> nas leituras cadastradas</span></div></article><article className="metric-card"><span className="metric-icon"><span className="tank-icon">▤</span></span><div><p>Reservatórios ativos</p><strong>{activeReservoirs.length} <small>/ {data.reservatorios.length}</small></strong><span className="metric-note"><b>{data.setores.length}</b> setores cadastrados</span></div></article><article className="metric-card"><span className="metric-icon alert-metric"><Icon name="bell" size={20}/></span><div><p>Ocorrências abertas</p><strong className="metric-critical">{open.length}</strong><span className="metric-note"><b className="attention">{critical.length} alta/extrema</b> precisam de atenção</span></div></article></section><section className="content-grid"><article className="panel chart-panel"><div className="panel-heading"><div><p className="eyebrow">MONITORAMENTO · ÚLTIMAS 24H</p><h2>Consumo e leituras</h2></div><button className="select-button" type="button">Últimas 24h <span>⌄</span></button></div><div className="chart-legend"><span/><b>Consumo de água</b></div><ConsumptionChart/></article><article className="panel levels-panel"><div className="panel-heading"><div><p className="eyebrow">NÍVEIS ATUAIS</p><h2>Nível dos reservatórios</h2></div><button className="icon-button" type="button" aria-label="Mais opções"><Icon name="more"/></button></div><div className="reservoir-list compact">{activeReservoirs.slice(0,5).map(r=><div className="reservoir-row" key={r.id}><div className="reservoir-label"><span>{r.nome}</span></div><div className="level-track"><span className={r.nivel<35?"low":r.nivel<45?"warning":""} style={{width:`${r.nivel}%`}}/></div><strong className={r.nivel<35?"level-low":""}>{r.nivel}%</strong></div>)}</div><button className="text-link" onClick={()=>go("reservatorios")}>Gerenciar reservatórios <span>→</span></button></article></section><section className="panel alerts-panel"><div className="panel-heading"><div><p className="eyebrow">MONITORAMENTO DE OCORRÊNCIAS</p><h2>Ocorrências recentes <span className="count-pill">{open.length}</span></h2></div><button className="text-link" onClick={()=>go("ocorrencias")}>Abrir central <span>→</span></button></div><div className="alert-list">{open.slice(0,3).map(item=><article className={`alert-row ${toKey(item.severidade)}`} key={item.id}><span className="alert-symbol">!</span><div className="alert-copy"><div className="alert-heading"><strong>{item.tipo}</strong><span className={`severity ${toKey(item.severidade)}`}>{item.severidade}</span></div><p>{item.reservatorio} · {item.setor}</p></div><time>{formatValue(item.abertura)}</time></article>)}</div></section></>; }
 export default function AdminDashboard() {
-  const [active, setActive] = useState("visao");
-  const [mobileMenu, setMobileMenu] = useState(false);
-  useEffect(() => {
-    const navigate = (event) => setActive(event.detail);
-    window.addEventListener("wapi-section", navigate);
-    return () => window.removeEventListener("wapi-section", navigate);
-  }, []);
-  const title = pageTitles[active];
-  return (
-    <main className="wapi-app">
-      <OceanBackground />
-      <header className="topbar">
-        <a
-          className="brand"
-          href="/admin"
-          aria-label="WAPI Water Control início"
-        >
-          <Image
-            src="/logo-wapi.png"
-            alt="WAPI Water Control"
-            width={147}
-            height={62}
-            priority
-          />
-        </a>
-        <button
-          className="mobile-menu-toggle"
-          onClick={() => setMobileMenu(!mobileMenu)}
-          aria-label="Abrir navegação"
-        >
-          ☰
-        </button>
-        <nav
-          className={`main-nav ${mobileMenu ? "open" : ""}`}
-          aria-label="Navegação administrativa"
-        >
-          {sections.map((item) => (
-            <button
-              key={item.id}
-              className={active === item.id ? "active" : ""}
-              onClick={() => {
-                setActive(item.id);
-                setMobileMenu(false);
-              }}
-            >
-              {item.label}
-              {item.badge && <span className="nav-badge">{item.badge}</span>}
-            </button>
-          ))}
-        </nav>
-      </header>
-      <div className="page-shell">
-        <div className="page-title">
-          <div>
-            <h1>{title[0]}</h1>
-          </div>
-        </div>
-        {active === "visao" ? <GlobalView /> : <SectionView section={active} />}
-      </div>
-    </main>
-  );
+ const [active,setActive]=useState("visao"); const [mobileMenu,setMobileMenu]=useState(false); const [data,setData]=useState(initialData); const [ready,setReady]=useState(false); const [notice,setNotice]=useState(""); const [tariff,setTariff]=useState("6.50"); const [theme,setTheme]=useState("Escuro");
+ useEffect(()=>{const timer=window.setTimeout(()=>{try{const saved=localStorage.getItem("watercontrol-admin-demo");if(saved){const parsed=JSON.parse(saved);setData({...initialData,...parsed.data});setTariff(parsed.tariff||"6.50");setTheme(parsed.theme==="Claro"?"Claro":"Escuro");}}catch{}setReady(true);},0);return()=>window.clearTimeout(timer);},[]);
+ useEffect(()=>{if(ready)localStorage.setItem("watercontrol-admin-demo",JSON.stringify({data,tariff,theme}));},[data,tariff,theme,ready]);
+ useEffect(()=>{const navigate=e=>setActive(e.detail);window.addEventListener("wapi-section",navigate);return()=>window.removeEventListener("wapi-section",navigate);},[]);
+ function update(key,rows){setData(prev=>({...prev,[key]:rows}));}
+ function notify(text){setNotice(text);window.setTimeout(()=>setNotice(""),3200);}
+ const title=pageTitles[active]||pageTitles.visao;
+ return <main className={`wapi-app ${theme==="Claro"?"theme-light":""}`}><OceanBackground theme={theme}/><header className="topbar"><a className="brand" href="/admin" aria-label="WAPI Water Control início"><Image src="/logo-wapi.png" alt="WAPI Water Control" width={147} height={62} priority/></a><button className="mobile-menu-toggle" onClick={()=>setMobileMenu(!mobileMenu)} aria-label="Abrir navegação">☰</button><nav className={`main-nav ${mobileMenu?"open":""}`} aria-label="Navegação administrativa">{sections.map(item=><button key={item.id} className={active===item.id?"active":""} onClick={()=>{setActive(item.id);setMobileMenu(false);}}>{item.label}{item.id==="ocorrencias"&&<span className="nav-badge">{data.ocorrencias.filter(x=>!["Resolvida","Descartada"].includes(x.status)).length}</span>}{item.id==="alertas"&&<span className="nav-badge">{data.alertas.filter(x=>x.status==="Ativo").length}</span>}</button>)}</nav><button className="theme-toggle" type="button" onClick={()=>setTheme(current=>current==="Escuro"?"Claro":"Escuro")} aria-label={`Ativar modo ${theme==="Escuro"?"claro":"escuro"}`} title={`Ativar modo ${theme==="Escuro"?"claro":"escuro"}`}><svg viewBox="0 0 24 24" aria-hidden="true">{theme==="Escuro"?<><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></>:<path d="M20.5 15.3A8.5 8.5 0 0 1 8.7 3.5 8.5 8.5 0 1 0 20.5 15.3Z"/>}</svg><span>Modo {theme==="Escuro"?"claro":"escuro"}</span></button></header><div className="page-shell"><div className="page-title"><div><h1>{title[0]}</h1><p className="admin-page-subtitle">{active==="visao"?"Acompanhe a operação e os indicadores gerais.":title[1]}</p></div></div>{notice&&<div className="admin-toast" role="status">{notice}</div>}{active==="visao"?<Dashboard data={data} go={setActive}/>:active==="relatorios"?<Reports data={data} tariff={tariff} setTariff={setTariff}/>:<RecordsView section={active} records={data[active]||[]} data={data} updateRecords={rows=>update(active,rows)} notify={notify}/>}</div></main>;
 }
+function Reports({data,tariff,setTariff}) { const open=data.ocorrencias.filter(o=>!["Resolvida","Descartada"].includes(o.status)); const estimatedLoss=data.ocorrencias.reduce((s,o)=>s+Number(o.volume_perdido||0),0); const totalMeters=data.medidores.length; const download=kind=>{const rows=kind==="consumo"?data.leituras:data.ocorrencias;const body=[kind==="consumo"?"Relatório de leituras":"Relatório de ocorrências",`Emitido em ${new Date().toLocaleString("pt-BR")}`,"",...rows.map(r=>Object.entries(r).map(([k,v])=>`${k}: ${formatValue(v)}`).join(" | "))].join("\n");const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([body],{type:"text/plain;charset=utf-8"}));a.download=`relatorio-${kind}-watercontrol.txt`;a.click();URL.revokeObjectURL(a.href);};return <div className="admin-report-grid"><section className="panel section-panel"><p className="eyebrow">INDICADORES OPERACIONAIS</p><h2>Resumo operacional</h2><div className="report-stats"><div><span>Reservatórios</span><strong>{data.reservatorios.filter(r=>r.status==="Ativo").length} ativos</strong></div><div><span>Medidores cadastrados</span><strong>{totalMeters}</strong></div><div><span>Ocorrências abertas</span><strong>{open.length}</strong></div><div><span>Perda estimada registrada</span><strong>{estimatedLoss.toLocaleString("pt-BR")} L</strong></div></div><div className="admin-export-row"><button className="admin-action" onClick={()=>download("consumo")}>Exportar relatório de leituras (.txt)</button><button className="admin-action secondary" onClick={()=>download("ocorrencias")}>Exportar ocorrências (.txt)</button></div></section><section className="panel section-panel"><p className="eyebrow">ECONOMIA E PLANEJAMENTO</p><h2>Tarifa e estimativa</h2><label className="tariff-field">Tarifa de água (R$/m³)<input type="number" min="0" step="0.01" value={tariff} onChange={e=>setTariff(e.target.value)}/></label><div className="report-estimate"><span>Tarifa configurada</span><strong>{Number(tariff||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"})}/m³</strong></div></section></div>; }

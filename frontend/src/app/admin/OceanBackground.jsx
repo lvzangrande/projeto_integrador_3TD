@@ -10,7 +10,7 @@ import {
   skyFragmentShader,
 } from './oceanShaders';
 
-export default function OceanBackground() {
+export default function OceanBackground({ theme = 'Escuro' }) {
   const hostRef = useRef(null);
 
   useEffect(() => {
@@ -38,11 +38,12 @@ export default function OceanBackground() {
     camera.lookAt(0, 0, -24);
 
     const sunDir = new THREE.Vector3(...OCEAN_CONFIG.sunDirection).normalize();
+    const themeValue = theme === 'Claro' ? 1 : 0;
 
     // Céu (esfera que acompanha a câmera)
     const skyGeometry = new THREE.SphereGeometry(1000, 32, 16);
     const skyMaterial = new THREE.ShaderMaterial({
-      uniforms: { uSunDir: { value: sunDir } },
+      uniforms: { uSunDir: { value: sunDir }, uTheme: { value: themeValue } },
       vertexShader: skyVertexShader,
       fragmentShader: skyFragmentShader,
       side: THREE.BackSide,
@@ -60,6 +61,7 @@ export default function OceanBackground() {
     const uniforms = {
       uTime: { value: 0 },
       uSunDir: { value: sunDir },
+      uTheme: { value: themeValue },
       uNormalStrength: { value: OCEAN_CONFIG.normalStrength },
       uDetailHeight: { value: OCEAN_CONFIG.detailHeight },
     };
@@ -117,7 +119,7 @@ export default function OceanBackground() {
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, []);
+  }, [theme]);
 
-  return <div ref={hostRef} className="ocean-background" aria-hidden="true"><div className="ocean-vignette"/></div>;
+  return <div ref={hostRef} className="ocean-background" aria-hidden="true"><div className="ocean-sun"/><div className="ocean-vignette"/></div>;
 }

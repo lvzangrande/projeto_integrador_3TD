@@ -3,7 +3,7 @@
 
 // Ajustes rápidos de aparência
 export const OCEAN_CONFIG = {
-  sunDirection: [0.3, 0.1, -1.0], // posição do sol (x, altura, profundidade)
+  sunDirection: [0.3, 0.28, -1.0], // posição do sol (x, altura, profundidade)
   normalStrength: 0.62,           // quanto as ondulações inclinam a superfície
   detailHeight: 0.55,             // altura das ondulações finas
 };
@@ -65,15 +65,22 @@ const common = /* glsl */ `
 
 const skyFunction = /* glsl */ `
   uniform vec3 uSunDir;
+  uniform float uTheme;
 
   vec3 skyColor(vec3 dir) {
     float h = clamp(dir.y, 0.0, 1.0);
-    vec3 horizon = vec3(0.012, 0.085, 0.130);
-    vec3 mid     = vec3(0.002, 0.026, 0.060);
-    vec3 zenith  = vec3(0.0005, 0.005, 0.018);
-    vec3 c = mix(horizon, mid, smoothstep(0.0, 0.14, h));
-    c = mix(c, zenith, smoothstep(0.06, 0.60, h));
-    return c;
+    vec3 nightHorizon = vec3(0.012, 0.085, 0.130);
+    vec3 nightMid     = vec3(0.002, 0.026, 0.060);
+    vec3 nightZenith  = vec3(0.0005, 0.005, 0.018);
+    vec3 night = mix(nightHorizon, nightMid, smoothstep(0.0, 0.14, h));
+    night = mix(night, nightZenith, smoothstep(0.06, 0.60, h));
+
+    vec3 dayHorizon = vec3(0.92, 0.75, 0.48);
+    vec3 dayMid     = vec3(0.30, 0.63, 0.84);
+    vec3 dayZenith  = vec3(0.22, 0.49, 0.76);
+    vec3 day = mix(dayHorizon, dayMid, smoothstep(0.0, 0.14, h));
+    day = mix(day, dayZenith, smoothstep(0.06, 0.60, h));
+    return mix(night, day, uTheme);
   }
 `;
 
@@ -123,8 +130,12 @@ export const waterFragmentShader = /* glsl */ `
 
     // Cor do corpo da água: azul profundo -> turquesa nas cristas (espalhamento).
     float crest = clamp(ripples(p, t) * 1.15, 0.0, 1.0);
-    vec3 deep    = vec3(0.0005, 0.010, 0.026);
-    vec3 shallow = vec3(0.005, 0.105, 0.160);
+    vec3 deepNight    = vec3(0.0005, 0.010, 0.026);
+    vec3 shallowNight = vec3(0.005, 0.105, 0.160);
+    vec3 deepDay      = vec3(0.035, 0.20, 0.31);
+    vec3 shallowDay   = vec3(0.12, 0.49, 0.61);
+    vec3 deep = mix(deepNight, deepDay, uTheme);
+    vec3 shallow = mix(shallowNight, shallowDay, uTheme);
     float sunFacing = 0.55 + 0.45 * max(dot(N, normalize(uSunDir)), 0.0);
     vec3 body = mix(deep, shallow, clamp(0.12 + crest * 0.75 + swell(p, t) * 0.35, 0.0, 1.0) * sunFacing);
 
