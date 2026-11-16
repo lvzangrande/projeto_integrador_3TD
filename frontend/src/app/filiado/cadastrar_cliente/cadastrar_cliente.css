@@ -1,0 +1,8 @@
+.affiliate-register-page { max-width: 1100px !important; }
+.affiliate-register-page .affiliate-back { width: 100%; max-width: 900px; margin: 0 auto 14px; }
+.affiliate-register-page .botao-voltar, .mc .botao-voltar { min-height: 40px; padding: 0 14px; border: 1px solid var(--affiliate-line); border-radius: 11px; background: rgba(10, 39, 64, .72); color: var(--affiliate-text); font: inherit; font-size: .84rem; cursor: pointer; }
+.affiliate-register-page .botao-voltar:hover, .mc .botao-voltar:hover { border-color: rgba(69, 201, 237, .55); background: var(--affiliate-panel-raised); }
+.affiliate-register-page .botao-voltar:focus-visible, .mc .botao-voltar:focus-visible { outline: 2px solid var(--affiliate-accent); outline-offset: 2px; }
+.affiliate-register-page .cf-card { width: 100%; max-width: 900px; margin-inline: auto; border-radius: 18px; }
+.affiliate-register-page .cf-card__titulo { color: var(--affiliate-text); }
+@media (max-width: 600px) { .affiliate-register-page .cf-card__header { align-items: flex-start; } }

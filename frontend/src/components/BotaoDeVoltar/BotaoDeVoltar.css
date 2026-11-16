@@ -1,5 +1,6 @@
 .botao-voltar {
     display: inline-flex;
+    margin-bottom: 16px;
     align-items: center;
     gap: 10px;
     height: 52px;

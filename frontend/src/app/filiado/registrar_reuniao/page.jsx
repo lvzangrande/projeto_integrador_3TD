@@ -1,14 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
 import ModalCadastro from "@/components/Form/ModalCadastro.jsx";
 import { IconCalendarCheck, IconClock, IconMic, IconRecord, IconStop, IconFileText, IconNote, IconListCheck, IconX, IconCheck } from "@/components/Form/Iconesregistrarreunião.jsx";
 import "@/components/Form/formbase.css";
 import "./registrar_reuniao.css";
 
 export default function RegistrarReuniao() {
-  const router = useRouter();
   const [tipo, setTipo] = useState("reuniao");
   const [clienteManual, setClienteManual] = useState(false);
   const [dataHora, setDataHora] = useState("");
@@ -57,13 +56,13 @@ export default function RegistrarReuniao() {
 
   return (
     <main className="rr-page">
+      <div className="rr-back"><BotaoVoltar /></div>
       <ModalCadastro
         icone={IconCalendarCheck}
         titulo="Registro de reunião ou entrevista"
         subtitulo="Documente os encontros e acompanhe os próximos passos com seus clientes."
         rodape={<>
           {erro && <p className="cf-erro-envio" role="alert">{erro}</p>}
-          <button type="button" className="cf-btn cf-btn--sec" onClick={() => router.back()}><IconX size={18} /> Cancelar</button>
           <button type="submit" form="registro-reuniao" className="cf-btn cf-btn--pri"><IconCheck size={18} /> Registrar encontro</button>
         </>}
       >

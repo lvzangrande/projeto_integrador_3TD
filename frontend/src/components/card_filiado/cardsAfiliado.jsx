@@ -29,4 +29,4 @@ export const cards = [
         descricao: "Consulta de registros anteriores",
         link: "/filiado/historico_reunioes"
     }
-]   
+]

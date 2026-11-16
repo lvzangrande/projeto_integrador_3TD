@@ -25,7 +25,7 @@
   .mc h1 { color:#e8f3fc; }
   .mc .subtitulo { margin-bottom:0; }
   .mc .mc-voltar-wrap { max-width:1180px; margin:0 auto 14px; }
-  .mc .mc-voltar-wrap .botao-voltar { height:42px; padding:0 18px; border-radius:14px; font-size:.9rem; }
+  .mc .mc-voltar-wrap .botao-voltar { width:auto; height:40px; min-height:40px; padding:0 14px; border-radius:11px; font-size:.84rem; }
   .mc .resumo { grid-template-columns:repeat(2,minmax(0,1fr)); }
   .mc .cartao { background:rgba(5,26,46,.58); border-color:rgba(80,160,220,.22); }
   .mc .resumo { background:rgba(5,26,46,.58); border-color:rgba(80,160,220,.22); }
