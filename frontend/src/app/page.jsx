@@ -1,4 +1,5 @@
 import "./page.css";
+import Link from "next/link";
 import AguaViva from "@/components/Login/AguaViva";
 import BolhasSubindo from "@/components/Login/BolhasSubindo";
 import MedidorAgua from "@/components/Login/MedidorAgua";
@@ -172,9 +173,9 @@ export default async function Inicio() {
                 />
               </div>
 
-              <button className="login__esqueceu-senha" type="button">
+              <Link className="login__esqueceu-senha" href="/esqueceu_senha">
                 Esqueceu a senha?
-              </button>
+              </Link>
               <button className="login__botao" type="button">
                 Entrar
               </button>
