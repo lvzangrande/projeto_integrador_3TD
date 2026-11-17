@@ -29,11 +29,7 @@ export default function EsqueceuSenha() {
     }
 
     setErro("");
-    // TODO (integração): chamar a API aqui antes de navegar, usando
-    // process.env.NEXT_PUBLIC_API_URL, com o corpo { email: emailLimpo }.
-    // A tela de aviso é a mesma exista ou não conta com esse e-mail,
-    // para não revelar quais e-mails estão cadastrados.
-    router.push(`/email_enviado?email=${encodeURIComponent(emailLimpo)}`);
+    router.push(`/esqueceu_senha/enviado?email=${encodeURIComponent(emailLimpo)}`);
   }
 
   return (

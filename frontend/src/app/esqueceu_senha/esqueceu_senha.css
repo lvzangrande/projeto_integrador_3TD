@@ -9,9 +9,22 @@
   overflow: hidden;
   padding: 48px 24px;
   background:
-    radial-gradient(ellipse 55% 45% at 22% 78%, rgba(34, 166, 217, 0.3), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 88% 18%, rgba(127, 211, 240, 0.2), transparent 70%),
-    linear-gradient(180deg, var(--cor-azul-profundo) 0%, #0a3560 35%, var(--cor-abismo) 100%);
+    radial-gradient(
+      ellipse 55% 45% at 22% 78%,
+      rgba(34, 166, 217, 0.3),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 45% 40% at 88% 18%,
+      rgba(127, 211, 240, 0.2),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      var(--cor-azul-profundo) 0%,
+      #0a3560 35%,
+      var(--cor-abismo) 100%
+    );
 }
 
 .pagina-esqueceu-senha__agua-viva {
@@ -50,7 +63,8 @@
     0 30px 80px rgba(0, 0, 0, 0.45),
     0 0 0 1px rgba(255, 255, 255, 0.5),
     0 0 120px rgba(34, 166, 217, 0.28);
-  animation: pagina-esqueceu-senha-entrar 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: pagina-esqueceu-senha-entrar 0.6s cubic-bezier(0.2, 0.7, 0.2, 1)
+    both;
 }
 
 .pagina-esqueceu-senha__logo {
@@ -195,7 +209,11 @@
   right: 0;
   bottom: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--cor-azul-agua), var(--cor-azul-profundo));
+  background: linear-gradient(
+    90deg,
+    var(--cor-azul-agua),
+    var(--cor-azul-profundo)
+  );
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);

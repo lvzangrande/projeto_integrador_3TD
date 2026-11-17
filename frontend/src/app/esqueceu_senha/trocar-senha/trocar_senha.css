@@ -9,9 +9,22 @@
   overflow: hidden;
   padding: 48px 24px;
   background:
-    radial-gradient(ellipse 55% 45% at 22% 78%, rgba(34, 166, 217, 0.3), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 88% 18%, rgba(127, 211, 240, 0.2), transparent 70%),
-    linear-gradient(180deg, var(--cor-azul-profundo) 0%, #0a3560 35%, var(--cor-abismo) 100%);
+    radial-gradient(
+      ellipse 55% 45% at 22% 78%,
+      rgba(34, 166, 217, 0.3),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 45% 40% at 88% 18%,
+      rgba(127, 211, 240, 0.2),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      var(--cor-azul-profundo) 0%,
+      #0a3560 35%,
+      var(--cor-abismo) 100%
+    );
 }
 
 .pagina-trocar-senha__agua-viva {
@@ -195,7 +208,11 @@
   right: 0;
   bottom: 0;
   height: 2px;
-  background: linear-gradient(90deg, var(--cor-azul-agua), var(--cor-azul-profundo));
+  background: linear-gradient(
+    90deg,
+    var(--cor-azul-agua),
+    var(--cor-azul-profundo)
+  );
   transform: scaleX(0);
   transform-origin: left;
   transition: transform 0.45s cubic-bezier(0.2, 0.7, 0.2, 1);

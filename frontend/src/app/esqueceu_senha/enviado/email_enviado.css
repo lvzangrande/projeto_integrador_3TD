@@ -9,9 +9,22 @@
   overflow: hidden;
   padding: 48px 24px;
   background:
-    radial-gradient(ellipse 55% 45% at 22% 78%, rgba(34, 166, 217, 0.3), transparent 70%),
-    radial-gradient(ellipse 45% 40% at 88% 18%, rgba(127, 211, 240, 0.2), transparent 70%),
-    linear-gradient(180deg, var(--cor-azul-profundo) 0%, #0a3560 35%, var(--cor-abismo) 100%);
+    radial-gradient(
+      ellipse 55% 45% at 22% 78%,
+      rgba(34, 166, 217, 0.3),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 45% 40% at 88% 18%,
+      rgba(127, 211, 240, 0.2),
+      transparent 70%
+    ),
+    linear-gradient(
+      180deg,
+      var(--cor-azul-profundo) 0%,
+      #0a3560 35%,
+      var(--cor-abismo) 100%
+    );
 }
 
 .pagina-email-enviado__agua-viva {
@@ -50,7 +63,8 @@
     0 30px 80px rgba(0, 0, 0, 0.45),
     0 0 0 1px rgba(255, 255, 255, 0.5),
     0 0 120px rgba(34, 166, 217, 0.28);
-  animation: pagina-email-enviado-entrar 0.6s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  animation: pagina-email-enviado-entrar 0.6s cubic-bezier(0.2, 0.7, 0.2, 1)
+    both;
 }
 
 .pagina-email-enviado__logo {
@@ -179,7 +193,11 @@
   padding: 14px 18px;
   border-left: 4px solid var(--cor-azul-agua);
   border-radius: 0 16px 16px 0;
-  background: linear-gradient(100deg, rgba(34, 166, 217, 0.1), rgba(34, 166, 217, 0.02));
+  background: linear-gradient(
+    100deg,
+    rgba(34, 166, 217, 0.1),
+    rgba(34, 166, 217, 0.02)
+  );
   font-size: clamp(0.875rem, 0.92vw, 1rem);
   line-height: 1.55;
   color: var(--cor-texto-suave);
