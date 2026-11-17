@@ -1,0 +1,58 @@
+/* Bolhas subindo devagar, usadas como textura de fundo das duas seções. */
+.bolhas {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.bolhas__bolha {
+  position: absolute;
+  bottom: -12%;
+  display: block;
+  border-radius: 50%;
+  animation: bolhas-subir var(--duracao) linear var(--atraso) infinite;
+  will-change: transform, opacity;
+}
+
+.bolhas--clara .bolhas__bolha {
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.15) 72%
+  );
+}
+
+.bolhas--profunda .bolhas__bolha {
+  border: 1px solid rgba(127, 211, 240, 0.55);
+  background: radial-gradient(
+    circle at 32% 30%,
+    rgba(207, 239, 255, 0.85),
+    rgba(34, 166, 217, 0.12) 72%
+  );
+}
+
+@keyframes bolhas-subir {
+  0% {
+    transform: translate3d(0, 0, 0) scale(0.7);
+    opacity: 0;
+  }
+  12% {
+    opacity: var(--opacidade);
+  }
+  88% {
+    opacity: var(--opacidade);
+  }
+  100% {
+    transform: translate3d(var(--deriva), -118vh, 0) scale(1.15);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bolhas {
+    display: none;
+  }
+}

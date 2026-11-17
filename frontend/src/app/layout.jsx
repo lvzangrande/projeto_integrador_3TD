@@ -1,3 +1,6 @@
+import "./globals.css";
+import "lenis/dist/lenis.css";
+
 export const metadata = {
   title: "Wapi",
   description: "wapi é um sistema de controle de água e vazamentos.",
@@ -5,7 +8,7 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="pt-BR" data-scroll-behavior="smooth">
+    <html lang="pt-BR">
       <head>
         <link
           rel="stylesheet"
