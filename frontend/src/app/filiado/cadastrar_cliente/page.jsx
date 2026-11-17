@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
 import ClienteForm from "@/components/Form/Clienteform";
+import "./cadastrar_cliente.css";
 
 export default function CadastrarCliente() {
   const router = useRouter();
@@ -26,7 +27,7 @@ export default function CadastrarCliente() {
         throw new Error(corpo.mensagem || "Não foi possível cadastrar o cliente.");
       }
 
-      router.push("/clientes");                        // ajuste o destino
+      router.push("/filiado/clientes");
     } catch (e) {
       setErroEnvio(e.message);
     } finally {
@@ -35,12 +36,11 @@ export default function CadastrarCliente() {
   };
 
   return (
-    <main>
-    <BotaoVoltar/>
+    <main className="affiliate-register-page">
+    <div className="affiliate-back"><BotaoVoltar/></div>
 
     <ClienteForm
       onSubmit={cadastrar}
-      onCancel={() => router.back()}
       enviando={enviando}
       erroEnvio={erroEnvio}
     />

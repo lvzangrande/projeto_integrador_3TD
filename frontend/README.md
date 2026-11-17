@@ -12,6 +12,7 @@ npm run dev
 npm run build
 npm start
 npm run lint
+npm install chart.js react-chartjs-2
 ```
 
 ## Ambiente

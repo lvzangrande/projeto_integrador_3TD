@@ -6,7 +6,7 @@ import "./Clienteform.css";
 import ModalCadastro from "./ModalCadastro.jsx";
 import SecaoForm from "./SecaoForm.jsx";
 import { Campo, CampoSenha } from "./Campo.jsx";
-import { IconIdCard, IconMail, IconPhone, IconUser, IconUserPlus, IconX } from "./icones";
+import { IconIdCard, IconMail, IconPhone, IconUser, IconUserPlus } from "./icones";
 import {
   mascararCnpj,
   mascararCpf,
@@ -81,7 +81,6 @@ function validar(valores, tipo) {
  *               dados = { tipoPessoa: "fisica" | "juridica", nome, documento (só dígitos),
  *                         email, telefone (só dígitos), senha }
  *               Se lançar erro, trate no pai e passe a mensagem em `erroEnvio`.
- *  - onCancel   () => void, ao clicar em "Cancelar"
  *  - enviando   true enquanto a requisição está em andamento (desabilita os botões)
  *  - erroEnvio  mensagem de erro da API, exibida no rodapé
  */
@@ -145,16 +144,6 @@ export default function ClienteForm({ onSubmit, onCancel, enviando = false, erro
               {erroEnvio}
             </p>
           )}
-
-          <button
-            type="button"
-            className="cf-btn cf-btn--sec"
-            onClick={onCancel}
-            disabled={enviando}
-          >
-            <IconX size={20} />
-            Cancelar
-          </button>
 
           <button type="submit" form={formId} className="cf-btn cf-btn--pri" disabled={enviando}>
             <IconUserPlus size={20} />

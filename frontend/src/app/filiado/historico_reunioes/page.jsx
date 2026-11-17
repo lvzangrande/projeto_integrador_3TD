@@ -6,9 +6,9 @@ export default function historicodeReunioes(){
     
     
     return(
-        <main>
+        <div className="affiliate-history-page">
             <BotaoVoltar/>
             <RegistrosTable/>
-        </main>
+        </div>
     )
 }
