@@ -3,7 +3,15 @@ import express from "express";
 import helmet from "helmet";
 
 import { errorHandler } from "./middlewares/errorHandler.js";
-import healthRoutes from "./routes/healthRoutes.js";
+import { pool } from "./config/database.js";
+import { criarHealthModel } from "../models/HealthModels.js";
+import { criarHealthService } from "../services/HealthService.js";
+import { criarHealthController } from "./controllers/HealthController.js";
+import { criarHealthRoutes } from "./routes/healthRoutes.js";
+
+const healthModel = criarHealthModel({ pool });
+const healthService = criarHealthService({ healthModel });
+const healthController = criarHealthController({ healthService });
 
 const app = express();
 
@@ -16,12 +24,16 @@ app.use(
 app.use(express.json());
 
 app.get("/", (request, response) => {
-  response.json({
-    message: "API do projeto base",
-  });
+  response.json({ message: "API do projeto base" });
 });
 
-app.use("/api/health", healthRoutes);
+app.use("/health", criarHealthRoutes({ healthController }));
+
+app.use((req, res) => {
+  res.status(404).json({
+    erro: `A rota ${req.method} ${req.originalUrl} não existe.`,
+  });
+});
 
 app.use(errorHandler);
 

@@ -1,0 +1,31 @@
+.pagina-carregando {
+  position: relative;
+  display: grid;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  padding: 120px 24px 48px;
+  color: #f4fbff;
+  background:
+    radial-gradient(ellipse at 77% 76%, rgba(17, 151, 205, 0.34), transparent 36%),
+    radial-gradient(ellipse at 9% 16%, rgba(36, 119, 176, 0.4), transparent 38%),
+    linear-gradient(135deg, #0b3559 0%, #082746 55%, #061d35 100%);
+}
+
+.pagina-carregando__cabecalho {
+  position: absolute;
+  z-index: 2;
+  top: 28px;
+  left: clamp(24px, 6vw, 68px);
+}
+
+.pagina-carregando__marca img {
+  width: clamp(100px, 11vw, 124px);
+  height: auto;
+  mix-blend-mode: screen;
+}
+
+.pagina-carregando__marca:focus-visible {
+  outline: 3px solid #a9e9ff;
+  outline-offset: 5px;
+}

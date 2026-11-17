@@ -1,0 +1,96 @@
+.not-found-cena {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.not-found-cena__chao {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: clamp(110px, 20vh, 190px);
+  background: linear-gradient(180deg, transparent, rgba(3, 22, 41, 0.13) 30%, rgba(3, 18, 35, 0.56));
+}
+
+.not-found-cena__pocas {
+  position: absolute;
+  right: 0;
+  bottom: 3.8%;
+  left: 0;
+  height: 18%;
+}
+
+.not-found-cena__poca {
+  position: absolute;
+  display: block;
+  height: clamp(10px, 2.6vh, 20px);
+  border: 1px solid rgba(135, 218, 245, 0.48);
+  border-radius: 50%;
+  background: radial-gradient(ellipse at 50% 35%, rgba(132, 220, 249, 0.33), rgba(24, 126, 172, 0.28) 48%, rgba(10, 49, 80, 0.12) 74%);
+  box-shadow: 0 0 18px rgba(66, 174, 218, 0.12), inset 0 2px 5px rgba(187, 239, 255, 0.14);
+  animation: not-found-poca-brilhar 4s ease-in-out infinite;
+}
+
+.not-found-cena__poca--1 { left: 5%; bottom: 15%; width: 12%; animation-delay: -1s; }
+.not-found-cena__poca--2 { left: 22%; bottom: 37%; width: 8%; height: 11px; animation-delay: -2.4s; }
+.not-found-cena__poca--3 { left: 40%; bottom: 5%; width: 22%; height: clamp(15px, 3.7vh, 28px); }
+.not-found-cena__poca--4 { right: 20%; bottom: 38%; width: 10%; height: 13px; animation-delay: -1.8s; }
+.not-found-cena__poca--5 { right: 4%; bottom: 16%; width: 14%; height: 17px; animation-delay: -3s; }
+.not-found-cena__poca--6 { left: 69%; bottom: 7%; width: 9%; height: 10px; animation-delay: -0.5s; }
+
+.not-found-cena__onda {
+  position: absolute;
+  inset: 14% 24%;
+  border: 1px solid rgba(185, 241, 255, 0.66);
+  border-radius: 50%;
+  animation: not-found-ondulacao 2.5s ease-out infinite;
+}
+
+.not-found-cena__onda--atrasada {
+  animation-delay: 1.2s;
+}
+
+.not-found-cena__passaro {
+  position: absolute;
+  z-index: 1;
+  right: 34%;
+  bottom: clamp(58px, 11vh, 106px);
+  width: clamp(54px, 8vw, 82px);
+  filter: drop-shadow(0 6px 9px rgba(0, 15, 30, 0.28));
+  transform-origin: 55% 85%;
+  animation: not-found-bicada 2.8s ease-in-out infinite;
+}
+
+@keyframes not-found-ondulacao {
+  0% { transform: scale(0.55); opacity: 0.9; }
+  100% { transform: scale(2.8); opacity: 0; }
+}
+
+@keyframes not-found-poca-brilhar {
+  0%, 100% { filter: brightness(0.88); }
+  50% { filter: brightness(1.22); }
+}
+
+@keyframes not-found-bicada {
+  0%, 26%, 100% { transform: translateY(0) rotate(0); }
+  37% { transform: translateY(5px) rotate(8deg); }
+  45% { transform: translateY(2px) rotate(4deg); }
+  54% { transform: translateY(0) rotate(0); }
+}
+
+@media (max-width: 600px) {
+  .not-found-cena__passaro { right: 32%; }
+  .not-found-cena__poca--2,
+  .not-found-cena__poca--4 { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .not-found-cena__poca,
+  .not-found-cena__onda,
+  .not-found-cena__passaro {
+    animation: none;
+  }
+}

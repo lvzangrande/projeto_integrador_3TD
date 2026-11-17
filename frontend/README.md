@@ -6,6 +6,8 @@ Aplicacao Next.js do template base.
 
 ```bash
 npm install
+npm install three @types/three @react-three/fiber @react-three/drei
+npm install lenis 
 npm run dev
 npm run build
 npm start
