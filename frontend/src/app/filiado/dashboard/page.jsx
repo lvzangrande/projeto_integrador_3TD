@@ -1,19 +1,18 @@
 // SALVAR COMO: <pasta da rota do filiado>/dashboard/page.jsx
 //
-// Componente de servidor: sem hooks e sem "use client". O filtro de período é feito por
-// links (?periodo=7|30|90), então a página inteira é renderizada no servidor a partir de
-// uma única chamada ao endpoint agregado (RNF010). Os gráficos são SVG puro, sem biblioteca.
+// Componente de servidor. O dashboard fica sem integração com backend e apresenta estado vazio
+// enquanto não há uma fonte local de cadastros. O gráfico de cadastros usa Chart.js no cliente.
 import Link from "next/link";
 import "../filiado.css"; // reaproveita .affiliate-eyebrow e .affiliate-home__intro da home
 import "./dashboard.css";
-import { getDashboardFiliado } from "./dashboard-data.js";
+import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
+import ConsumoLineChart from "./ConsumoLineChart.jsx";
 import {
   formatarDataHora,
   formatarDiaMes,
   formatarInteiro,
   formatarM3,
   formatarMoeda,
-  formatarVolume,
   plural,
 } from "./dashboard-format.js";
 
@@ -21,7 +20,6 @@ export const metadata = { title: "Dashboard do Filiado" };
 
 // Ajuste estas rotas para as reais do projeto. É o único lugar com caminhos fixos.
 const ROTAS = {
-  home: "/filiado",
   clientes: "/filiado/clientes",
   cadastrarCliente: "/filiado/cadastrar_cliente",
   reunioes: "/filiado/historico_reunioes",
@@ -45,21 +43,33 @@ const SEVERIDADES = [
 
 export default async function DashboardFiliado({ searchParams }) {
   const params = (await searchParams) ?? {};
-  const pedido = Number(params.periodo);
-  const periodo = PERIODOS.includes(pedido) ? pedido : PERIODO_PADRAO;
-
-  const { dados } = await getDashboardFiliado(periodo);
+  const solicitado = Number(params.periodo);
+  const periodo = PERIODOS.includes(solicitado) ? solicitado : PERIODO_PADRAO;
+  // Dashboard sem integração: mantém o estado inicial até a fonte local de dados ser definida.
+  const dados = {
+    filiado: { nome: "" },
+    resumo: { clientesAtivos: 0, alertasAtivos: 0, alertasCriticos: 0, ocorrenciasAbertas: 0 },
+    economia: null,
+    cadastros: [],
+    alertasPorSeveridade: { critico: 0, atencao: 0, informativo: 0 },
+    clientesAtencao: [],
+    reunioes: [],
+  };
 
   return (
     <main className="aff-dash">
-      <Link href={ROTAS.home} className="botao-voltar">← Voltar</Link>
+      <BotaoVoltar />
 
-      {!dados ? (
-        <EstadoErro periodo={periodo} />
-      ) : dados.resumo.clientesAtivos === 0 ? (
+      {dados.resumo.clientesAtivos === 0 ? (
         <div className="aff-dash__corpo">
           <Cabecalho dados={dados} frase="Sua carteira ainda não tem clientes ativos." />
-          <EstadoVazio />
+          <section className="aff-panel" aria-labelledby="aff-cadastros-titulo">
+            <div className="aff-panel__head"><div><h2 id="aff-cadastros-titulo">Novos clientes cadastrados</h2><p>Quantidade de cadastros por dia</p></div></div>
+            <GraficoCadastros serie={dados.cadastros} periodo={periodo} />
+            {dados.cadastros.length === 0 && (
+              <Link href={ROTAS.cadastrarCliente} className="aff-btn">Cadastrar cliente</Link>
+            )}
+          </section>
         </div>
       ) : (
         <div className="aff-dash__corpo">
@@ -126,7 +136,7 @@ function Kpis({ dados, periodo }) {
   return (
     <section className="aff-dash__kpis" aria-label="Indicadores da carteira">
       <Link href={ROTAS.clientes} className="aff-kpi aff-kpi--link">
-        <span className="aff-kpi__label">Clientes ativos</span>
+        <span className="aff-kpi__label">Clientes cadastrados</span>
         <strong className="aff-kpi__valor">{formatarInteiro(resumo.clientesAtivos)}</strong>
         <span className="aff-kpi__nota">Ver meus clientes →</span>
       </Link>
@@ -177,8 +187,8 @@ function Graficos({ dados, periodo }) {
       <div className="aff-panel">
         <div className="aff-panel__head">
           <div>
-            <h2>Consumo da carteira</h2>
-            <p>Soma diária de todos os clientes{dados.simulado ? " · leituras simuladas" : ""}</p>
+            <h2>Novos clientes cadastrados</h2>
+            <p>Quantidade de cadastros por dia{dados.simulado ? " · dados ilustrativos" : ""}</p>
           </div>
           <nav className="aff-periodos" aria-label="Período do gráfico">
             {PERIODOS.map((p) => (
@@ -193,7 +203,7 @@ function Graficos({ dados, periodo }) {
             ))}
           </nav>
         </div>
-        <GraficoConsumo serie={dados.consumo} periodo={periodo} />
+        <GraficoCadastros serie={dados.cadastros} periodo={periodo} />
       </div>
 
       <div className="aff-panel">
@@ -209,123 +219,35 @@ function Graficos({ dados, periodo }) {
   );
 }
 
-const W = 640;
-const H = 260;
-const M = { t: 14, r: 16, b: 30, l: 56 };
-
-// 1, 2, 5 × 10ⁿ: passos "redondos" para o eixo Y.
-function passoBonito(bruto) {
-  const exp = 10 ** Math.floor(Math.log10(bruto));
-  const f = bruto / exp;
-  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * exp;
-}
-
-function montarGrafico(serie) {
-  const n = serie.length;
-  const iw = W - M.l - M.r;
-  const ih = H - M.t - M.b;
-  const maximo = Math.max(...serie.map((p) => p.litros), 1);
-  const passo = passoBonito(maximo / 4);
-  const topo = passo * Math.ceil(maximo / passo);
-  const baseY = M.t + ih;
-  const r1 = (v) => Math.round(v * 10) / 10;
-  const x = (i) => r1(M.l + (i / (n - 1)) * iw);
-  const y = (v) => r1(M.t + ih - (v / topo) * ih);
-
-  const pontos = serie.map((p, i) => ({
-    x: x(i),
-    y: y(p.litros),
-    titulo: `${formatarDiaMes(p.data)} · ${formatarVolume(p.litros)}`,
-  }));
-  const linha = pontos.map((p, i) => `${i ? "L" : "M"}${p.x} ${p.y}`).join(" ");
-  const area = `${linha} L${pontos[n - 1].x} ${baseY} L${pontos[0].x} ${baseY} Z`;
-
-  const ticksY = Array.from({ length: Math.round(topo / passo) + 1 }, (_, k) => ({
-    y: y(k * passo),
-    rotulo: formatarVolume(k * passo),
-  }));
-
-  const qtdX = Math.min(5, n);
-  const ticksX = Array.from({ length: qtdX }, (_, k) => {
-    const i = Math.round((k * (n - 1)) / (qtdX - 1));
-    return {
-      x: pontos[i].x,
-      rotulo: formatarDiaMes(serie[i].data),
-      ancora: k === 0 ? "start" : k === qtdX - 1 ? "end" : "middle",
-    };
-  });
-
-  const total = serie.reduce((s, p) => s + p.litros, 0);
-  const pico = serie.reduce((a, p) => (p.litros > a.litros ? p : a), serie[0]);
-
-  return { pontos, linha, area, ticksY, ticksX, baseY, total, media: total / n, pico };
-}
-
-function GraficoConsumo({ serie, periodo }) {
+function GraficoCadastros({ serie, periodo }) {
   if (serie.length < 2) {
-    return <p className="aff-vazio">Sem leituras no período selecionado.</p>;
+    return <p className="aff-vazio">Ainda não há dados de cadastros para exibir neste período.</p>;
   }
 
-  const g = montarGrafico(serie);
-  const descricao = `Consumo diário da carteira nos últimos ${periodo} dias. Total ${formatarVolume(
-    g.total,
-  )}, média de ${formatarVolume(g.media)} por dia, pico de ${formatarVolume(g.pico.litros)} em ${formatarDiaMes(
-    g.pico.data,
-  )}.`;
+  const total = serie.reduce((soma, ponto) => soma + (Number(ponto.clientes) || 0), 0);
+  const maiorDia = serie.reduce((maior, ponto) => (ponto.clientes > maior.clientes ? ponto : maior), serie[0]);
 
   return (
     <>
       <dl className="aff-stats">
         <div>
-          <dt>Total no período</dt>
-          <dd>{formatarVolume(g.total)}</dd>
+          <dt>Cadastros no período</dt>
+          <dd>{formatarInteiro(total)}</dd>
         </div>
         <div>
           <dt>Média diária</dt>
-          <dd>{formatarVolume(g.media)}</dd>
+          <dd>{formatarInteiro(total / periodo)}</dd>
         </div>
         <div>
           <dt>Pico</dt>
           <dd>
-            {formatarVolume(g.pico.litros)} <span className="aff-stats__data">em {formatarDiaMes(g.pico.data)}</span>
+            {formatarInteiro(maiorDia.clientes)} <span className="aff-stats__data">em {formatarDiaMes(maiorDia.data)}</span>
           </dd>
         </div>
       </dl>
 
-      <div className="aff-chart" role="region" aria-label="Gráfico de consumo (role para o lado para ver tudo)" tabIndex={0}>
-        <svg className="aff-chart__svg" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={descricao}>
-          <defs>
-            <linearGradient id="aff-grad-consumo" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" className="aff-chart__stop aff-chart__stop--topo" />
-              <stop offset="100%" className="aff-chart__stop aff-chart__stop--base" />
-            </linearGradient>
-          </defs>
-
-          {g.ticksY.map((t, i) => (
-            <g key={i}>
-              <line className="aff-chart__grid" x1={M.l} x2={W - M.r} y1={t.y} y2={t.y} />
-              <text className="aff-chart__tick" x={M.l - 8} y={t.y} textAnchor="end" dominantBaseline="middle">
-                {t.rotulo}
-              </text>
-            </g>
-          ))}
-
-          {g.ticksX.map((t, i) => (
-            <text key={i} className="aff-chart__tick" x={t.x} y={H - 8} textAnchor={t.ancora}>
-              {t.rotulo}
-            </text>
-          ))}
-
-          <path className="aff-chart__area" d={g.area} fill="url(#aff-grad-consumo)" />
-          <path className="aff-chart__linha" d={g.linha} fill="none" />
-
-          {/* Áreas de hover: o navegador mostra o <title> como dica, sem JavaScript. */}
-          {g.pontos.map((p, i) => (
-            <circle key={i} className="aff-chart__hit" cx={p.x} cy={p.y} r="5">
-              <title>{p.titulo}</title>
-            </circle>
-          ))}
-        </svg>
+      <div className="aff-chart" role="region" aria-label={`Gráfico de cadastros de clientes nos últimos ${periodo} dias`} tabIndex={0}>
+        <ConsumoLineChart serie={serie} formatarDiaMes={formatarDiaMes} formatarInteiro={formatarInteiro} />
       </div>
     </>
   );
@@ -426,29 +348,6 @@ function UltimasReunioes({ itens }) {
         </ul>
       )}
     </div>
-  );
-}
-
-/* --------------------------------------------------------------------- estados */
-
-function EstadoVazio() {
-  return (
-    <section className="aff-panel aff-estado" aria-labelledby="aff-vazio-titulo">
-      <h2 id="aff-vazio-titulo">Nenhum cliente ainda</h2>
-      <p>Cadastre seu primeiro cliente para acompanhar consumo, alertas e economia da carteira aqui.</p>
-      <Link href={ROTAS.cadastrarCliente} className="aff-btn">Cadastrar cliente</Link>
-    </section>
-  );
-}
-
-function EstadoErro({ periodo }) {
-  return (
-    <section className="aff-panel aff-estado" role="alert">
-      <h2>Não foi possível carregar o dashboard</h2>
-      <p>Os dados da sua carteira não responderam a tempo. Tente novamente em instantes.</p>
-      {/* <a> de propósito: força uma nova requisição ao servidor, o Link poderia reaproveitar o cache. */}
-      <a href={`?periodo=${periodo}`} className="aff-btn aff-btn--sec">Tentar novamente</a>
-    </section>
   );
 }
 
