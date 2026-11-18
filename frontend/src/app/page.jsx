@@ -3,7 +3,6 @@ import PonteiroParalaxe from "@/components/PonteiroParalaxe/PonteiroParalaxe";
 import ProgressoRolagem from "@/components/ProgressoRolagem/ProgressoRolagem";
 import AguaViva from "@/components/AguaViva/AguaViva";
 import BolhasSubindo from "@/components/BolhasSubindo/BolhasSubindo";
-import MedidorAgua from "@/components/MedidorAgua/MedidorAgua";
 import OndasAnimadas from "@/components/OndasAnimadas/OndasAnimadas";
 import RaiosDeLuz from "@/components/RaiosDeLuz/RaiosDeLuz";
 import VazamentoCano from "@/components/VazamentoCano/VazamentoCano";
@@ -24,12 +23,9 @@ export default function Inicio() {
           <div className="inicio__conteudo">
             <TituloAgua>Sistema de controle de água</TituloAgua>
             <p className="inicio__descricao">Faça seu login e acompanhe consumo e alertas.</p>
-            <div className="inicio__dado">
-              <MedidorAgua nivel={0.55} />
-              <div className="inicio__dado-textos">
-                <span className="inicio__dado-valor">000 L</span>
-                <span className="inicio__dado-texto">de água poupada por dia</span>
-              </div>
+            <div className="inicio__dado-textos">
+              <span className="inicio__dado-valor">Cada gota conta</span>
+              <span className="inicio__dado-texto">Acompanhe os dados da operação no painel.</span>
             </div>
           </div>
           <div className="inicio__ilustracao"><AguaViva sufixo="inicio" /></div>
