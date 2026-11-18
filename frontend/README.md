@@ -26,7 +26,7 @@ cp .env.example .env.local
 Variavel principal:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
 As instrucoes completas do projeto ficam no `README.md` da raiz.
