@@ -1,0 +1,55 @@
+.affiliate-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: var(--affiliate-header-h);
+  padding: 8px 120px;
+  color: #fff;
+  text-align: center;
+  background:
+    radial-gradient(520px 200px at 50% -40%, rgba(114, 223, 246, .28), transparent 70%),
+    linear-gradient(180deg, #2679b2 0%, #1b6498 100%);
+  border-bottom: 2px solid rgba(114, 223, 246, .55);
+  filter: drop-shadow(0 8px 14px rgba(0, 8, 20, .35));
+}
+.affiliate-header__titulo { display: flex; flex-direction: column; align-items: center; line-height: 1.1; }
+.affiliate-header__saudacao { margin: 0; font-size: clamp(.95rem, 1.5vw, 1.2rem); font-weight: 400; letter-spacing: .22em; text-transform: uppercase; color: #bfeaf8; }
+.affiliate-header__nome { margin: 6px 0 0; font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 700; letter-spacing: .02em; text-transform: uppercase; text-shadow: 0 2px 12px rgba(0, 20, 40, .35); }
+.affiliate-header__sair {
+  position: absolute;
+  top: 50%;
+  left: 40px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: .85rem;
+  cursor: pointer;
+}
+.affiliate-header__sair-icone {
+  display: grid;
+  place-items: center;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  border: 1px solid rgba(114, 223, 246, .45);
+  background: linear-gradient(145deg, #154a72, #0a2d49);
+  box-shadow: 0 4px 12px rgba(0, 10, 25, .3);
+  transition: background .18s ease, transform .18s ease, border-color .18s ease;
+}
+.affiliate-header__sair:hover .affiliate-header__sair-icone { border-color: #72dff6; background: linear-gradient(145deg, #1a5a88, #0d3858); transform: scale(1.06); }
+.affiliate-header__sair:focus-visible { outline: 2px solid #fff; outline-offset: 4px; border-radius: 12px; }
+
+@media (max-width: 850px) {
+  .affiliate-header { padding: 8px 84px; }
+  .affiliate-header__sair { left: 14px; }
+  .affiliate-header__sair-icone { width: 48px; height: 48px; }
+}

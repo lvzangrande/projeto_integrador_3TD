@@ -6,6 +6,7 @@
   --affiliate-text: #e8f3fc;
   --affiliate-muted: #9bb6cb;
   --affiliate-accent: #45c9ed;
+  --affiliate-header-h: 108px;
 }
 
 .affiliate-shell {
@@ -15,7 +16,7 @@
   font-family: Roboto, "Segoe UI", system-ui, sans-serif;
 }
 
-.affiliate-content { min-height: 100vh; padding: 34px 24px 56px; }
+.affiliate-content { min-height: calc(100vh - var(--affiliate-header-h)); padding: 34px 24px 56px; }
 .affiliate-content > * { animation: affiliate-page-enter 420ms cubic-bezier(.2,.7,.25,1) both; }
 
 @keyframes affiliate-page-enter {
