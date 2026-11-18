@@ -1,0 +1,177 @@
+/* ---------- Card: painel de reservatório ---------- */
+.card {
+    --rebite: rgba(127, 211, 240, 0.35);
+
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    min-width: 0;
+    padding: 28px 20px 44px;
+
+    border: 1px solid rgba(127, 211, 240, 0.16);
+    border-top: 3px solid var(--cor-azul-agua);
+    border-radius: 12px;
+
+    /* quatro rebites nos cantos + fundo abismo */
+    background:
+        radial-gradient(circle, var(--rebite) 0 2px, transparent 2.5px) left 8px top 8px / 8px 8px no-repeat,
+        radial-gradient(circle, var(--rebite) 0 2px, transparent 2.5px) right 8px top 8px / 8px 8px no-repeat,
+        radial-gradient(circle, var(--rebite) 0 2px, transparent 2.5px) left 8px bottom 8px / 8px 8px no-repeat,
+        radial-gradient(circle, var(--rebite) 0 2px, transparent 2.5px) right 8px bottom 8px / 8px 8px no-repeat,
+        var(--cor-abismo);
+    box-shadow: 0 14px 24px -14px rgba(7, 30, 56, 0.7);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+/* Nível de água no pé do card: sobe quando o card recebe mouse ou foco */
+.card::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 44px;
+    z-index: 0;
+    pointer-events: none;
+
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 44'%3E%3Cpath fill='%2322a6d9' fill-opacity='.35' d='M0 14Q15 6 30 14T60 14T90 14T120 14V44H0Z'/%3E%3C/svg%3E") repeat-x left bottom / 120px 44px;
+
+    transform: translateY(16px);
+    transition: transform 0.45s ease;
+}
+
+.card:hover::after,
+.card:focus-within::after {
+    transform: translateY(0);
+}
+
+/* ---------- Link e conteúdo ---------- */
+.card a {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--cor-branca);
+    text-decoration: none;
+}
+
+.card a:focus-visible {
+    outline: 2px solid var(--cor-azul-claro);
+    outline-offset: 8px;
+    border-radius: 8px;
+}
+
+/* Selo do ícone em formato de visor de medição */
+.card img {
+    flex: none;
+    box-sizing: border-box;
+    width: 76px;
+    height: 76px;
+    max-width: none;
+    margin: 0;
+    padding: 18px;
+    object-fit: contain;
+
+    border-radius: 50%;
+    background: linear-gradient(160deg, var(--cor-azul-profundo), var(--cor-marinho-escuro));
+    box-shadow:
+        inset 0 0 0 1px rgba(127, 211, 240, 0.45),
+        inset 0 0 0 5px var(--cor-abismo),
+        inset 0 0 0 6px rgba(127, 211, 240, 0.2);
+}
+
+.card h1 {
+    margin: 16px 0 6px;
+    font-family: var(--fonte-titulo);
+    font-size: 26px;
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
+    color: var(--cor-branca);
+    overflow-wrap: break-word;
+}
+
+.card p {
+    margin: 0;
+    max-width: 28ch;
+    font-size: 14px;
+    line-height: 1.45;
+    color: var(--cor-azul-claro);
+    overflow-wrap: break-word;
+}
+
+/* ---------- Histórico de Reuniões (card largo, horizontal) ---------- */
+.Card > div:last-child:nth-child(odd) {
+    min-height: 120px;
+    padding: 28px 28px 44px;
+}
+
+.Card > div:last-child:nth-child(odd) a {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-rows: auto auto;
+    justify-content: center;
+    align-items: center;
+    column-gap: 24px;
+    row-gap: 0;
+}
+
+.Card > div:last-child:nth-child(odd) img {
+    grid-column: 1;
+    grid-row: 1 / 3;
+}
+
+.Card > div:last-child:nth-child(odd) h1 {
+    grid-column: 2;
+    align-self: end;
+    margin: 0 0 4px;
+    font-size: 24px;
+    text-align: left;
+}
+
+.Card > div:last-child:nth-child(odd) p {
+    grid-column: 2;
+    align-self: start;
+    max-width: none;
+    text-align: left;
+}
+
+/* ---------- Telas pequenas e acessibilidade ---------- */
+@media (max-width: 480px) {
+    .card {
+        padding: 24px 16px 40px;
+    }
+
+    .card h1 {
+        font-size: 24px;
+    }
+
+    .Card > div:last-child:nth-child(odd) {
+        padding: 24px 16px 40px;
+    }
+
+    .Card > div:last-child:nth-child(odd) a {
+        column-gap: 16px;
+    }
+
+    .Card > div:last-child:nth-child(odd) h1 {
+        font-size: 22px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .card::after {
+        transition: none;
+    }
+}

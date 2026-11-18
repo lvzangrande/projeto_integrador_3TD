@@ -1,0 +1,111 @@
+/* A primeira tela fica parada: a seção de login sobe por cima dela. */
+.inicio {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  height: 100vh;
+  min-height: 720px;
+  overflow: hidden;
+  background:
+    radial-gradient(ellipse 70% 55% at 78% 6%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, var(--cor-ceu-topo) 0%, var(--cor-ceu-meio) 45%, #eaf8fe 100%);
+}
+
+.inicio__cabecalho {
+  position: absolute;
+  top: clamp(20px, 3vh, 40px);
+  left: 8vw;
+}
+
+.inicio__logo {
+  display: block;
+  width: clamp(190px, 14vw, 280px);
+  height: auto;
+  mix-blend-mode: multiply;
+}
+
+.inicio__palco {
+  position: absolute;
+  inset: 0;
+  padding: 0 8vw 12vh;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4vw;
+}
+
+/* Ao rolar, o texto sai para a esquerda e a ilustração para a direita,
+   sumindo aos poucos. Ao subir, acontece o contrário. */
+.inicio__cabecalho,
+.inicio__conteudo,
+.inicio__ilustracao {
+  will-change: transform, opacity;
+  opacity: max(0, calc(1 - var(--progresso-rolagem) * 1.8));
+}
+
+.inicio__cabecalho,
+.inicio__conteudo {
+  transform: translateX(calc(var(--progresso-rolagem) * -160px));
+}
+
+.inicio__ilustracao {
+  transform: translateX(calc(var(--progresso-rolagem) * 160px));
+}
+
+.inicio__conteudo {
+  max-width: 52rem;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(20px, 2.4vw, 36px);
+}
+
+.inicio__descricao {
+  max-width: 34rem;
+  font-size: clamp(1.15rem, 1.5vw, 1.6rem);
+  line-height: 1.5;
+  color: var(--cor-texto-suave);
+}
+
+.inicio__dado {
+  display: flex;
+  align-items: center;
+  gap: clamp(14px, 1.4vw, 24px);
+}
+
+.inicio__dado-textos {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.inicio__dado-valor {
+  font-size: clamp(2.5rem, 3.6vw, 4.25rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  color: var(--cor-azul-profundo);
+}
+
+.inicio__dado-texto {
+  font-size: clamp(1rem, 1.15vw, 1.3rem);
+  color: var(--cor-texto-suave);
+}
+
+.inicio__ilustracao {
+  flex: none;
+  width: clamp(300px, 28vw, 600px);
+}
+
+@media (max-width: 900px) {
+  .inicio__ilustracao {
+    display: none;
+  }
+
+  .inicio__cabecalho {
+    left: 24px;
+  }
+
+  .inicio__palco {
+    padding: 0 24px 14vh;
+  }
+}

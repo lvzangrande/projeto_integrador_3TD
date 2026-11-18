@@ -1,0 +1,80 @@
+.agua-viva {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  filter: drop-shadow(0 0 26px rgba(34, 166, 217, 0.55));
+  /* segue o mouse em profundidade própria (--profundidade pode ser ajustada por quem usa) */
+  translate:
+    calc(var(--ponteiro-x) * var(--profundidade, -22) * 1px)
+    calc(var(--ponteiro-y) * var(--profundidade, -22) * 0.6px);
+  rotate: calc(var(--ponteiro-x) * 3deg);
+  transition:
+    translate 0.9s cubic-bezier(0.2, 0.7, 0.2, 1),
+    rotate 0.9s cubic-bezier(0.2, 0.7, 0.2, 1);
+  animation: agua-viva-flutuar 7s ease-in-out infinite;
+}
+
+.agua-viva__aura {
+  animation: agua-viva-brilhar 3.6s ease-in-out infinite;
+}
+
+.agua-viva__sino {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: agua-viva-pulsar 3.6s ease-in-out infinite;
+}
+
+.agua-viva__tentaculo,
+.agua-viva__braco {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: agua-viva-balancar 4.5s ease-in-out infinite;
+}
+
+.agua-viva__braco {
+  animation-duration: 5.5s;
+}
+
+@keyframes agua-viva-flutuar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-22px);
+  }
+}
+
+@keyframes agua-viva-brilhar {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes agua-viva-pulsar {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+  40% {
+    transform: scale(1.05, 0.9);
+  }
+  70% {
+    transform: scale(0.99, 1.03);
+  }
+}
+
+@keyframes agua-viva-balancar {
+  0%,
+  100% {
+    transform: skewX(-6deg) scaleY(1);
+  }
+  50% {
+    transform: skewX(6deg) scaleY(1.04);
+  }
+}

@@ -1,0 +1,29 @@
+.botao-voltar {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    height: 52px;
+    padding: 0 24px 0 18px;
+    color: #e8f3fc;
+    font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+    font-size: 1rem;
+    background: rgba(8, 32, 56, 0.7);
+    border: 1px solid rgba(120, 190, 240, 0.28);
+    border-radius: 18px;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  
+  .botao-voltar:hover {
+    background: rgba(14, 50, 84, 0.8);
+    border-color: #14b8ee;
+  }
+  
+  .botao-voltar:focus-visible {
+    outline: 2px solid #4fd6ff;
+    outline-offset: 2px;
+  }
+  
+  .botao-voltar svg {
+    color: #14b8ee;
+  }
