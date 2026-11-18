@@ -1,8 +1,8 @@
-// SALVAR COMO: <pasta da rota do filiado>/dashboard/page.jsx
-//
-// Componente de servidor. O dashboard fica sem integração com backend e apresenta estado vazio
-// enquanto não há uma fonte local de cadastros. O gráfico de cadastros usa Chart.js no cliente.
+"use client";
+
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
+import { apiRequest } from "@/lib/api";
 import "../filiado.css"; // reaproveita .affiliate-eyebrow e .affiliate-home__intro da home
 import "./dashboard.css";
 import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
@@ -16,7 +16,13 @@ import {
   plural,
 } from "./dashboard-format.js";
 
-export const metadata = { title: "Dashboard do Filiado" };
+const paraDataLocal = (valor) => valor ? new Date(String(valor).replace(" ", "T")) : null;
+const chaveData = (valor) => {
+  const data = paraDataLocal(valor);
+  return data && !Number.isNaN(data.getTime())
+    ? `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`
+    : "";
+};
 
 // Ajuste estas rotas para as reais do projeto. É o único lugar com caminhos fixos.
 const ROTAS = {
@@ -41,41 +47,93 @@ const SEVERIDADES = [
   { chave: "informativo", rotulo: "Informativo", status: "normal" },
 ];
 
-export default async function DashboardFiliado({ searchParams }) {
-  const params = (await searchParams) ?? {};
-  const solicitado = Number(params.periodo);
-  const periodo = PERIODOS.includes(solicitado) ? solicitado : PERIODO_PADRAO;
-  // Dashboard sem integração: mantém o estado inicial até a fonte local de dados ser definida.
-  const dados = {
-    filiado: { nome: "" },
-    resumo: { clientesAtivos: 0, alertasAtivos: 0, alertasCriticos: 0, ocorrenciasAbertas: 0 },
-    economia: null,
-    cadastros: [],
-    alertasPorSeveridade: { critico: 0, atencao: 0, informativo: 0 },
-    clientesAtencao: [],
-    reunioes: [],
-  };
+export default function DashboardFiliado() {
+  const [clientes, setClientes] = useState([]);
+  const [reunioes, setReunioes] = useState([]);
+  const [filiado, setFiliado] = useState({ nome: "" });
+  const [periodo, setPeriodo] = useState(PERIODO_PADRAO);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+    Promise.all([apiRequest("/usuario"), apiRequest("/reunioes"), apiRequest("/auth/me")])
+      .then(([clientesApi, reunioesApi, usuario]) => {
+        if (!ativo) return;
+        setClientes(Array.isArray(clientesApi) ? clientesApi : []);
+        setReunioes(Array.isArray(reunioesApi) ? reunioesApi : []);
+        setFiliado(usuario);
+      })
+      .catch((errorApi) => { if (ativo) setErro(errorApi.message); })
+      .finally(() => { if (ativo) setCarregando(false); });
+    return () => { ativo = false; };
+  }, []);
+
+  const dados = useMemo(() => {
+    const hoje = new Date();
+    const inicio = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - periodo + 1);
+    const agrupado = new Map();
+    for (const cliente of clientes) {
+      const chave = chaveData(cliente.criado_em);
+      if (chave) agrupado.set(chave, (agrupado.get(chave) || 0) + 1);
+    }
+    const cadastros = Array.from({ length: periodo }, (_, indice) => {
+      const data = new Date(inicio.getFullYear(), inicio.getMonth(), inicio.getDate() + indice);
+      const chave = `${data.getFullYear()}-${String(data.getMonth() + 1).padStart(2, "0")}-${String(data.getDate()).padStart(2, "0")}`;
+      return { data: chave, clientes: agrupado.get(chave) || 0 };
+    });
+    const reunioesRecentes = [...reunioes]
+      .sort((a, b) => new Date(b.momento_abertura) - new Date(a.momento_abertura))
+      .map((item) => ({
+        id: item.id_reuniao,
+        cliente: item.nome_usuario || "Cliente",
+        data: item.momento_abertura,
+        proximosPassos: item.proximos_passos,
+      }));
+    return {
+      filiado,
+      resumo: {
+        clientesAtivos: clientes.filter((cliente) => cliente.status === "Ativo").length,
+        reunioesRegistradas: reunioes.length,
+        alertasAtivos: null,
+        alertasCriticos: null,
+        ocorrenciasAbertas: null,
+      },
+      economia: null,
+      cadastros,
+      alertasPorSeveridade: null,
+      clientesAtencao: [...clientes]
+        .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em))
+        .slice(0, 5)
+        .map((cliente) => ({
+          id: cliente.id_usuario,
+          nome: cliente.nome,
+          status: cliente.status === "Ativo" ? "normal" : "atencao",
+          rotuloStatus: cliente.status,
+          data: cliente.criado_em,
+        })),
+      reunioes: reunioesRecentes,
+      atualizadoEm: new Date().toISOString(),
+    };
+  }, [clientes, reunioes, filiado, periodo]);
 
   return (
     <main className="aff-dash">
       <BotaoVoltar />
-
-      {dados.resumo.clientesAtivos === 0 ? (
+      {erro ? <p role="alert" className="aff-vazio">{erro}</p> : carregando ? <p className="aff-vazio" role="status">Carregando dados da carteira...</p> : dados.resumo.clientesAtivos === 0 ? (
         <div className="aff-dash__corpo">
           <Cabecalho dados={dados} frase="Sua carteira ainda não tem clientes ativos." />
           <section className="aff-panel" aria-labelledby="aff-cadastros-titulo">
             <div className="aff-panel__head"><div><h2 id="aff-cadastros-titulo">Novos clientes cadastrados</h2><p>Quantidade de cadastros por dia</p></div></div>
             <GraficoCadastros serie={dados.cadastros} periodo={periodo} />
-            {dados.cadastros.length === 0 && (
-              <Link href={ROTAS.cadastrarCliente} className="aff-btn">Cadastrar cliente</Link>
-            )}
+            <Link href={ROTAS.cadastrarCliente} className="aff-btn">Cadastrar cliente</Link>
           </section>
         </div>
       ) : (
         <div className="aff-dash__corpo">
           <Cabecalho dados={dados} frase={fraseResumo(dados.resumo)} />
           <Kpis dados={dados} periodo={periodo} />
-          <Graficos dados={dados} periodo={periodo} />
+          <Graficos dados={dados} periodo={periodo} onPeriodoChange={setPeriodo} />
           <section className="aff-dash__listas" aria-label="Acompanhamento da carteira">
             <ClientesAtencao itens={dados.clientesAtencao} />
             <UltimasReunioes itens={dados.reunioes} />
@@ -86,15 +144,12 @@ export default async function DashboardFiliado({ searchParams }) {
   );
 }
 
-function fraseResumo({ alertasAtivos, ocorrenciasAbertas }) {
-  if (!alertasAtivos && !ocorrenciasAbertas) {
-    return "Nenhum alerta ativo ou ocorrência aberta na sua carteira.";
-  }
-  return `${plural(alertasAtivos, "alerta ativo", "alertas ativos")} · ${plural(
-    ocorrenciasAbertas,
-    "ocorrência aberta",
-    "ocorrências abertas",
-  )} na sua carteira`;
+function fraseResumo({ clientesAtivos, reunioesRegistradas }) {
+  return `${plural(clientesAtivos, "cliente ativo", "clientes ativos")} · ${plural(
+    reunioesRegistradas,
+    "reunião registrada",
+    "reuniões registradas",
+  )} na sua carteira.`;
 }
 
 /* ------------------------------------------------------------------ cabeçalho */
@@ -131,7 +186,6 @@ function Cabecalho({ dados, frase }) {
 
 function Kpis({ dados, periodo }) {
   const { resumo, economia } = dados;
-  const criticos = resumo.alertasCriticos;
 
   return (
     <section className="aff-dash__kpis" aria-label="Indicadores da carteira">
@@ -141,18 +195,16 @@ function Kpis({ dados, periodo }) {
         <span className="aff-kpi__nota">Ver meus clientes →</span>
       </Link>
 
-      <div className={`aff-kpi${criticos > 0 ? " aff-kpi--alerta" : ""}`}>
-        <span className="aff-kpi__label">Alertas ativos</span>
-        <strong className="aff-kpi__valor">{formatarInteiro(resumo.alertasAtivos)}</strong>
-        <span className={`aff-kpi__nota aff-status--${criticos > 0 ? "critico" : "normal"}`}>
-          <IconeStatus status={criticos > 0 ? "critico" : "normal"} />
-          {criticos > 0 ? plural(criticos, "crítico", "críticos") : "Nenhum crítico"}
-        </span>
+      <div className="aff-kpi">
+        <span className="aff-kpi__label">Reuniões registradas</span>
+        <strong className="aff-kpi__valor">{formatarInteiro(resumo.reunioesRegistradas)}</strong>
+        <span className="aff-kpi__nota">Ver histórico de encontros</span>
       </div>
 
       <div className="aff-kpi">
-        <span className="aff-kpi__label">Ocorrências abertas</span>
-        <strong className="aff-kpi__valor">{formatarInteiro(resumo.ocorrenciasAbertas)}</strong>
+        <span className="aff-kpi__label">Alertas ativos</span>
+        <strong className="aff-kpi__valor"><span aria-label="Indisponível">—</span></strong>
+        <span className="aff-kpi__nota">Consulta indisponível para afiliados</span>
       </div>
 
       <div className="aff-kpi">
@@ -181,7 +233,7 @@ function Kpis({ dados, periodo }) {
 
 /* -------------------------------------------------------------------- gráficos */
 
-function Graficos({ dados, periodo }) {
+function Graficos({ dados, periodo, onPeriodoChange }) {
   return (
     <section className="aff-dash__graficos" aria-label="Gráficos da carteira">
       <div className="aff-panel">
@@ -192,14 +244,9 @@ function Graficos({ dados, periodo }) {
           </div>
           <nav className="aff-periodos" aria-label="Período do gráfico">
             {PERIODOS.map((p) => (
-              <Link
-                key={p}
-                href={`?periodo=${p}`}
-                scroll={false}
-                aria-current={p === periodo ? "true" : undefined}
-              >
+              <button key={p} type="button" onClick={() => onPeriodoChange(p)} aria-pressed={p === periodo}>
                 {p} dias
-              </Link>
+              </button>
             ))}
           </nav>
         </div>
@@ -210,7 +257,7 @@ function Graficos({ dados, periodo }) {
         <div className="aff-panel__head">
           <div>
             <h2>Alertas por severidade</h2>
-            <p>Alertas ativos agora</p>
+            <p>Consulta de alertas indisponível para afiliados</p>
           </div>
         </div>
         <AlertasPorSeveridade valores={dados.alertasPorSeveridade} />
@@ -254,6 +301,7 @@ function GraficoCadastros({ serie, periodo }) {
 }
 
 function AlertasPorSeveridade({ valores }) {
+  if (!valores) return <p className="aff-vazio">O backend ainda não disponibiliza dados de alertas para esta carteira.</p>;
   const total = SEVERIDADES.reduce((soma, s) => soma + valores[s.chave], 0);
 
   if (!total) {
@@ -290,15 +338,15 @@ function ClientesAtencao({ itens }) {
     <div className="aff-panel">
       <div className="aff-panel__head">
         <div>
-          <h2>Clientes que precisam de atenção</h2>
-          <p>Pior status primeiro</p>
+          <h2>Clientes recentes</h2>
+          <p>Cadastros da sua carteira</p>
         </div>
         <Link href={ROTAS.clientes} className="aff-link">Ver todos →</Link>
       </div>
 
       {itens.length === 0 ? (
         <p className="aff-vazio aff-status--normal">
-          <IconeStatus status="normal" /> Nenhum cliente precisa de atenção agora.
+          Nenhum cliente cadastrado na sua carteira.
         </p>
       ) : (
         <ul className="aff-lista">
@@ -309,8 +357,8 @@ function ClientesAtencao({ itens }) {
                 <Link href={ROTAS.clientes} className={`aff-linha aff-status--${status}`}>
                   <IconeStatus status={status} />
                   <span className="aff-linha__nome">{c.nome}</span>
-                  <span className="aff-linha__status">{STATUS[status].rotulo}</span>
-                  <span className="aff-linha__meta">{plural(c.alertas, "alerta", "alertas")}</span>
+                  <span className="aff-linha__status">{c.rotuloStatus}</span>
+                  <span className="aff-linha__meta">{formatarDataHora(c.data)}</span>
                 </Link>
               </li>
             );

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
 import ClienteForm from "@/components/Form/Clienteform";
+import { apiRequest } from "@/lib/api";
 import "./cadastrar_cliente.css";
 
 export default function CadastrarCliente() {
@@ -16,17 +17,11 @@ export default function CadastrarCliente() {
     setErroEnvio(null);
 
     try {
-      const res = await fetch("/api/clientes", {      // ajuste ao seu endpoint
+      await apiRequest("/usuario", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dados),                   // ajuste os nomes dos campos, se preciso
+        body: JSON.stringify(dados),
       });
-
-      if (!res.ok) {
-        const corpo = await res.json().catch(() => ({}));
-        throw new Error(corpo.mensagem || "Não foi possível cadastrar o cliente.");
-      }
-
+      router.refresh();
       router.push("/filiado/clientes");
     } catch (e) {
       setErroEnvio(e.message);

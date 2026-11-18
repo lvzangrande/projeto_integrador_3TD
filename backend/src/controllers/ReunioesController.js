@@ -1,39 +1,31 @@
 export function criarReunioesController({ reunioesService }) {
-
-  async function listar(req, res, next) {
+  async function listar(request, response, next) {
     try {
-      const reunioes = await reunioesService.listar();
-      res.status(200).json({ sucesso: true, dados: reunioes });
+      const dados = await reunioesService.listar(request.usuarioAutenticado.id_usuario);
+      response.status(200).json({ sucesso: true, dados });
     } catch (erro) {
       next(erro);
     }
   }
 
-  async function buscar(req, res, next) {
+  async function buscar(request, response, next) {
     try {
-      const reunioes = await reunioesService.buscarPorId(req.params.id);
-      res.status(200).json({ sucesso: true, dados: reunioes });
+      const dados = await reunioesService.buscarPorId(request.params.id, request.usuarioAutenticado.id_usuario);
+      response.status(200).json({ sucesso: true, dados });
     } catch (erro) {
-      if (erro instanceof TypeError) {
-        return res.status(400).json({ erro: erro.message });
-      }
-
-      if (erro.message.includes('não encontrado')) {
-        return res.status(404).json({ erro: erro.message });
-      }
-
+      if (erro instanceof TypeError) return response.status(400).json({ erro: erro.message });
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
       next(erro);
     }
   }
 
-  async function criar(req, res, next) {
+  async function criar(request, response, next) {
     try {
-      const reunioesNovo = await reunioesService.criar(req.body);
-      res.status(201).json({ sucesso: true, dados: reunioesNovo });
+      const dados = await reunioesService.criar(request.body ?? {}, request.usuarioAutenticado.id_usuario);
+      response.status(201).json({ sucesso: true, dados });
     } catch (erro) {
-      if (erro instanceof TypeError) {
-        return res.status(400).json({ erro: erro.message });
-      }
+      if (erro instanceof TypeError) return response.status(400).json({ erro: erro.message });
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
       next(erro);
     }
   }

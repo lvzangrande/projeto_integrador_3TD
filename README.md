@@ -108,10 +108,10 @@ FRONTEND_PORT=3000
 BACKEND_PORT=8080
 
 FRONTEND_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
 
 MYSQL_ROOT_PASSWORD=root_password
-MYSQL_DATABASE=app_db
+MYSQL_DATABASE=DB_water_control
 MYSQL_USER=app_user
 MYSQL_PASSWORD=app_password
 
@@ -119,7 +119,10 @@ DB_HOST=database
 DB_PORT=3306
 DB_USER=app_user
 DB_PASSWORD=app_password
-DB_NAME=app_db
+DB_NAME=DB_water_control
+JWT_SECRET=replace-with-a-random-secret-of-at-least-32-characters
+COOKIE_SECURE=false
+COOKIE_SAME_SITE=strict
 ```
 
 Para rodar varios grupos no mesmo servidor, mude pelo menos as portas publicadas no host e a URL publica da API. Exemplo para um segundo grupo:
@@ -129,7 +132,7 @@ FRONTEND_HOST_PORT=3001
 BACKEND_HOST_PORT=8081
 DATABASE_HOST_PORT=3307
 FRONTEND_URL=http://localhost:3001
-NEXT_PUBLIC_API_URL=http://localhost:8081
+NEXT_PUBLIC_API_URL=http://localhost:8081/api
 ```
 
 As portas internas podem continuar nos defaults (`FRONTEND_PORT=3000` e `BACKEND_PORT=8080`) na maioria dos casos. Altere as portas internas apenas se o Coolify ou a arquitetura escolhida exigirem.
@@ -140,18 +143,21 @@ Backend (`backend/.env`):
 PORT=8080
 NODE_ENV=development
 FRONTEND_URL=http://localhost:3000
+JWT_SECRET=replace-with-a-random-secret-of-at-least-32-characters
+COOKIE_SECURE=false
+COOKIE_SAME_SITE=strict
 
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=app_user
 DB_PASSWORD=app_password
-DB_NAME=app_db
+DB_NAME=DB_water_control
 ```
 
 Frontend (`frontend/.env.local`):
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=http://localhost:8080/api
 ```
 
 No Docker Compose, o backend usa `DB_HOST=database`, porque esse e o nome do servico MySQL na rede Docker.
@@ -169,6 +175,9 @@ Rotas iniciais:
 
 - `GET /` retorna uma mensagem basica da API.
 - `GET /api/health` retorna status da API e testa a conexao com MySQL.
+- `POST /api/auth/login`, `POST /api/auth/logout` e `GET /api/auth/me` controlam a sessao por cookie HTTPOnly.
+- `GET/POST /api/usuario` lista e cadastra clientes na carteira do afiliado autenticado.
+- `GET/POST /api/reunioes` lista e registra encontros vinculados a um cliente da carteira.
 
 Pastas padrao:
 
@@ -192,7 +201,8 @@ O projeto esta sem Tailwind e sem Bootstrap por padrao. Cada aluno pode instalar
 
 ## Banco de Dados
 
-O arquivo `database/init/01-schema.sql` cria a base inicial quando o container MySQL sobe pela primeira vez.
+O container cria o banco indicado por `MYSQL_DATABASE`; `database/init/01-schema.sql` cria as tabelas nesse banco na primeira inicializacao.
+Para bancos criados anteriormente, aplique uma vez `database/migrations/20261118_filiado_integracao.sql` antes de usar login, cadastro de clientes ou reunioes. Bancos novos recebem as colunas pela definicao inicial. O script nao tenta adivinhar a carteira dos clientes antigos: preencha `usuarios.id_filiado` e `reunioes.id_filiado` para associar esses registros aos afiliados corretos.
 
 Para reiniciar o banco local do zero:
 

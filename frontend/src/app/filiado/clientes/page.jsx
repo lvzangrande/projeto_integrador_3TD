@@ -1,22 +1,90 @@
-"use client"
+"use client";
 
-import "./Meusclientes.css";
+import { useEffect, useMemo, useState } from "react";
+import Link from "next/link";
+import { apiRequest } from "@/lib/api";
 import BotaoVoltar from "@/components/BotaoDeVoltar/BotaoDeVoltar.jsx";
+import "./Meusclientes.css";
 
-const icones = {
-  users: "M5 7a4 4 0 1 0 8 0a4 4 0 1 0-8 0M3 20v-1a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v1M16 3a4 4 0 0 1 0 8M21 20v-1a4 4 0 0 0-3-4",
-  calendar: "M6 5h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V8a3 3 0 0 1 3-3zM8 3v4M16 3v4M3 10h18",
-  search: "M4 11a7 7 0 1 0 14 0a7 7 0 0 0-14 0M20 20l-3.5-3.5",
-  eye: "M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12zM9 12a3 3 0 1 0 6 0a3 3 0 0 0-6 0",
-};
-function Icon({ name, size = 20 }) { return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d={icones[name]} /></svg>; }
-const iniciais = (nome) => nome.split(" ").map((p) => p[0]).slice(0, 2).join("");
+const iniciais = (nome = "") => nome.trim().split(/\s+/).map((parte) => parte[0]).slice(0, 2).join("").toUpperCase();
+
+function formatarDataHora(valor) {
+  if (!valor) return "Sem reunião";
+  const data = new Date(String(valor).replace(" ", "T"));
+  if (Number.isNaN(data.getTime())) return "Sem reunião";
+  return new Intl.DateTimeFormat("pt-BR", {
+    dateStyle: "short",
+    timeStyle: "short",
+    timeZone: "America/Sao_Paulo",
+  }).format(data);
+}
+
+function IconeBusca() {
+  return <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7"/><path d="m16 16 5 5"/></svg>;
+}
 
 export default function MeusClientes() {
-  const clientes = [];
-  return <div className="mc"><div className="mc-voltar-wrap"><BotaoVoltar /></div><main>
-    <header className="mc-cabecalho"><div><p className="mc-contexto">ÁREA DO AFILIADO</p><h1>Meus Clientes</h1><p className="subtitulo">Visualize e gerencie os clientes vinculados ao seu perfil de afiliado.</p></div></header>
-    <div className="filtros"><label className="busca"><Icon name="search" /><input placeholder="Buscar por nome ou empresa..." /></label></div>
-    <section className="cartao"><div className="rolagem"><table><thead><tr>{["Cliente", "Empresa", "Tipo", "Última reunião", "Status", ""].map((t, i) => <th key={i}>{t}</th>)}</tr></thead><tbody>{clientes.length ? clientes.map(c => <tr key={c.nome}><td><div className="cliente"><span className="avatar">{iniciais(c.nome)}</span>{c.nome}</div></td><td className="suave">{c.empresa}</td><td className="suave">{c.tipo}</td><td className="num">{c.data} · {c.hora}</td><td><span className={`status ${c.status === "Ativo" ? "ok" : "pendente"}`}><i/>{c.status}</span></td><td><button className="acao" aria-label={`Visualizar ${c.nome}`}><Icon name="eye"/></button></td></tr>) : <tr><td className="mc-vazio" colSpan={6}>Nenhum cliente encontrado.</td></tr>}</tbody></table></div><footer><span>{clientes.length ? `Exibindo ${clientes.length} clientes` : "Nenhum registro para exibir"}</span></footer></section>
-  </main></div>;
+  const [clientes, setClientes] = useState([]);
+  const [busca, setBusca] = useState("");
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+    apiRequest("/usuario")
+      .then((dados) => { if (ativo) setClientes(Array.isArray(dados) ? dados : []); })
+      .catch((error) => { if (ativo) setErro(error.message); })
+      .finally(() => { if (ativo) setCarregando(false); });
+    return () => { ativo = false; };
+  }, []);
+
+  const visiveis = useMemo(() => {
+    const termo = busca.trim().toLocaleLowerCase("pt-BR");
+    if (!termo) return clientes;
+    return clientes.filter((cliente) => [cliente.nome, cliente.email, cliente.documento]
+      .some((valor) => String(valor ?? "").toLocaleLowerCase("pt-BR").includes(termo)));
+  }, [clientes, busca]);
+
+  return (
+    <div className="mc">
+      <div className="mc-voltar-wrap"><BotaoVoltar /></div>
+      <main>
+        <header className="mc-cabecalho">
+          <div>
+            <p className="mc-contexto">ÁREA DO AFILIADO</p>
+            <h1>Meus Clientes</h1>
+            <p className="subtitulo">Clientes cadastrados por você e vinculados à sua carteira.</p>
+          </div>
+          <Link className="mc-novo" href="/filiado/cadastrar_cliente">Cadastrar cliente</Link>
+        </header>
+
+        <div className="filtros">
+          <label className="busca"><IconeBusca /><input value={busca} onChange={(evento) => setBusca(evento.target.value)} placeholder="Buscar por nome, e-mail ou documento..." /></label>
+        </div>
+
+        <section className="cartao" aria-busy={carregando}>
+          <div className="rolagem">
+            <table>
+              <thead><tr>{["Cliente", "E-mail", "Pessoa", "Última reunião", "Status"].map((titulo) => <th key={titulo}>{titulo}</th>)}</tr></thead>
+              <tbody>
+                {erro ? <tr><td className="mc-vazio" colSpan={5} role="alert">{erro}</td></tr> : null}
+                {!erro && carregando ? <tr><td className="mc-vazio" colSpan={5}>Carregando clientes...</td></tr> : null}
+                {!erro && !carregando && visiveis.map((cliente) => (
+                  <tr key={cliente.id_usuario}>
+                    <td><div className="cliente"><span className="avatar">{iniciais(cliente.nome)}</span>{cliente.nome}</div></td>
+                    <td className="suave">{cliente.email}</td>
+                    <td className="suave">{cliente.tipo_pessoa === "juridica" ? "Pessoa jurídica" : "Pessoa física"}</td>
+                    <td className="num">{formatarDataHora(cliente.ultima_reuniao)}</td>
+                    <td><span className={`status ${cliente.status === "Ativo" ? "ok" : "pendente"}`}><i />{cliente.status}</span></td>
+                  </tr>
+                ))}
+                {!erro && !carregando && visiveis.length === 0 ? <tr><td className="mc-vazio" colSpan={5}>{busca ? "Nenhum cliente corresponde à busca." : "Nenhum cliente cadastrado na sua carteira."}</td></tr> : null}
+              </tbody>
+            </table>
+          </div>
+          <footer><span>{carregando ? "Carregando..." : `Exibindo ${visiveis.length} de ${clientes.length} clientes`}</span></footer>
+        </section>
+      </main>
+    </div>
+  );
 }

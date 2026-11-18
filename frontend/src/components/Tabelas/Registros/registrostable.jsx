@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import "./registrostable.css";
 
 /* ---------- Aparência por tipo ----------
@@ -10,6 +10,7 @@ import "./registrostable.css";
  */
 const TIPOS = {
   reuniao: { label: "Reunião", icon: "users" },
+  entrevista: { label: "Entrevista", icon: "users" },
   vistoria: { label: "Vistoria", icon: "eye" },
   ocorrencia: { label: "Ocorrência", icon: "alert" },
   manutencao: { label: "Manutenção", icon: "wrench" },
@@ -211,9 +212,6 @@ export default function RegistrosTable({
   const [tipo, setTipo] = useState("todos");
   const [pagina, setPagina] = useState(1);
 
-  const onChangeRef = useRef(onChange);
-  onChangeRef.current = onChange;
-
   // Atraso na busca para não chamar a API a cada tecla
   useEffect(() => {
     if (busca === buscaAplicada) return;
@@ -226,12 +224,12 @@ export default function RegistrosTable({
 
   // Avisa o componente pai sempre que os parâmetros de consulta mudam
   useEffect(() => {
-    onChangeRef.current?.({
+    onChange?.({
       busca: buscaAplicada.trim(),
       tipo: tipo === "todos" ? null : tipo,
       pagina,
     });
-  }, [buscaAplicada, tipo, pagina]);
+  }, [buscaAplicada, tipo, pagina, onChange]);
 
   const totalRegistros = Number.isFinite(total) ? total : registros.length;
   const totalPaginas = Math.max(1, Math.ceil(totalRegistros / porPagina));

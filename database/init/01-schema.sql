@@ -1,16 +1,19 @@
-CREATE DATABASE DB_water_control;
-use DB_water_control;
-
 CREATE TABLE IF NOT EXISTS usuarios(
 	id_usuario INT PRIMARY KEY AUTO_INCREMENT,
 	nome VARCHAR(100) NOT NULL,
 	email VARCHAR(100) UNIQUE NOT NULL,
-	senha VARCHAR(80) NOT NULL, -- verificar caracteres do hash para nao ficar faltando
+	senha VARCHAR(255) NOT NULL,
 	cnpj VARCHAR(20) NOT NULL,
+	documento VARCHAR(20) NULL,
+	tipo_pessoa ENUM('fisica', 'juridica') NULL,
 	telefone VARCHAR(20) NULL,
 	categoria ENUM('Admin', 'Filiado', 'Cliente') DEFAULT 'Cliente' NOT NULL,
 	tema ENUM('Claro', 'Escuro') DEFAULT 'Escuro' NOT NULL,
-	status ENUM('Ativo', 'Inativo') DEFAULT 'Ativo' NOT NULL
+	status ENUM('Ativo', 'Inativo') DEFAULT 'Ativo' NOT NULL,
+	id_filiado INT NULL,
+	criado_em DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	UNIQUE KEY uq_usuarios_documento (documento),
+	CONSTRAINT fk_usuarios_filiado FOREIGN KEY (id_filiado) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
 )ENGINE=InnoDB;
 
 CREATE TABLE IF NOT EXISTS reservatorios(
@@ -79,10 +82,12 @@ CREATE TABLE IF NOT EXISTS ocorrencias(
 CREATE TABLE IF NOT EXISTS reunioes(
 	id_reuniao INT PRIMARY KEY AUTO_INCREMENT,
 	id_usuario INT,
+	id_filiado INT NULL,
 	momento_abertura DATETIME NOT NULL,
 	pauta VARCHAR(255) NOT NULL,
 	resumo TEXT NOT NULL,
 	proximos_passos TEXT NULL,
 	tipo ENUM('Reunião', 'Entrevista') DEFAULT 'Reunião' NOT NULL,
-	FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+	FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+	FOREIGN KEY (id_filiado) REFERENCES usuarios(id_usuario) ON DELETE SET NULL
 )ENGINE=InnoDB;
