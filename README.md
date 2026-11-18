@@ -108,7 +108,7 @@ FRONTEND_PORT=3000
 BACKEND_PORT=8080
 
 FRONTEND_URL=http://localhost:3000
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=http://localhost:8080
 
 MYSQL_ROOT_PASSWORD=root_password
 MYSQL_DATABASE=app_db
@@ -129,7 +129,7 @@ FRONTEND_HOST_PORT=3001
 BACKEND_HOST_PORT=8081
 DATABASE_HOST_PORT=3307
 FRONTEND_URL=http://localhost:3001
-NEXT_PUBLIC_API_URL=http://localhost:8081/api
+NEXT_PUBLIC_API_URL=http://localhost:8081
 ```
 
 As portas internas podem continuar nos defaults (`FRONTEND_PORT=3000` e `BACKEND_PORT=8080`) na maioria dos casos. Altere as portas internas apenas se o Coolify ou a arquitetura escolhida exigirem.
@@ -151,7 +151,7 @@ DB_NAME=app_db
 Frontend (`frontend/.env.local`):
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080/api
+NEXT_PUBLIC_API_URL=http://localhost:8080
 ```
 
 No Docker Compose, o backend usa `DB_HOST=database`, porque esse e o nome do servico MySQL na rede Docker.
