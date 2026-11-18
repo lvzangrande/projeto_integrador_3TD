@@ -1,12 +1,14 @@
 export function criarReunioesModel({ pool }) {
   async function listarTodos() {
-    const [linhas] = await pool.query("SELECT * FROM reunioes");
+    const [linhas] = await pool.query(
+      "SELECT r.*, u.nome AS nome_usuario FROM reunioes r LEFT JOIN usuarios u ON u.id_usuario = r.id_usuario ORDER BY r.momento_abertura DESC",
+    );
     return linhas;
   }
 
   async function buscarPorId(id) {
     const [linhas] = await pool.query(
-      "SELECT * FROM reunioes WHERE id_reunioes = ?",
+      "SELECT r.*, u.nome AS nome_usuario FROM reunioes r LEFT JOIN usuarios u ON u.id_usuario = r.id_usuario WHERE r.id_reuniao = ?",
       [id],
     );
     return linhas[0] || null;
