@@ -9,22 +9,16 @@
     "lint": "eslint"
   },
   "dependencies": {
-<<<<<<< HEAD
     "@react-three/drei": "^10.7.9",
     "@react-three/fiber": "^9.8.2",
     "@types/three": "^0.187.0",
+    "chart.js": "^4.6.1",
     "lenis": "^1.3.27",
     "next": "16.2.10",
     "react": "19.2.4",
+    "react-chartjs-2": "^5.3.1",
     "react-dom": "19.2.4",
     "three": "^0.187.0"
-=======
-    "chart.js": "^4.6.1",
-    "next": "16.2.10",
-    "react": "19.2.4",
-    "react-chartjs-2": "^5.3.1",
-    "react-dom": "19.2.4"
->>>>>>> 65ac6ef666fc3f535798e164f9f8660f2b261ab2
   },
   "overrides": {
     "postcss": "8.5.10"
