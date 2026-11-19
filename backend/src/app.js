@@ -12,7 +12,6 @@ import { criarOcorrenciasController } from "./controllers/OcorrenciasController.
 import { criarLeiturasController } from "./controllers/LeiturasController.js";
 import { criarReunioesController } from "./controllers/ReunioesController.js";
 import { criarReservatoriosController } from "./controllers/ReservatoriosController.js";
-import { criarHealthController } from "./controllers/healthController.js";
 import { criarAutenticacaoRoutes } from "./routes/autenticacaoRoutes.js";
 import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 import { criarSetorRoutes } from "./routes/setorRoutes.js";
@@ -21,7 +20,7 @@ import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
 import { criarLeiturasRoutes } from "./routes/leiturasRoutes.js";
 import { criarReunioesRoutes } from "./routes/reunioesRoutes.js";
 import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
-import { criarHealthRoutes } from "./routes/healthRoutes.js";
+
 import { criarAutenticacaoService } from "../services/AutenticacaoService.js";
 import { criarUsuarioService } from "../services/UsuarioService.js";
 import { criarSetorService } from "../services/SetorService.js";
@@ -30,7 +29,7 @@ import { criarOcorrenciasService } from "../services/OcorrenciasService.js";
 import { criarLeiturasService } from "../services/LeiturasService.js";
 import { criarReunioesService } from "../services/ReunioesService.js";
 import { criarReservatoriosService } from "../services/ReservatoriosService.js";
-import { criarHealthService } from "../services/HealthService.js";
+
 import { criarUsuarioModel } from "../models/UsuarioModels.js";
 import { criarSetorModel } from "../models/SetorModels.js";
 import { criarMedidoresModel } from "../models/MedidoresModel.js";
@@ -38,7 +37,6 @@ import { criarOcorrenciasModel } from "../models/OcorrenciasModel.js";
 import { criarLeiturasModel } from "../models/LeiturasModel.js";
 import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
-import { criarHealthModel } from "../models/HealthModels.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
@@ -57,7 +55,6 @@ api.use("/medidores", criarMedidoresRoutes({ medidorController: criarMedidoresCo
 api.use("/ocorrencias", criarOcorrenciasRoutes({ ocorrenciasController: criarOcorrenciasController({ ocorrenciasService: criarOcorrenciasService({ ocorrenciasModel: criarOcorrenciasModel({ pool }) }) }) }));
 api.use("/leituras", criarLeiturasRoutes({ leituraController: criarLeiturasController({ leituraService: criarLeiturasService({ leituraModel: criarLeiturasModel({ pool }) }) }) }));
 api.use("/reservatorios", criarReservatoriosRoutes({ reservatoriosController: criarReservatoriosController({ reservatoriosService: criarReservatoriosService({ reservatoriosModel: criarReservatoriosModel({ pool }) }) }) }));
-api.use("/health", criarHealthRoutes({ healthController: criarHealthController({ healthService: criarHealthService({ healthModel: criarHealthModel({ pool }) }) }) }));
 
 const app = express();
 app.use(helmet());
