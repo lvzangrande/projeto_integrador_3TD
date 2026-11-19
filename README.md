@@ -48,19 +48,21 @@ cd ../frontend
 npm install
 ```
 
-2. Copie os arquivos de ambiente:
+2. Configure as variaveis locais do backend e do frontend:
 
 ```bash
-cp .env.example .env
 cp backend/.env.example backend/.env
 cp frontend/.env.example frontend/.env.local
 ```
 
-3. Suba o MySQL com Docker (se for rodar com XAMPP ou MySQL Community Server, ignorar passo):
+No `backend/.env`, ajuste `DB_USER` e `DB_PASSWORD` para as credenciais do seu MySQL local.
 
-```bash
-docker compose up -d database
-```
+3. Crie e popule o banco. No MySQL Workbench, execute nesta ordem:
+
+- `database/init/01-schema.sql`
+- `database/init/seed.sql`
+
+O backend espera o banco `DB_water_control` na porta `3306`.
 
 4. Rode o backend:
 
@@ -80,7 +82,8 @@ URLs padrao:
 
 - Frontend: `http://localhost:3000`
 - Backend: `http://localhost:8080`
-- Health check da API: `http://localhost:8080/api/health`
+- Rota base da API: `http://localhost:8080/`
+- Recursos da API: `/usuario`, `/reservatorios`, `/setor`, `/medidores`, `/leituras`, `/ocorrencias` e `/reunioes`
 - MySQL: `localhost:3306`
 
 ## Rodando Tudo com Docker Compose

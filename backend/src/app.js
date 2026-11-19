@@ -12,6 +12,7 @@ import { criarOcorrenciasController } from "./controllers/OcorrenciasController.
 import { criarLeiturasController } from "./controllers/LeiturasController.js";
 import { criarReunioesController } from "./controllers/ReunioesController.js";
 import { criarReservatoriosController } from "./controllers/ReservatoriosController.js";
+import { criarHealthController } from "./controllers/HealthController.js";
 import { criarAutenticacaoRoutes } from "./routes/autenticacaoRoutes.js";
 import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 import { criarSetorRoutes } from "./routes/setorRoutes.js";
@@ -20,6 +21,7 @@ import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
 import { criarLeiturasRoutes } from "./routes/leiturasRoutes.js";
 import { criarReunioesRoutes } from "./routes/reunioesRoutes.js";
 import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
+import { criarHealthRoutes } from "./routes/healthRoutes.js";
 
 import { criarAutenticacaoService } from "../services/AutenticacaoService.js";
 import { criarUsuarioService } from "../services/UsuarioService.js";
@@ -29,6 +31,7 @@ import { criarOcorrenciasService } from "../services/OcorrenciasService.js";
 import { criarLeiturasService } from "../services/LeiturasService.js";
 import { criarReunioesService } from "../services/ReunioesService.js";
 import { criarReservatoriosService } from "../services/ReservatoriosService.js";
+import { criarHealthService } from "../services/HealthService.js";
 
 import { criarUsuarioModel } from "../models/UsuarioModels.js";
 import { criarSetorModel } from "../models/SetorModels.js";
@@ -37,6 +40,7 @@ import { criarOcorrenciasModel } from "../models/OcorrenciasModel.js";
 import { criarLeiturasModel } from "../models/LeiturasModel.js";
 import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
+import { criarHealthModel } from "../models/HealthModels.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
@@ -46,7 +50,9 @@ const reunioesModel = criarReunioesModel({ pool });
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
-api.use("/usuario", criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) }));
+const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
+api.use("/usuario", usuarioRoutes);
+api.use("/usuarios", usuarioRoutes);
 api.use("/reunioes", criarReunioesRoutes({ reunioesController: criarReunioesController({
   reunioesService: criarReunioesService({ reunioesModel, usuarioModel }),
 }) }));
@@ -55,10 +61,34 @@ api.use("/medidores", criarMedidoresRoutes({ medidorController: criarMedidoresCo
 api.use("/ocorrencias", criarOcorrenciasRoutes({ ocorrenciasController: criarOcorrenciasController({ ocorrenciasService: criarOcorrenciasService({ ocorrenciasModel: criarOcorrenciasModel({ pool }) }) }) }));
 api.use("/leituras", criarLeiturasRoutes({ leituraController: criarLeiturasController({ leituraService: criarLeiturasService({ leituraModel: criarLeiturasModel({ pool }) }) }) }));
 api.use("/reservatorios", criarReservatoriosRoutes({ reservatoriosController: criarReservatoriosController({ reservatoriosService: criarReservatoriosService({ reservatoriosModel: criarReservatoriosModel({ pool }) }) }) }));
+api.use("/health", criarHealthRoutes({ healthController: criarHealthController({ healthService: criarHealthService({ healthModel: criarHealthModel({ pool }) }) }) }));
 
 const app = express();
 app.use(helmet());
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000", credentials: true }));
+const frontendOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
+const allowedOrigins = new Set([frontendOrigin]);
+if (process.env.NODE_ENV !== "production") {
+  try {
+    const localOrigin = new URL(frontendOrigin);
+    if (["localhost", "127.0.0.1"].includes(localOrigin.hostname)) {
+      for (const hostname of ["localhost", "127.0.0.1"]) {
+        localOrigin.hostname = hostname;
+        allowedOrigins.add(localOrigin.origin);
+      }
+    }
+  } catch {
+    // Invalid FRONTEND_URL will simply not authorize browser origins.
+  }
+}
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    return callback(null, allowedOrigins.has(origin));
+  },
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+}));
 app.use(express.json({ limit: "1mb" }));
 app.use("/api", api);
 app.use("/", api);

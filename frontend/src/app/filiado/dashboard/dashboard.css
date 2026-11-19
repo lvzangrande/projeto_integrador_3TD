@@ -193,6 +193,50 @@
     list-style: none;
 }
 
+.aff-linha {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid var(--affiliate-line);
+    border-radius: 12px;
+    color: var(--affiliate-text);
+    text-decoration: none;
+}
+
+.aff-linha:hover {
+    background: var(--affiliate-panel-raised);
+}
+
+.aff-icone {
+    display: block;
+    width: 18px;
+    height: 18px;
+    flex: 0 0 18px;
+}
+
+.aff-linha__nome {
+    min-width: 0;
+    overflow: hidden;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.aff-linha__status {
+    flex: 0 0 auto;
+    color: var(--affiliate-muted);
+    font-size: .78rem;
+}
+
+.aff-linha__meta {
+    margin-left: auto;
+    color: var(--affiliate-muted);
+    font-size: .75rem;
+    white-space: nowrap;
+}
+
 .aff-link {
     color: var(--affiliate-accent);
     font-size: .82rem;
