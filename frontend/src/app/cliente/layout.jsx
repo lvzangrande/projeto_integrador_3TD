@@ -1,6 +1,6 @@
-import ClienteShell from "./ClienteShell";
+import ClientShell from "./ClientShell";
+import "../filiado/affiliate.css";
 import "./cliente.css";
-
-export default function ClienteLayout({ children }) {
-  return <ClienteShell>{children}</ClienteShell>;
+export default function ClientLayout({ children }) {
+  return <ClientShell>{children}</ClientShell>;
 }

@@ -66,9 +66,7 @@ export function verificarToken(token) {
 }
 
 export function autenticar(request, response, next) {
-  const token = lerCookie(request, COOKIE_NAME);
-  if (!token) return response.status(401).json({ erro: "Autenticação necessária. Entre na sua conta para continuar." });
-  const usuario = verificarToken(token);
+  const usuario = verificarToken(lerCookie(request, COOKIE_NAME));
   if (!usuario) return response.status(401).json({ erro: "Sua sessão expirou. Entre novamente." });
   request.usuarioAutenticado = usuario;
   next();
@@ -77,6 +75,13 @@ export function autenticar(request, response, next) {
 export function exigirFiliado(request, response, next) {
   if (request.usuarioAutenticado?.categoria !== "Filiado") {
     return response.status(403).json({ erro: "Esta área está disponível somente para afiliados." });
+  }
+  next();
+}
+
+export function exigirCliente(request, response, next) {
+  if (request.usuarioAutenticado?.categoria !== "Cliente") {
+    return response.status(403).json({ erro: "Esta área está disponível somente para clientes." });
   }
   next();
 }

@@ -97,8 +97,7 @@
   }
   
   .rg-search:focus-within,
-  .rg-btn:focus-visible,
-  .rg-periodo:focus-within {
+  .rg-btn:focus-visible {
     border-color: var(--cyan);
     box-shadow: 0 0 0 3px rgba(20, 184, 238, 0.25);
     outline: none;
@@ -117,28 +116,6 @@
   .rg-btn:hover {
     border-color: var(--cyan);
     background: rgba(14, 50, 84, 0.8);
-  }
-
-  .rg-periodo {
-    cursor: pointer;
-  }
-
-  .rg-periodo select {
-    min-width: 0;
-    max-width: 190px;
-    padding: 0;
-    border: 0;
-    outline: 0;
-    appearance: none;
-    background: transparent;
-    color: inherit;
-    font: inherit;
-    cursor: pointer;
-  }
-
-  .rg-periodo option {
-    background: #05213b;
-    color: #e8f3fc;
   }
   
   /* ---------- Filtro por tipo (chips) ---------- */

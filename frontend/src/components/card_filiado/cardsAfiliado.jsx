@@ -28,11 +28,5 @@ export const cards = [
         imgFuncao: "icones/history.png",
         descricao: "Consulta de registros anteriores",
         link: "/filiado/historico_reunioes"
-    },
-    {
-        funcaoCard: "Histórico de Leituras",
-        imgFuncao: "icones/history.png",
-        descricao: "Leituras reais dos medidores",
-        link: "/filiado/leituras"
     }
 ]

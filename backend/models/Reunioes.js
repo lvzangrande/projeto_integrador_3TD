@@ -1,4 +1,4 @@
-const TIPOS = ["Reuni\u00e3o", "Entrevista"];
+const TIPOS = ["Reunião", "Entrevista"];
 
 export default class Reuniao {
   constructor({ id_usuario, id_filiado, momento_abertura, pauta, resumo, proximos_passos, tipo }) {

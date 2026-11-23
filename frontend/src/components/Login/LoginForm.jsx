@@ -27,8 +27,11 @@ export default function LoginForm() {
         router.replace("/filiado");
       } else if (usuario.categoria === "Admin") {
         router.replace("/admin");
-      } else {
+      } else if (usuario.categoria === "Cliente") {
         router.replace("/cliente");
+      } else {
+        await apiRequest("/auth/logout", { method: "POST" });
+        setErro("Esta conta não possui uma área de acesso configurada.");
       }
     } catch (error) {
       setErro(error.message || "Não foi possível entrar. Tente novamente.");

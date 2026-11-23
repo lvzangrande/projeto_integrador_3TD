@@ -20,6 +20,7 @@ import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
 import { criarLeiturasRoutes } from "./routes/leiturasRoutes.js";
 import { criarReunioesRoutes } from "./routes/reunioesRoutes.js";
 import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
+import { criarClienteRoutes } from "./routes/clienteRoutes.js";
 
 import { criarAutenticacaoService } from "../services/AutenticacaoService.js";
 import { criarUsuarioService } from "../services/UsuarioService.js";
@@ -46,9 +47,7 @@ const reunioesModel = criarReunioesModel({ pool });
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
-const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
-api.use("/usuario", usuarioRoutes);
-api.use("/usuarios", usuarioRoutes);
+api.use("/usuario", criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) }));
 api.use("/reunioes", criarReunioesRoutes({ reunioesController: criarReunioesController({
   reunioesService: criarReunioesService({ reunioesModel, usuarioModel }),
 }) }));
@@ -57,33 +56,11 @@ api.use("/medidores", criarMedidoresRoutes({ medidorController: criarMedidoresCo
 api.use("/ocorrencias", criarOcorrenciasRoutes({ ocorrenciasController: criarOcorrenciasController({ ocorrenciasService: criarOcorrenciasService({ ocorrenciasModel: criarOcorrenciasModel({ pool }) }) }) }));
 api.use("/leituras", criarLeiturasRoutes({ leituraController: criarLeiturasController({ leituraService: criarLeiturasService({ leituraModel: criarLeiturasModel({ pool }) }) }) }));
 api.use("/reservatorios", criarReservatoriosRoutes({ reservatoriosController: criarReservatoriosController({ reservatoriosService: criarReservatoriosService({ reservatoriosModel: criarReservatoriosModel({ pool }) }) }) }));
+api.use("/cliente/portal", criarClienteRoutes({ pool }));
 
 const app = express();
 app.use(helmet());
-const frontendOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
-const allowedOrigins = new Set([frontendOrigin]);
-if (process.env.NODE_ENV !== "production") {
-  try {
-    const localOrigin = new URL(frontendOrigin);
-    if (["localhost", "127.0.0.1"].includes(localOrigin.hostname)) {
-      for (const hostname of ["localhost", "127.0.0.1"]) {
-        localOrigin.hostname = hostname;
-        allowedOrigins.add(localOrigin.origin);
-      }
-    }
-  } catch {
-    // Invalid FRONTEND_URL will simply not authorize browser origins.
-  }
-}
-app.use(cors({
-  origin(origin, callback) {
-    if (!origin) return callback(null, true);
-    return callback(null, allowedOrigins.has(origin));
-  },
-  credentials: true,
-  allowedHeaders: ["Content-Type", "Authorization"],
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-}));
+app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000", credentials: true }));
 app.use(express.json({ limit: "1mb" }));
 app.use("/api", api);
 app.use("/", api);

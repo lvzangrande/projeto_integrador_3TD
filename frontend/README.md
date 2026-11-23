@@ -7,12 +7,12 @@ Aplicacao Next.js do template base.
 ```bash
 npm install
 npm install three @types/three @react-three/fiber @react-three/drei
-npm install lenis
-npm install chart.js react-chartjs-2 
+npm install lenis 
 npm run dev
 npm run build
 npm start
 npm run lint
+npm install chart.js react-chartjs-2
 ```
 
 ## Ambiente
