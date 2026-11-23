@@ -42,17 +42,26 @@ import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
 import { criarAdminModel } from "../models/AdminModel.js";
 import { criarAcessoModel } from "../models/AcessoModel.js";
+import { criarRecuperacaoSenhaModel } from "../models/RecuperacaoSenhaModel.js";
+import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaService.js";
+import { criarGmailEmailService } from "../services/GmailEmailService.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
 const acessoModel = criarAcessoModel({ pool });
 const autenticacaoService = criarAutenticacaoService({ usuarioModel, acessoModel });
+const recuperacaoSenhaModel = criarRecuperacaoSenhaModel({ pool });
+const recuperacaoSenhaService = criarRecuperacaoSenhaService({
+  usuarioModel,
+  recuperacaoSenhaModel,
+  gmailEmailService: criarGmailEmailService(),
+});
 const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
-api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
+api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) }));
 api.use("/admin", criarAdminRoutes({ adminController: criarAdminController({ adminService: criarAdminService({ adminModel }) }) }));
 const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
 api.use("/usuario", usuarioRoutes);

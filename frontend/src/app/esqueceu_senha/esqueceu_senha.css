@@ -142,6 +142,8 @@
   color: var(--cor-branca);
 }
 
+.pagina-esqueceu-senha__botao:disabled { cursor: wait; opacity: .76; }
+
 .pagina-esqueceu-senha__botao::before {
   content: "";
   position: absolute;

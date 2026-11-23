@@ -1,6 +1,6 @@
 import { limparCookieSessao, definirCookieSessao } from "../middlewares/auth.js";
 
-export function criarAutenticacaoController({ autenticacaoService }) {
+export function criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) {
   async function entrar(request, response, next) {
     try {
       const sessao = await autenticacaoService.entrar(request.body ?? {}, { ip: request.ip });
@@ -26,5 +26,35 @@ export function criarAutenticacaoController({ autenticacaoService }) {
     response.status(200).json({ sucesso: true, dados: request.usuarioAutenticado });
   }
 
-  return { entrar, sair, atual };
+  async function solicitarRedefinicao(request, response, next) {
+    try {
+      const dados = await recuperacaoSenhaService.solicitarRedefinicao(request.body?.email);
+      response.status(202).json({ sucesso: true, dados });
+    } catch (erro) {
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
+      next(erro);
+    }
+  }
+
+  async function redefinirSenha(request, response, next) {
+    try {
+      const dados = await recuperacaoSenhaService.redefinirSenha(request.body ?? {});
+      response.status(200).json({ sucesso: true, dados });
+    } catch (erro) {
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
+      next(erro);
+    }
+  }
+
+  async function validarTokenRedefinicao(request, response, next) {
+    try {
+      const dados = await recuperacaoSenhaService.validarToken(request.query?.token);
+      response.status(200).json({ sucesso: true, dados });
+    } catch (erro) {
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
+      next(erro);
+    }
+  }
+
+  return { entrar, sair, atual, solicitarRedefinicao, validarTokenRedefinicao, redefinirSenha };
 }

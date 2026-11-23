@@ -4,6 +4,7 @@ import "./esqueceu_senha.css";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { apiRequest } from "@/lib/api";
 import AguaViva from "@/components/Login/AguaViva";
 import BolhasSubindo from "@/components/Login/BolhasSubindo";
 import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
@@ -14,9 +15,11 @@ export default function EsqueceuSenha() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [erro, setErro] = useState("");
+  const [enviando, setEnviando] = useState(false);
 
-  function aoEnviar(evento) {
+  async function aoEnviar(evento) {
     evento.preventDefault();
+    if (enviando) return;
     const emailLimpo = email.trim();
 
     if (!emailLimpo) {
@@ -29,7 +32,18 @@ export default function EsqueceuSenha() {
     }
 
     setErro("");
-    router.push(`/esqueceu_senha/enviado?email=${encodeURIComponent(emailLimpo)}`);
+    setEnviando(true);
+    try {
+      await apiRequest("/auth/esqueci-senha", {
+        method: "POST",
+        body: JSON.stringify({ email: emailLimpo }),
+      });
+      router.push(`/esqueceu_senha/enviado?email=${encodeURIComponent(emailLimpo)}`);
+    } catch (error) {
+      setErro(error.message || "Não foi possível solicitar a recuperação agora. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -97,8 +111,8 @@ export default function EsqueceuSenha() {
             )}
           </div>
 
-          <button className="pagina-esqueceu-senha__botao" type="submit">
-            Enviar link de recuperação
+          <button className="pagina-esqueceu-senha__botao" type="submit" disabled={enviando}>
+            {enviando ? "Enviando..." : "Enviar link de recuperação"}
           </button>
         </form>
 
