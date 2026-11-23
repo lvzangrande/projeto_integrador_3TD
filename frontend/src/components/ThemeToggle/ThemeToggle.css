@@ -1,0 +1,41 @@
+.app-theme-toggle {
+  position: fixed;
+  z-index: 20;
+  top: 16px;
+  right: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1px solid rgba(185, 222, 242, .4);
+  border-radius: 999px;
+  color: #e8f3fc;
+  background: rgba(5, 28, 47, .82);
+  box-shadow: 0 5px 18px rgba(0, 10, 25, .2);
+  font: 600 .78rem/1 "Segoe UI", system-ui, sans-serif;
+  cursor: pointer;
+  backdrop-filter: blur(10px);
+  transition: color .18s ease, background .18s ease, border-color .18s ease, transform .18s ease;
+}
+
+.app-theme-toggle:hover { transform: translateY(-1px); border-color: #72dff6; }
+.app-theme-toggle:focus-visible { outline: 2px solid #45c9ed; outline-offset: 3px; }
+.app-theme-toggle svg { width: 19px; height: 19px; flex: 0 0 auto; }
+
+.theme-light .app-theme-toggle {
+  border-color: rgba(31, 83, 108, .24);
+  color: #24485d;
+  background: rgba(255, 255, 255, .92);
+  box-shadow: 0 5px 18px rgba(34, 72, 91, .14);
+}
+
+@media (max-width: 520px) {
+  .app-theme-toggle { top: 12px; right: 12px; min-height: 38px; gap: 6px; padding: 0 10px; font-size: .7rem; }
+  .app-theme-toggle svg { width: 17px; height: 17px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-theme-toggle { transition: none; }
+}

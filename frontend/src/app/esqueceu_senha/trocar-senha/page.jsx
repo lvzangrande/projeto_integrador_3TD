@@ -2,13 +2,14 @@
 
 import "./trocar_senha.css";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { apiRequest } from "@/lib/api";
 import AguaViva from "@/components/Login/AguaViva";
 import BolhasSubindo from "@/components/Login/BolhasSubindo";
 import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
 
 const MINIMO_CARACTERES = 8;
-// O backend guarda a senha com bcrypt, que só considera os primeiros 72 caracteres.
+// Mantém o limite aceito pela API de recuperação de senha.
 const MAXIMO_CARACTERES = 72;
 
 const REGRAS = [
@@ -74,6 +75,31 @@ export default function TrocarSenha() {
   const [confirmacao, setConfirmacao] = useState("");
   const [erros, setErros] = useState({});
   const [concluido, setConcluido] = useState(false);
+  const [token, setToken] = useState("");
+  const [verificandoToken, setVerificandoToken] = useState(true);
+  const [enviando, setEnviando] = useState(false);
+  const [erroGeral, setErroGeral] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+    const tokenUrl = new URLSearchParams(window.location.search).get("token") || "";
+    setToken(tokenUrl);
+    if (!tokenUrl) {
+      setErroGeral("O link está incompleto. Solicite uma nova recuperação de senha.");
+      setVerificandoToken(false);
+      return () => { ativo = false; };
+    }
+
+    apiRequest(`/auth/verificar-token-redefinicao?token=${encodeURIComponent(tokenUrl)}`)
+      .catch((error) => {
+        if (!ativo) return;
+        setToken("");
+        setErroGeral(error.message || "Este link é inválido ou expirou. Solicite outro link de recuperação.");
+      })
+      .finally(() => { if (ativo) setVerificandoToken(false); });
+
+    return () => { ativo = false; };
+  }, []);
 
   const senhasIguais = confirmacao.length > 0 && novaSenha === confirmacao;
   const requisitos = [
@@ -81,8 +107,9 @@ export default function TrocarSenha() {
     { id: "igualdade", texto: "As duas senhas são iguais", atendido: senhasIguais },
   ];
 
-  function aoEnviar(evento) {
+  async function aoEnviar(evento) {
     evento.preventDefault();
+    if (enviando) return;
     const novosErros = {};
 
     if (!novaSenha) {
@@ -100,10 +127,25 @@ export default function TrocarSenha() {
     setErros(novosErros);
     if (Object.keys(novosErros).length > 0) return;
 
-    // TODO (integração): chamar POST {NEXT_PUBLIC_API_URL}/auth/redefinir-senha com a nova senha
-    // e o token do link do e-mail (new URLSearchParams(window.location.search).get("token")).
-    // Só marcar como concluído quando a API responder com sucesso.
-    setConcluido(true);
+    if (!token) {
+      setErroGeral("O link está incompleto. Solicite uma nova recuperação de senha.");
+      return;
+    }
+
+    setErroGeral("");
+    setEnviando(true);
+    try {
+      await apiRequest("/auth/redefinir-senha", {
+        method: "POST",
+        body: JSON.stringify({ token, senha: novaSenha }),
+      });
+      setConcluido(true);
+      window.history.replaceState({}, document.title, window.location.pathname);
+    } catch (error) {
+      setErroGeral(error.message || "Não foi possível alterar a senha. Solicite outro link e tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -168,6 +210,8 @@ export default function TrocarSenha() {
             </div>
 
             <form className="pagina-trocar-senha__formulario" onSubmit={aoEnviar} noValidate>
+              {erroGeral && <p className="pagina-trocar-senha__erro" role="alert">{erroGeral}</p>}
+              {erroGeral && <Link className="pagina-trocar-senha__voltar" href="/esqueceu_senha">Solicitar outro link de recuperação</Link>}
               <CampoSenha
                 id="nova-senha"
                 rotulo="Nova senha"
@@ -198,8 +242,8 @@ export default function TrocarSenha() {
                 ))}
               </ul>
 
-              <button className="pagina-trocar-senha__botao" type="submit">
-                Salvar nova senha
+              <button className="pagina-trocar-senha__botao" type="submit" disabled={verificandoToken || enviando || !token}>
+                {enviando ? "Salvando..." : "Salvar nova senha"}
               </button>
             </form>
 

@@ -12,6 +12,7 @@ import { criarOcorrenciasController } from "./controllers/OcorrenciasController.
 import { criarLeiturasController } from "./controllers/LeiturasController.js";
 import { criarReunioesController } from "./controllers/ReunioesController.js";
 import { criarReservatoriosController } from "./controllers/ReservatoriosController.js";
+import { criarAdminController } from "./controllers/AdminController.js";
 import { criarAutenticacaoRoutes } from "./routes/autenticacaoRoutes.js";
 import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 import { criarSetorRoutes } from "./routes/setorRoutes.js";
@@ -30,6 +31,7 @@ import { criarOcorrenciasService } from "../services/OcorrenciasService.js";
 import { criarLeiturasService } from "../services/LeiturasService.js";
 import { criarReunioesService } from "../services/ReunioesService.js";
 import { criarReservatoriosService } from "../services/ReservatoriosService.js";
+import { criarAdminService } from "../services/AdminService.js";
 
 import { criarUsuarioModel } from "../models/UsuarioModels.js";
 import { criarSetorModel } from "../models/SetorModels.js";
@@ -38,16 +40,37 @@ import { criarOcorrenciasModel } from "../models/OcorrenciasModel.js";
 import { criarLeiturasModel } from "../models/LeiturasModel.js";
 import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
+import { criarAdminModel } from "../models/AdminModel.js";
+import { criarAcessoModel } from "../models/AcessoModel.js";
+import { criarRecuperacaoSenhaModel } from "../models/RecuperacaoSenhaModel.js";
+import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaService.js";
+import { criarGmailEmailService } from "../services/GmailEmailService.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
-const autenticacaoService = criarAutenticacaoService({ usuarioModel });
+const acessoModel = criarAcessoModel({ pool });
+const autenticacaoService = criarAutenticacaoService({ usuarioModel, acessoModel });
+const recuperacaoSenhaModel = criarRecuperacaoSenhaModel({ pool });
+const recuperacaoSenhaService = criarRecuperacaoSenhaService({
+  usuarioModel,
+  recuperacaoSenhaModel,
+  gmailEmailService: criarGmailEmailService(),
+});
+const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
+<<<<<<< HEAD
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
 api.use("/usuario", criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) }));
+=======
+api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) }));
+api.use("/admin", criarAdminRoutes({ adminController: criarAdminController({ adminService: criarAdminService({ adminModel }) }) }));
+const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
+api.use("/usuario", usuarioRoutes);
+api.use("/usuarios", usuarioRoutes);
+>>>>>>> 65076e32bf7f93a869e58de13fee7796e7e5a0e1
 api.use("/reunioes", criarReunioesRoutes({ reunioesController: criarReunioesController({
   reunioesService: criarReunioesService({ reunioesModel, usuarioModel }),
 }) }));

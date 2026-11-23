@@ -141,6 +141,8 @@
   color: var(--cor-branca);
 }
 
+.pagina-trocar-senha__botao:disabled { cursor: wait; opacity: .76; }
+
 .pagina-trocar-senha__botao::before {
   content: "";
   position: absolute;
