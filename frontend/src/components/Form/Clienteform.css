@@ -1,0 +1,139 @@
+/* ClienteForm — layout em grade, tipo de pessoa (radios) e botões do rodapé */
+
+/* ---------- Tipo de pessoa (radios) ---------- */
+.cf-radios {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px 28px;
+    margin: 0 0 16px;
+    padding: 0;
+    border: 0;
+    min-width: 0;
+  }
+  
+  .cf-radio {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  /* input nativo escondido, mas acessível por teclado */
+  .cf-radio input {
+    position: absolute;
+    opacity: 0;
+    width: 22px;
+    height: 22px;
+    margin: 0;
+    cursor: pointer;
+  }
+  
+  .cf-radio__marca {
+    position: relative;
+    flex-shrink: 0;
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 2px solid rgba(120, 190, 240, 0.55);
+    background: rgba(5, 26, 46, 0.6);
+    transition: border-color 0.15s, box-shadow 0.15s;
+  }
+  
+  .cf-radio__marca::after {
+    content: "";
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--cf-cyan);
+    transform: scale(0);
+    transition: transform 0.15s;
+  }
+  
+  .cf-radio input:checked + .cf-radio__marca {
+    border-color: var(--cf-cyan);
+    box-shadow: 0 0 10px rgba(20, 184, 238, 0.5);
+  }
+  
+  .cf-radio input:checked + .cf-radio__marca::after {
+    transform: scale(1);
+  }
+  
+  .cf-radio input:focus-visible + .cf-radio__marca {
+    outline: 2px solid var(--cf-cyan-soft);
+    outline-offset: 3px;
+  }
+  
+  /* ---------- Grade de campos (2 colunas) ---------- */
+  .cf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px 20px;
+  }
+  
+  /* ---------- Rodapé: erro de envio e botões ---------- */
+  .cf-erro-envio {
+    margin: 0 auto 0 0;
+    color: var(--cf-danger);
+    font-size: 0.9rem;
+  }
+  
+  .cf-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 48px;
+    padding: 0 28px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, box-shadow 0.15s, opacity 0.15s;
+  }
+  
+  .cf-btn:focus-visible {
+    outline: 2px solid var(--cf-cyan-soft);
+    outline-offset: 3px;
+  }
+  
+  .cf-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+  
+  .cf-btn--sec {
+    background: rgba(8, 32, 56, 0.6);
+    border: 1px solid rgba(80, 200, 255, 0.6);
+    color: var(--cf-text);
+  }
+  
+  .cf-btn--sec:hover:not(:disabled) {
+    background: rgba(14, 50, 84, 0.8);
+    border-color: var(--cf-cyan-soft);
+  }
+  
+  .cf-btn--pri {
+    background: var(--cf-cyan);
+    border: 1px solid var(--cf-cyan);
+    color: #04243d;
+    font-weight: 700;
+    box-shadow: 0 0 18px rgba(20, 184, 238, 0.35);
+  }
+  
+  .cf-btn--pri:hover:not(:disabled) {
+    background: var(--cf-cyan-soft);
+    border-color: var(--cf-cyan-soft);
+  }
+  
+  /* ---------- Responsivo ---------- */
+  @media (max-width: 720px) {
+    .cf-grid {
+      grid-template-columns: 1fr;
+    }
+  
+    .cf-btn {
+      flex: 1 1 auto;
+    }
+  }

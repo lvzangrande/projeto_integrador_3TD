@@ -1,0 +1,72 @@
+{
+  "routes": [
+    {
+      "path": "/admin",
+      "title": "WaterControl — admin"
+    },
+    {
+      "path": "/cliente/leituras",
+      "title": "WaterControl — cliente · leituras"
+    },
+    {
+      "path": "/cliente/ocorrencias",
+      "title": "WaterControl — cliente · ocorrencias"
+    },
+    {
+      "path": "/cliente",
+      "title": "WaterControl — cliente"
+    },
+    {
+      "path": "/cliente/relatorios",
+      "title": "WaterControl — cliente · relatorios"
+    },
+    {
+      "path": "/cliente/reservatorios",
+      "title": "WaterControl — cliente · reservatorios"
+    },
+    {
+      "path": "/esqueceu_senha/enviado",
+      "title": "WaterControl — esqueceu_senha · enviado"
+    },
+    {
+      "path": "/esqueceu_senha",
+      "title": "WaterControl — esqueceu_senha"
+    },
+    {
+      "path": "/esqueceu_senha/trocar-senha",
+      "title": "WaterControl — esqueceu_senha · trocar-senha"
+    },
+    {
+      "path": "/filiado/cadastrar_cliente",
+      "title": "WaterControl — filiado · cadastrar_cliente"
+    },
+    {
+      "path": "/filiado/clientes",
+      "title": "WaterControl — filiado · clientes"
+    },
+    {
+      "path": "/filiado/dashboard",
+      "title": "WaterControl — filiado · dashboard"
+    },
+    {
+      "path": "/filiado/historico_reunioes",
+      "title": "WaterControl — filiado · historico_reunioes"
+    },
+    {
+      "path": "/filiado/leituras",
+      "title": "WaterControl — filiado · leituras"
+    },
+    {
+      "path": "/filiado",
+      "title": "WaterControl — filiado"
+    },
+    {
+      "path": "/filiado/registrar_reuniao",
+      "title": "WaterControl — filiado · registrar_reuniao"
+    },
+    {
+      "path": "/",
+      "title": "WaterControl — Início"
+    }
+  ]
+}

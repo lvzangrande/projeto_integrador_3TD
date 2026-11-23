@@ -1,5 +1,5 @@
 import "./page.css";
-import Link from "next/link";
+import LoginForm from "@/components/Login/LoginForm.jsx";
 import AguaViva from "@/components/Login/AguaViva";
 import BolhasSubindo from "@/components/Login/BolhasSubindo";
 import MedidorAgua from "@/components/Login/MedidorAgua";
@@ -144,42 +144,7 @@ export default async function Inicio() {
               <p className="login__subtitulo">Acesse sua conta para continuar</p>
             </div>
 
-            <form className="login__formulario" noValidate>
-              <div className="login__campo">
-                <label className="login__rotulo" htmlFor="usuario">
-                  Usuário
-                </label>
-                <input
-                  className="login__entrada"
-                  id="usuario"
-                  name="usuario"
-                  type="text"
-                  placeholder="Digite seu usuário"
-                  autoComplete="username"
-                />
-              </div>
-
-              <div className="login__campo">
-                <label className="login__rotulo" htmlFor="senha">
-                  Senha
-                </label>
-                <input
-                  className="login__entrada"
-                  id="senha"
-                  name="senha"
-                  type="password"
-                  placeholder="Digite sua senha"
-                  autoComplete="current-password"
-                />
-              </div>
-
-              <Link className="login__esqueceu-senha" href="/esqueceu_senha">
-                Esqueceu a senha?
-              </Link>
-              <button className="login__botao" type="button">
-                Entrar
-              </button>
-            </form>
+            <LoginForm />
           </div>
         </div>
         <a className="convite" href="#login" aria-label="Rolar para o login">
