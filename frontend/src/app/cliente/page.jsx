@@ -1,13 +1,8 @@
-"use client";
-import { useEffect, useState } from "react";
-import { apiRequest } from "@/lib/api";
-
+// Módulos da área do cliente (documentação, seção 4) que têm tabela no banco.
 const modulos = [
   {
     titulo: "Reservatórios e setores",
-    descricao:
-      "Visualize a estrutura hídrica da operação, capacidades e limites configurados.",
-    detalhe: "Estrutura da operação",
+    descricao: "Capacidade, localização e tipo de cada reservatório e seus setores.",
     icone: (
       <>
         <path d="M4 20V8l8-4 8 4v12" />
@@ -16,21 +11,33 @@ const modulos = [
     ),
   },
   {
-    titulo: "Leituras e medidores",
-    descricao:
-      "Acompanhe níveis e consumo registrados pelos medidores da operação.",
-    detalhe: "Monitoramento hídrico",
+    titulo: "Medidores e responsáveis",
+    descricao: "Medidores de nível, vazão e hidrômetro e quem responde por cada reservatório.",
     icone: (
       <>
-        <path d="M3 12h4l3-8 4 16 3-8h4" />
+        <circle cx="12" cy="12" r="8" />
+        <path d="m12 12 3-3M12 7v1m5 4h-1M8 12H7" />
+      </>
+    ),
+  },
+  {
+    titulo: "Leituras",
+    descricao: "Registro manual ou simulado e histórico por medidor e período.",
+    icone: <path d="M3 12h4l3-8 4 16 3-8h4" />,
+  },
+  {
+    titulo: "Limites",
+    descricao: "Nível mínimo e máximo dos reservatórios e consumo máximo diário dos setores.",
+    icone: (
+      <>
+        <path d="M4 5h16M4 19h16" />
+        <path d="M12 8v8m-3-5 3-3 3 3m-6 2 3 3 3-3" />
       </>
     ),
   },
   {
     titulo: "Ocorrências",
-    descricao:
-      "Consulte vazamentos, anomalias e o andamento das ações corretivas.",
-    detalhe: "Acompanhamento operacional",
+    descricao: "Vazamentos e anomalias, com severidade, volume perdido e andamento do reparo.",
     icone: (
       <>
         <path d="M12 3 2.8 20h18.4L12 3Z" />
@@ -38,118 +45,29 @@ const modulos = [
       </>
     ),
   },
-  {
-    titulo: "Central de alertas",
-    descricao:
-      "Veja alertas relacionados a níveis, consumo e anomalias detectadas.",
-    detalhe: "Atenção e prevenção",
-    icone: (
-      <>
-        <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />
-      </>
-    ),
-  },
-  {
-    titulo: "Painel de economia",
-    descricao:
-      "Acompanhe indicadores de consumo e economia de água e financeira.",
-    detalhe: "Eficiência hídrica",
-    icone: (
-      <>
-        <path d="M4 19V5m0 14h16" />
-        <path d="m7 15 4-4 3 2 5-6" />
-      </>
-    ),
-  },
-  {
-    titulo: "Relatórios",
-    descricao: "Consulte relatórios de consumo e ocorrências da sua operação.",
-    detalhe: "Dados para decisão",
-    icone: (
-      <>
-        <path d="M6 3h9l4 4v14H6z" />
-        <path d="M14 3v5h5M9 13h7m-7 4h7" />
-      </>
-    ),
-  },
 ];
+
 export default function ClienteHome() {
-  const [usuario, setUsuario] = useState(null);
-  useEffect(() => {
-    let ativo = true;
-    apiRequest("/auth/me")
-      .then((dados) => {
-        if (ativo) setUsuario(dados);
-      })
-      .catch(() => {});
-    return () => {
-      ativo = false;
-    };
-  }, []);
-  const primeiroNome = usuario?.nome?.trim().split(/\s+/)[0];
   return (
     <main className="cliente-home">
       <header className="cliente-home__intro">
         <p className="cliente-home__eyebrow">PAINEL DO CLIENTE</p>
-        <h1>{primeiroNome ? `Olá, ${primeiroNome}` : "Painel da operação"}</h1>
-        <p>Acompanhe a gestão hídrica da sua operação em um só lugar.</p>
+        <h1>Gestão hídrica da sua operação</h1>
+        <p>Consulte a estrutura, as leituras e as ocorrências de água em um só lugar.</p>
       </header>
-      <section className="cliente-home__resumo" aria-label="Resumo do painel">
-        <div className="cliente-home__resumo-icone" aria-hidden="true">
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M12 3s7 7.2 7 12a7 7 0 0 1-14 0c0-4.8 7-12 7-12Z" />
-            <path d="M9 16a3 3 0 0 0 3 2" />
-          </svg>
-        </div>
-        <div>
-          <strong>Controle hídrico</strong>
-          <p>
-            Use os módulos abaixo para consultar os dados e indicadores da sua
-            operação.
-          </p>
-        </div>
-        <span className="cliente-home__selo">
-          <i aria-hidden="true" /> Área do cliente
-        </span>
-      </section>
-      <section
-        className="cliente-home__modulos"
-        aria-label="Módulos previstos para a área do cliente"
-      >
+      <section className="cliente-home__modulos" aria-label="Módulos da área do cliente">
         {modulos.map((modulo) => (
           <article className="cliente-modulo" key={modulo.titulo}>
             <span className="cliente-modulo__icone" aria-hidden="true">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.7"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round">
                 {modulo.icone}
               </svg>
             </span>
-            <span className="cliente-modulo__texto">
-              <small>{modulo.detalhe}</small>
-              <strong>{modulo.titulo}</strong>
-              <span>{modulo.descricao}</span>
-            </span>
-            <span className="cliente-modulo__status">Em desenvolvimento</span>
+            <h2>{modulo.titulo}</h2>
+            <p>{modulo.descricao}</p>
           </article>
         ))}
       </section>
-      <p className="cliente-home__nota">
-        Os módulos seguem o escopo definido na documentação do Wapi; as telas
-        operacionais ainda estão sendo implementadas.
-      </p>
     </main>
   );
 }
