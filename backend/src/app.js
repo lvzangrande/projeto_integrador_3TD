@@ -12,10 +12,6 @@ import { criarOcorrenciasController } from "./controllers/OcorrenciasController.
 import { criarLeiturasController } from "./controllers/LeiturasController.js";
 import { criarReunioesController } from "./controllers/ReunioesController.js";
 import { criarReservatoriosController } from "./controllers/ReservatoriosController.js";
-<<<<<<< HEAD
-import { criarClientePortalController } from "./controllers/ClientePortalController.js";
-=======
->>>>>>> main
 import { criarAutenticacaoRoutes } from "./routes/autenticacaoRoutes.js";
 import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 import { criarSetorRoutes } from "./routes/setorRoutes.js";
@@ -24,10 +20,6 @@ import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
 import { criarLeiturasRoutes } from "./routes/leiturasRoutes.js";
 import { criarReunioesRoutes } from "./routes/reunioesRoutes.js";
 import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
-<<<<<<< HEAD
-import { criarClientePortalRoutes } from "./routes/clientePortalRoutes.js";
-=======
->>>>>>> main
 
 import { criarAutenticacaoService } from "../services/AutenticacaoService.js";
 import { criarUsuarioService } from "../services/UsuarioService.js";
@@ -37,10 +29,6 @@ import { criarOcorrenciasService } from "../services/OcorrenciasService.js";
 import { criarLeiturasService } from "../services/LeiturasService.js";
 import { criarReunioesService } from "../services/ReunioesService.js";
 import { criarReservatoriosService } from "../services/ReservatoriosService.js";
-<<<<<<< HEAD
-import { criarClientePortalService } from "../services/ClientePortalService.js";
-=======
->>>>>>> main
 
 import { criarUsuarioModel } from "../models/UsuarioModels.js";
 import { criarSetorModel } from "../models/SetorModels.js";
@@ -49,10 +37,6 @@ import { criarOcorrenciasModel } from "../models/OcorrenciasModel.js";
 import { criarLeiturasModel } from "../models/LeiturasModel.js";
 import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
-<<<<<<< HEAD
-import { criarClientePortalModel } from "../models/ClientePortalModel.js";
-=======
->>>>>>> main
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
@@ -62,14 +46,9 @@ const reunioesModel = criarReunioesModel({ pool });
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
-<<<<<<< HEAD
-api.use("/cliente", criarClientePortalRoutes({ clientePortalController: criarClientePortalController({ clientePortalService: criarClientePortalService({ clientePortalModel: criarClientePortalModel({ pool }) }) }) }));
-api.use("/usuario", criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) }));
-=======
 const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
 api.use("/usuario", usuarioRoutes);
 api.use("/usuarios", usuarioRoutes);
->>>>>>> main
 api.use("/reunioes", criarReunioesRoutes({ reunioesController: criarReunioesController({
   reunioesService: criarReunioesService({ reunioesModel, usuarioModel }),
 }) }));
@@ -81,9 +60,6 @@ api.use("/reservatorios", criarReservatoriosRoutes({ reservatoriosController: cr
 
 const app = express();
 app.use(helmet());
-<<<<<<< HEAD
-app.use(cors({ origin: process.env.FRONTEND_URL || "http://localhost:3000", credentials: true }));
-=======
 const frontendOrigin = process.env.FRONTEND_URL || "http://localhost:3000";
 const allowedOrigins = new Set([frontendOrigin]);
 if (process.env.NODE_ENV !== "production") {
@@ -108,7 +84,6 @@ app.use(cors({
   allowedHeaders: ["Content-Type", "Authorization"],
   methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
 }));
->>>>>>> main
 app.use(express.json({ limit: "1mb" }));
 app.use("/api", api);
 app.use("/", api);
