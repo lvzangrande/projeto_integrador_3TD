@@ -1,0 +1,469 @@
+# DOCUMENTAÇÃO - PROJETO INTEGRADOR
+
+Nome do projeto: Wapi -> Water Control
+Integrantes: Gustavo Ramalho, Lucas Zangrande, Nicolas Tavares e Vitor Oliveira
+
+(Observação: a imagem do logotipo foi omitida. O logotipo é o nome "WAPI" em cinza, ao lado de um ícone circular azul com uma onda em forma de "W".)
+
+
+==============================================================
+# PARTE I: DOCUMENTAÇÃO DA EMPRESA
+==============================================================
+
+## 1. Logotipo
+
+(Imagem omitida.)
+
+
+## 2. Empresa
+
+A WaterControl é uma empresa/sistema especializado em gerenciamento de reservatórios de água.
+
+O sistema ajuda as indústrias a gerenciar reservatórios de grande porte, otimizar o consumo em processos produtivos, evitar paradas de fábrica por desabastecimento e garantir adequação às normas ambientais. Representantes (Filiados) captam novos clientes e registram reuniões e entrevistas de diagnóstico.
+
+
+## 3. Identidade Visual (Paleta WaterControl)
+
+A paleta combina azuis profundos, que transmitem confiança, com tons de água e cinza para um visual limpo e técnico, remetendo ao nosso público-alvo, as indústrias. As cores de status foram escolhidas para serem distinguíveis por pessoas com daltonismo.
+
+| Cor            | Hexadecimal | Aplicação                                          |
+|----------------|-------------|----------------------------------------------------|
+| Deep Ocean     | #0B2545     | Backgrounds principais, cabeçalhos e rodapés.      |
+| Water Blue     | #1D6FA5     | Botões de ação primária (Call to Action).          |
+| Aqua           | #2CA6C4     | Destaques, ícones e links ativos.                  |
+| Mist           | #D6ECF3     | Backgrounds de cards no modo claro.                |
+| Slate Gray     | #3B4B5E     | Textos secundários.                                |
+| Cool Gray      | #8A94A6     | Bordas e divisores de conteúdo.                    |
+| Status Normal  | #0072B2     | Nível e consumo dentro dos limites.                |
+| Status Atenção | #E69F00     | Alertas de atenção.                                |
+| Status Crítico | #D55E00     | Alertas críticos e vazamentos.                     |
+
+
+## 4. Escopo de Atuação
+
+O Wapi fornece soluções nos seguintes pilares:
+
+- Gestão de Reservatórios: cadastro de reservatórios, setores, medidores e responsáveis, com limites mínimo e máximo.
+- Controle de Consumo: leituras manuais ou simuladas de nível e consumo, com histórico completo.
+- Prevenção de Perdas: registro e detecção de vazamentos e anomalias, com alertas.
+- Economia e Planejamento: dashboard, relatórios e indicadores de economia de água e financeira.
+
+
+## 5. Tipografia (Fontes)
+
+O Wapi utiliza as seguintes definições de fonte para o sistema:
+
+- Montserrat: aplicada nos títulos, menus, botões principais e nos grandes números do dashboard para dar destaque visual.
+- Roboto: aplicada nos textos, formulários, alertas e tabelas de leitura de dados.
+- Sans-Serif: utilizada como fonte genérica de fallback (reserva), garantindo o correto carregamento do texto caso a Montserrat ou a Roboto não estejam disponíveis.
+
+
+==============================================================
+# PARTE II: DOCUMENTAÇÃO DO SISTEMA
+==============================================================
+
+## 1. Objetivo do Sistema
+
+O portal do WaterControl foi desenvolvido para resolver o desafio do "desperdício invisível": a água perdida sem que ninguém perceba. Os pilares de controle são:
+
+- Controle de Reservatórios e Setores: gestão da estrutura hídrica de cada cliente.
+- Gestão de Leituras, Alertas e Ocorrências: fluxo desde a leitura até o alerta e a correção do vazamento.
+- Controle de Acesso: três perfis (Admin, Filiado e Cliente), com histórico de acesso e cadastro manual de usuários.
+
+
+## 2. Levantamento de Requisitos
+
+Legenda:
+- (Obrigatório) = pedido pelo cliente;
+- (Complementar) = não documentado, mas necessário para o sistema funcionar;
+- (Diferencial) = identidade criativa.
+
+
+### 2.1. Requisitos Funcionais (RF)
+
+- RF001: Área de cadastro e gerenciamento (CRUD) de reservatórios. (Obrigatório)
+- RF002: CRUD de setores vinculados a um reservatório. (Obrigatório)
+- RF003: CRUD de medidores (nível, vazão ou hidrômetro) vinculados a um reservatório ou setor. (Obrigatório)
+- RF004: CRUD de responsáveis vinculados a reservatórios e setores. (Obrigatório)
+- RF005: Diferenciação de perfis de acesso (Admin, Filiado e Cliente). (Obrigatório)
+- RF006: Área de login para usuários. (Complementar)
+- RF007: Mensagem de boas-vindas após o login, com resumo de alertas e ocorrências abertas. (Obrigatório)
+- RF008: Cadastro de novos usuários feito manualmente pelo Admin, como alternativa ao cadastro de clientes pelo Filiado (RF010), que é o fluxo principal. (Obrigatório)
+- RF009: Histórico de acesso (data, hora, usuário, ação e IP) consultável pelo Admin. (Obrigatório)
+- RF010: Cadastro de novos clientes pelo Filiado. (Obrigatório)
+- RF011: Registro de reuniões e entrevistas com clientes pelo Filiado. (Obrigatório)
+- RF012: Registro manual de leituras de nível e consumo. (Obrigatório)
+- RF013: Simulação automática de leituras de nível e consumo por medidor. (Obrigatório)
+- RF014: Definição de limites mínimo e máximo de nível por reservatório e de consumo por setor. (Obrigatório)
+- RF015: Registro de vazamentos e anomalias (tipo, severidade, local, descrição e status). (Obrigatório)
+- RF016: Geração automática de alertas ao violar limites ou detectar anomalia. (Obrigatório)
+- RF017: Central de alertas, com reconhecimento (ciência) e status de cada alerta. (Complementar)
+- RF018: Histórico de leituras com filtros por medidor, reservatório, setor e período. (Obrigatório)
+- RF019: Dashboard com indicadores (nível atual, consumo, alertas ativos e vazamentos abertos). (Obrigatório)
+- RF020: Gráficos de consumo e nível ao longo do tempo e por setor. (Obrigatório)
+- RF021: Painel de economia de água (m³) e financeira (R$). (Obrigatório)
+- RF022: Cadastro da tarifa da água (R$/m³) para o cálculo da economia. (Complementar)
+- RF023: Relatórios de consumo e de ocorrências, exportáveis em .txt. (Obrigatório)
+- RF025: CRUD completo do Admin sobre todas as entidades do sistema, com exclusão lógica (RN005); nas leituras, o Admin apenas visualiza os registros e o histórico. (Obrigatório)
+- RF026: Ativação, desativação e troca de perfil de usuários pelo Admin. (Complementar)
+- RF027: Alternar entre modo claro, escuro e daltônico, com a escolha salva por usuário. (Obrigatório)
+- RF028: Redefinição de senha por email. (Complementar)
+- RF029: Validação das leituras (valor fora da faixa, data futura, hidrômetro decrescente). (Complementar)
+- RF030: Detecção automática de anomalias (consumo noturno contínuo e queda de nível sem consumo). (Complementar)
+- RF031: Ciclo da ocorrência: Aberta -> Em análise -> Em reparo -> Resolvida, ou Descartada (ocorrência improcedente). (Complementar)
+- RF032: Dashboard adaptado ao perfil (Admin: visão global; Filiado: sua carteira; Cliente: sua operação). (Complementar)
+- RF033: Tutorial ao entrar no sistema pela primeira vez.
+
+(Nota: o documento original não possui RF024 e não classifica o RF033.)
+
+
+### 2.2. Requisitos Não Funcionais (RNF)
+
+- RNF001: Integração com banco de dados relacional. (Obrigatório)
+- RNF002: Uso de Transactions no banco de dados para evitar concorrência. (Complementar)
+- RNF003: Interface limpa, responsiva e acessível. (Complementar)
+- RNF004: Identidade visual baseada na paleta WaterControl e nos três temas (claro, escuro e daltônico). (Obrigatório)
+- RNF005: Segurança de sessão para validar permissões de acesso e isolar os dados de cada perfil. (Complementar)
+- RNF006: Senhas armazenadas com hash. (Complementar)
+- RNF007: Persistência e integridade dos dados: exclusão lógica e leituras que não podem ser apagadas. (Complementar)
+- RNF008: Permitir apenas um cadastro por CPF/CNPJ e e-mail. (Complementar)
+- RNF009: Tratamento de dados pessoais conforme a LGPD. (Complementar)
+- RNF010: Dashboard carregando em até 5 segundos. (Complementar)
+- RNF011: Fuso horário America/Sao_Paulo, unidades em L e m³ e formatos de data e moeda do Brasil. (Complementar)
+
+
+### 2.3. Regras de Negócio (RN)
+
+- RN001: Os limites de nível devem obedecer: mínimo < máximo <= capacidade do reservatório.
+- RN002: Todo medidor deve estar vinculado a um reservatório ou setor ativo.
+- RN003: O Filiado só acessa clientes que ele cadastrou; o Cliente só acessa os próprios dados.
+- RN004: Novos usuários são criados apenas pelo Filiado ou Admin. Não existe autocadastro.
+- RN005: Itens com histórico (reservatórios, setores, medidores, usuários) são apenas inativados, nunca apagados.
+- RN006: Enquanto um alerta do mesmo tipo e local estiver ativo, não é gerado outro igual.
+- RN007: Leituras simuladas são identificadas como tal e podem ser filtradas dos relatórios.
+- RN008: A leitura de um hidrômetro acumulado não pode ser menor que a anterior.
+- RN009: Economia de água = consumo de referência (baseline) - consumo real do período.
+- RN010: Economia financeira = economia de água x tarifa vigente.
+- RN011: Perda por vazamento = vazão de perda estimada x duração; o custo usa a tarifa vigente.
+- RN012: Uma ocorrência só pode ser "Resolvida" com a ação corretiva registrada.
+- RN013: Todo login, com sucesso ou falha, gera registro no histórico de acesso.
+- RN014: A preferência de tema é individual e persiste entre sessões.
+- RN015: Toda reunião ou entrevista deve estar vinculada a um cliente e a um Filiado.
+
+
+### 2.4. Requisitos Criativos (Diferenciais)
+
+- DIF001: Índice de saúde hídrica (nota de 0 a 100) por cliente e setor. (Diferencial)
+- DIF002: Previsão de autonomia: em quantas horas o reservatório atinge o nível mínimo. (Diferencial)
+- DIF003: Indicador de eficiência hídrica (L/tonelada de produto fabricado) e relatórios automatizados para auditorias ISO 14001 e inventários ESG. (Diferencial)
+- DIF004: Metas de redução por setor, com selos de conquista. (Diferencial)
+- DIF005: Registro em campo por QR Code colado no reservatório. (Diferencial)
+- DIF006: Relatório mensal automático por e-mail com economia e principais ocorrências. (Diferencial)
+
+
+## 3. Modelagem do Banco de Dados (Estrutura e Tabelas)
+
+O sistema utiliza um banco de dados relacional (db_watercontrol), garantindo a integridade referencial através de Chaves Primárias (PK) e Chaves Estrangeiras (FK).
+
+Total: 11 tabelas (usuarios, acessos, reservatorios, setores, medidores, responsaveis, leituras, ocorrencias, alertas, reunioes, tarifas).
+
+
+### 3.1 Tabela: usuarios
+
+Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
+
+| Campo           | Tipo                                  | Restrições / Chaves                | Descrição                                |
+|-----------------|---------------------------------------|------------------------------------|------------------------------------------|
+| id_user         | INT                                   | PK, AUTO_INCREMENT                 | Identificador único do usuário.          |
+| nome            | VARCHAR(100)                          | NOT NULL                           | Nome completo ou Razão Social.           |
+| email           | VARCHAR(100)                          | UNIQUE, NOT NULL                   | E-mail para login e contato.             |
+| senha           | VARCHAR(255)                          | NOT NULL                           | Senha criptografada (hash).              |
+| telefone        | VARCHAR(20)                           | NULL                               | Telefone de contato.                     |
+| cpf_cnpj        | VARCHAR(20)                           | UNIQUE, NOT NULL                   | Documento único de identificação.        |
+| tipo_user       | ENUM('PF','PJ')                       | NOT NULL                           | Pessoa Física ou Jurídica.               |
+| categoria_user  | ENUM('admin','filiado','cliente')     | NOT NULL                           | Nível de acesso no sistema.              |
+| tema            | ENUM('claro','escuro','daltonico')    | DEFAULT 'claro'                    | Tema escolhido pelo usuário.             |
+| status          | ENUM('Ativo','Inativo')               | DEFAULT 'Ativo'                    | Situação da conta.                       |
+| id_filiado      | INT                                   | FK -> usuarios(id_user), NULL      | Filiado que cadastrou o cliente.         |
+
+
+### 3.2 Tabela: acessos
+
+| Campo      | Tipo                              | Restrições / Chaves           | Descrição                                                                        |
+|------------|-----------------------------------|-------------------------------|----------------------------------------------------------------------------------|
+| id_acesso  | INT                               | PK, AUTO_INCREMENT            | Identificador do registro.                                                       |
+| id_user    | INT                               | FK -> usuarios(id_user), NULL | Usuário que acessou (vazio quando o login falha com e-mail não cadastrado).      |
+| evento     | ENUM('login','logout','falha')    | NOT NULL                      | Tipo de acesso.                                                                  |
+| data_hora  | DATETIME                          | NOT NULL                      | Momento do acesso.                                                               |
+| ip         | VARCHAR(45)                       | NULL                          | Endereço IP de origem.                                                           |
+
+
+### 3.3 Tabela: reservatorios
+
+| Campo        | Tipo                                                                                                                                                         | Restrições / Chaves      | Descrição                         |
+|--------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|-----------------------------------|
+| id_res       | INT                                                                                                                                                          | PK, AUTO_INCREMENT       | Identificador do reservatório.    |
+| id_cliente   | INT                                                                                                                                                          | FK -> usuarios(id_user)  | Cliente dono do reservatório.     |
+| nome_res     | VARCHAR(100)                                                                                                                                                 | NOT NULL                 | Nome do reservatório.             |
+| tipo_res     | ENUM('Torre de Resfriamento','Tanque de Processo','Decantador','Reservatório de Água Bruta','Reservatório de Água Tratada','Cisterna','Tanque Elevado')      | NOT NULL                 | Tipo do reservatório.             |
+| capacidade_l | INT                                                                                                                                                          | NOT NULL                 | Capacidade total em litros.       |
+| localizacao  | VARCHAR(255)                                                                                                                                                 | NULL                     | Endereço ou local de instalação.  |
+| nivel_min    | INT                                                                                                                                                          | NOT NULL                 | Limite mínimo de nível (L).       |
+| nivel_max    | INT                                                                                                                                                          | NOT NULL                 | Limite máximo de nível (L).       |
+| status_res   | ENUM('Ativo','Inativo')                                                                                                                                      | DEFAULT 'Ativo'          | Situação do reservatório.         |
+
+
+### 3.4 Tabela: setores
+
+| Campo            | Tipo                                                                                                                                  | Restrições / Chaves          | Descrição                              |
+|------------------|---------------------------------------------------------------------------------------------------------------------------------------|------------------------------|----------------------------------------|
+| id_setor         | INT                                                                                                                                   | PK, AUTO_INCREMENT           | Identificador do setor.                |
+| id_res           | INT                                                                                                                                   | FK -> reservatorios(id_res)  | Reservatório que abastece o setor.     |
+| nome_set         | VARCHAR(100)                                                                                                                          | NOT NULL                     | Nome do setor.                         |
+| tipo_uso         | ENUM('Linha de Produção','Torres de Resfriamento/Caldeiras','Limpeza/Lavagem','Uso Administrativo','Tratamento de Efluentes','Reúso') | NOT NULL                     | Tipo de uso da água.                   |
+| consumo_max_dia  | DECIMAL(10,2)                                                                                                                         | NULL                         | Limite de consumo diário (m³).         |
+| status_set       | ENUM('Ativo','Inativo')                                                                                                               | DEFAULT 'Ativo'              | Situação do setor.                     |
+
+
+### 3.5 Tabela: medidores
+
+| Campo       | Tipo                                  | Restrições / Chaves                 | Descrição                                      |
+|-------------|---------------------------------------|-------------------------------------|------------------------------------------------|
+| id_med      | INT                                   | PK, AUTO_INCREMENT                  | Identificador do medidor.                      |
+| id_res      | INT                                   | FK -> reservatorios(id_res), NULL   | Reservatório monitorado.                       |
+| id_setor    | INT                                   | FK -> setores(id_setor), NULL       | Setor monitorado.                              |
+| num_serie   | VARCHAR(50)                           | UNIQUE, NOT NULL                    | Número de série do medidor.                    |
+| tipo_med    | ENUM('Nível','Vazão','Hidrômetro')    | NOT NULL                            | O que o medidor mede.                          |
+| origem      | ENUM('Real','Simulado')               | DEFAULT 'Simulado'                  | Se os dados vêm de sensor ou do simulador.     |
+| status_med  | ENUM('Ativo','Inativo')               | DEFAULT 'Ativo'                     | Situação do medidor.                           |
+
+
+### 3.6 Tabela: responsaveis
+
+| Campo          | Tipo         | Restrições / Chaves                 | Descrição                              |
+|----------------|--------------|-------------------------------------|----------------------------------------|
+| id_resp        | INT          | PK, AUTO_INCREMENT                  | Identificador do responsável.          |
+| id_cliente     | INT          | FK -> usuarios(id_user)             | Cliente ao qual pertence.              |
+| id_res         | INT          | FK -> reservatorios(id_res), NULL   | Reservatório sob responsabilidade.     |
+| id_setor       | INT          | FK -> setores(id_setor), NULL       | Setor sob responsabilidade.            |
+| nome_resp      | VARCHAR(100) | NOT NULL                            | Nome do responsável.                   |
+| funcao         | VARCHAR(50)  | NULL                                | Função ou cargo.                       |
+| telefone_resp  | VARCHAR(20)  | NULL                                | Telefone para contato e alertas.       |
+| email_resp     | VARCHAR(100) | NULL                                | E-mail para contato e alertas.         |
+
+
+### 3.7 Tabela: leituras
+
+| Campo       | Tipo                                  | Restrições / Chaves          | Descrição                              |
+|-------------|---------------------------------------|------------------------------|----------------------------------------|
+| id_leitura  | BIGINT                                | PK, AUTO_INCREMENT           | Identificador da leitura.              |
+| id_med      | INT                                   | FK -> medidores(id_med)      | Medidor que gerou a leitura.           |
+| valor       | DECIMAL(12,3)                         | NOT NULL                     | Valor lido (L ou m³).                  |
+| data_hora   | DATETIME                              | NOT NULL                     | Momento da leitura.                    |
+| origem      | ENUM('Manual','Simulada','Importada') | NOT NULL                     | Como a leitura foi registrada.         |
+
+
+### 3.8 Tabela: ocorrencias
+
+| Campo             | Tipo                                                                                  | Restrições / Chaves                  | Descrição                         |
+|-------------------|---------------------------------------------------------------------------------------|--------------------------------------|-----------------------------------|
+| id_oc             | INT                                                                                   | PK, AUTO_INCREMENT                   | Identificador da ocorrência.      |
+| id_res            | INT                                                                                   | FK -> reservatorios(id_res)          | Reservatório afetado.             |
+| id_setor          | INT                                                                                   | FK -> setores(id_setor), NULL        | Setor afetado.                    |
+| tipo_oc           | ENUM('Vazamento visível','Vazamento oculto','Consumo anormal','Falha de sensor','Transbordo') | NOT NULL                     | Tipo da ocorrência.               |
+| severidade        | ENUM('Baixa','Média','Alta')                                                          | NOT NULL                             | Gravidade.                        |
+| descricao_oc      | TEXT                                                                                  | NOT NULL                             | Relato da ocorrência.             |
+| volume_perdido_l  | DECIMAL(12,2)                                                                         | NULL                                 | Volume estimado perdido (L).      |
+| status            | ENUM('Aberta','Em análise','Em reparo','Resolvida','Descartada')                      | DEFAULT 'Aberta'                     | Ciclo de vida da ocorrência.      |
+| acao_corretiva    | TEXT                                                                                  | NULL                                 | Ação realizada para resolver.     |
+| data_abertura     | DATETIME                                                                              | NOT NULL                             | Quando foi registrada.            |
+| id_resp           | INT                                                                                   | FK -> responsaveis(id_resp), NULL    | Responsável pelo tratamento.      |
+
+
+### 3.9 Tabela: alertas
+
+| Campo       | Tipo                                                       | Restrições / Chaves                | Descrição                          |
+|-------------|------------------------------------------------------------|------------------------------------|------------------------------------|
+| id_alerta   | INT                                                        | PK, AUTO_INCREMENT                 | Identificador do alerta.           |
+| id_res      | INT                                                        | FK -> reservatorios(id_res)        | Reservatório do alerta.            |
+| id_med      | INT                                                        | FK -> medidores(id_med), NULL      | Medidor que originou o alerta.     |
+| id_oc       | INT                                                        | FK -> ocorrencias(id_oc), NULL     | Ocorrência relacionada.            |
+| tipo        | ENUM('Nível mínimo','Nível máximo','Consumo excedido','Anomalia') | NOT NULL                    | Motivo do alerta.                  |
+| severidade  | ENUM('Informativo','Atenção','Crítico')                    | NOT NULL                           | Gravidade.                         |
+| status      | ENUM('Ativo','Reconhecido','Resolvido')                    | DEFAULT 'Ativo'                    | Situação do alerta.                |
+| data_hora   | DATETIME                                                   | NOT NULL                           | Quando foi gerado.                 |
+
+
+### 3.10 Tabela: reunioes
+
+| Campo            | Tipo                      | Restrições / Chaves      | Descrição                     |
+|------------------|---------------------------|--------------------------|-------------------------------|
+| id_reuniao       | INT                       | PK, AUTO_INCREMENT       | Identificador do registro.    |
+| id_filiado       | INT                       | FK -> usuarios(id_user)  | Filiado que realizou.         |
+| id_cliente       | INT                       | FK -> usuarios(id_user)  | Cliente atendido.             |
+| tipo             | ENUM('Reunião','Entrevista') | NOT NULL              | Modalidade do registro.       |
+| data_hora        | DATETIME                  | NOT NULL                 | Data e hora do encontro.      |
+| pauta            | TEXT                      | NULL                     | Assuntos tratados.            |
+| resumo           | TEXT                      | NULL                     | Resumo e decisões.            |
+| proximos_passos  | TEXT                      | NULL                     | Ações combinadas.             |
+
+
+### 3.11 Tabela: tarifas
+
+| Campo            | Tipo                                                       | Restrições / Chaves            | Descrição                          |
+|------------------|------------------------------------------------------------|--------------------------------|------------------------------------|
+| id_tarifa        | INT                                                        | PK, AUTO_INCREMENT             | Identificador da tarifa.           |
+| id_cliente       | INT                                                        | FK -> usuarios(id_user), NULL  | Cliente (vazio = tarifa padrão).   |
+| tipo_tarifa      | ENUM('Concessionária','Outorga/Captação Própria','Reúso')  | NOT NULL                       | Origem da água tarifada.           |
+| valor_m3         | DECIMAL(10,2)                                              | NOT NULL                       | Valor cobrado por m³.              |
+| vigencia_inicio  | DATE                                                       | NOT NULL                       | Início da vigência.                |
+
+
+### 3.12 Resumo dos relacionamentos (derivado das FKs acima)
+
+- usuarios.id_filiado -> usuarios.id_user (auto-relacionamento: Filiado que cadastrou o Cliente)
+- acessos.id_user -> usuarios.id_user (opcional)
+- reservatorios.id_cliente -> usuarios.id_user
+- setores.id_res -> reservatorios.id_res
+- medidores.id_res -> reservatorios.id_res (opcional)
+- medidores.id_setor -> setores.id_setor (opcional)
+- responsaveis.id_cliente -> usuarios.id_user
+- responsaveis.id_res -> reservatorios.id_res (opcional)
+- responsaveis.id_setor -> setores.id_setor (opcional)
+- leituras.id_med -> medidores.id_med
+- ocorrencias.id_res -> reservatorios.id_res
+- ocorrencias.id_setor -> setores.id_setor (opcional)
+- ocorrencias.id_resp -> responsaveis.id_resp (opcional)
+- alertas.id_res -> reservatorios.id_res
+- alertas.id_med -> medidores.id_med (opcional)
+- alertas.id_oc -> ocorrencias.id_oc (opcional)
+- reunioes.id_filiado -> usuarios.id_user
+- reunioes.id_cliente -> usuarios.id_user
+- tarifas.id_cliente -> usuarios.id_user (opcional; vazio = tarifa padrão)
+
+
+## 4. Interfaces Navegáveis
+
+O fluxo de acesso aos módulos foi pensado para reduzir cliques e dar clareza visual. O seletor de tema (claro, escuro e daltônico) fica no cabeçalho de todas as páginas.
+
+- Páginas de Acesso Público: Home / Login / Redefinir Senha (sem autocadastro: o acesso é criado pelo Filiado, ao cadastrar o cliente, ou pelo Admin).
+- Área do Admin: Dashboard -> Gestão de Usuários (Cadastrar/Editar/Ativar/Inativar) -> Gestão de Clientes, Reservatórios, Setores, Medidores, Responsáveis, Ocorrências, Alertas e Reuniões (CRUD) -> Histórico de Leituras (somente visualização) -> Histórico de Acesso -> Tarifas -> Relatórios.
+- Área do Filiado: Painel -> Cadastrar Cliente -> Meus Clientes -> Registrar Reunião/Entrevista -> Histórico de Reuniões.
+- Área do Cliente: Boas-vindas e Dashboard -> Reservatórios e Setores -> Medidores e Responsáveis -> Registrar ou Simular Leitura -> Limites -> Ocorrências -> Central de Alertas -> Histórico de Leituras -> Painel de Economia -> Relatórios.
+
+
+### 4.1 Wireframe
+
+Link: https://canva.link/vbv6wop9xmuwref
+
+
+### 4.2 Layout
+
+Link: https://canva.link/bthxf05grmgn8zc
+
+
+## 5. Divisão de Tarefas (Equipe)
+
+Legenda: PFE = Front-end; PBE = Back-end.
+
+| Funcionalidade / Página                                          | Responsável                |
+|------------------------------------------------------------------|----------------------------|
+| Páginas de Acesso (Login, Redefinir Senha, Boas-vindas)          | PFE: Lucas / PBE: Gustavo  |
+| Home, Temas (claro, escuro, daltônico)                           | PFE: Vitor                 |
+| Área do Admin (CRUD, Usuários e Histórico de Acesso)             | PFE: Vitor / PBE: Nicolas  |
+| Área do Filiado (Clientes, Reuniões e Entrevistas)               | PFE: Lucas / PBE: Gustavo  |
+| Reservatórios, Setores, Medidores e Responsáveis                 | PFE: Vitor / PBE: Nicolas  |
+| Leituras, Simulador e Limites                                    | PFE: Lucas / PBE: Nicolas  |
+| Ocorrências e Alertas                                            | PFE: Vitor / PBE: Nicolas  |
+| Dashboard, Painel de Economia e Relatórios                       | PFE: Lucas / PBE: Nicolas  |
+
+
+## 6. Planejamento de Sprints/Kanbans semanais
+
+Detalhamento Semanal das Sprints (até 48h / Semana)
+
+
+### 22/10 - 29/10 | Semana 1: Estruturação, Design e Base de Dados
+
+Foco Principal: Documentação do software
+
+| Atividade / Requisito                                                              | Responsável        | Prioridade | Horas Estimadas |
+|------------------------------------------------------------------------------------|--------------------|------------|-----------------|
+| Gerenciamento do projeto, estruturação do Kanban e alinhamento da equipe           | Lucas (Gerência)   | Alta       | 3h              |
+| [Dev Front-end] Construção do layout base, sistema de rotas e navegação principal  | Lucas (Front-end)  | Alta       | 6h              |
+| Padronização de fuso horário, moeda e unidades de medida no Front-end              | Lucas (Front-end)  | Média      | 2h              |
+| Preparação do ambiente de desenvolvimento e repositório Git                        | Nicolas            | Alta       | 4h              |
+| Criação das 11 tabelas do banco de dados MySQL e scripts de povoamento             | Nicolas            | Alta       | 6h              |
+| Configuração de Transactions e segurança relacional no banco de dados              | Nicolas            | Média      | 2h              |
+| Mapeamento e documentação das rotas RESTful da API                                 | Gustavo            | Alta       | 10h             |
+| Prototipagem em alta fidelidade das telas no Figma (Wireframes B2B)                | Vitor              | Alta       | 12h             |
+
+
+### 29/10 - 05/11 | Semana 2: Autenticação, Perfis e Acessibilidade
+
+Foco Principal: Início da programação
+
+| Atividade / Requisito                                                           | Responsável        | Prioridade | Horas Estimadas |
+|---------------------------------------------------------------------------------|--------------------|------------|-----------------|
+| Acompanhamento do progresso no Kanban, revisão de sprints e reuniões            | Lucas (Gerência)   | Alta       | 3h              |
+| Desenvolvimento das telas do Painel do Filiado (gestão de clientes)             | Lucas (Front-end)  | Alta       | 5h              |
+| Interface e formulários para termos da LGPD e máscaras de CPF/CNPJ              | Lucas (Front-end)  | Baixa      | 2h              |
+| Programação das rotas de login seguro (JWT, hash de senhas e HTTPS)             | Gustavo            | Alta       | 7h              |
+| Lógica de isolamento por perfis de acesso (Admin, Filiado e Cliente)            | Gustavo            | Alta       | 5h              |
+| Página do Admin para gerenciamento de contas de usuários e status               | Nicolas            | Média      | 6h              |
+| Registro do histórico de acessos (data, hora, IP e tipo de evento)              | Nicolas            | Média      | 5h              |
+| Tela de Login no Front-end e formulários de redefinição de senha                | Vitor              | Alta       | 6h              |
+| Implementação dos temas visuais: Claro, Escuro e Daltônico com ícones           | Vitor              | Alta       | 7h              |
+
+
+### 05/11 - 12/11 | Semana 3: Mapeamento da Planta Industrial
+
+Foco Principal: Implementação das funcionalidades obrigatórias do sistema
+
+| Atividade / Requisito                                                              | Responsável | Prioridade | Horas Estimadas |
+|------------------------------------------------------------------------------------|-------------|------------|-----------------|
+| Alinhamento da Sprint 3 no Kanban, resolução de gargalos e governança              | Lucas       | Alta       | 3h              |
+| Interface para agendamento e registro de reuniões/entrevistas do Filiado           | Lucas       | Média      | 5h              |
+| Integração do Front-end do Filiado com os endpoints de clientes e reuniões         | Lucas       | Média      | 2h              |
+| CRUD de Reservatórios Industriais e limites mínimos/máximos de nível               | Nicolas     | Alta       | 7h              |
+| CRUD de Setores da fábrica (linhas de produção, caldeiras, efluentes)              | Nicolas     | Alta       | 5h              |
+| Regra de exclusão lógica (Soft Delete) para manter integridade histórica           | Nicolas     | Alta       | 2h              |
+| CRUD de Medidores (nível, vazão, hidrômetro) e associação de responsáveis          | Gustavo     | Alta       | 9h              |
+| Construção dos formulários visuais, tabelas e botões de cadastro no Front-end      | Vitor       | Alta       | 12h             |
+
+
+### 12/11 - 19/11 | Semana 4: Monitoramento de Consumo e Alertas de Vazamentos
+
+Foco Principal: Melhorias e otimizações das funcionalidades e fluxo do sistema
+
+| Atividade / Requisito                                                                          | Responsável | Prioridade | Horas Estimadas |
+|------------------------------------------------------------------------------------------------|-------------|------------|-----------------|
+| Gerenciamento do quadro de testes de alertas e condução de reuniões da Sprint                  | Lucas       | Alta       | 3h              |
+| Construção da interface da Central de Alertas e Notificações (em parceria com Vitor)           | Lucas       | Alta       | 4h              |
+| Painel de simulação visual e controle do simulador no Front-end                                | Lucas       | Média      | 3h              |
+| Suporte na simulação de comunicação de sensores                                                | Lucas       | Baixa      | 2h              |
+| Motor do simulador de consumo automático por medidor                                           | Gustavo     | Alta       | 8h              |
+| Regras de validação de leituras (evita hidrômetro decrescente/datas futuras)                   | Gustavo     | Alta       | 2h              |
+| Algoritmo para detecção de vazamentos ocultos e disparos de alertas                            | Gustavo     | Alta       | 3h              |
+| Ciclo de vida das ocorrências (Aberta -> Em análise -> Em reparo -> Resolvida, ou Descartada)  | Nicolas     | Alta       | 7h              |
+| Regras de histórico e prevenção de alertas duplicados no banco de dados                        | Nicolas     | Média      | 4h              |
+| Desenvolvimento da interface da Central de Alertas e mensagem de boas-vindas                   | Vitor       | Alta       | 11h             |
+
+
+### 19/11 - 26/11 | Semana 5: Dashboards Executivos, Relatórios e Testes Finais
+
+Foco Principal: (não especificado no documento original)
+
+| Atividade / Requisito                                                           | Responsável     | Prioridade | Horas Estimadas     |
+|---------------------------------------------------------------------------------|-----------------|------------|---------------------|
+| Fechamento do projeto, auditoria final do Kanban e consolidação de entregas     | Lucas           | Alta       | 3h                  |
+| Front-end do Painel de Economia Financeira, Tarifas e Outorgas                  | Lucas           | Alta       | 5h                  |
+| Interface do Simulador de metas                                                 | Lucas           | Baixa      | 2h                  |
+| Testes de velocidade do Front-end                                               | Lucas           | Alta       | 2h                  |
+| Desenvolvimento do Dashboard Front-end principal com gráficos interativos       | Vitor           | Alta       | 10h                 |
+| Apoio na lógica de cálculo de Saúde Hídrica (0-100) e Autonomia no Back-end     | Vitor           | Média      | 2h                  |
+| Endpoints para relatórios e exportação de dados                                 | Nicolas         | Alta       | 7h                  |
+| Bateria final de testes no banco de dados e rotas de relatórios                 | Nicolas         | Alta       | 3h                  |
+| Módulo de cálculo de Saúde Hídrica e autonomia de reservatórios                 | Gustavo         | Média      | 5h                  |
+| Validações finais de segurança nas APIs e prevenção de concorrência             | Gustavo         | Alta       | 3h                  |
+| Revisão final do projeto, testes de usabilidade e fechamento do documento       | Toda a Equipe   | Alta       | 6h (1.5h/cada)      |

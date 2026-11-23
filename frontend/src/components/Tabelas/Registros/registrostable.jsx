@@ -191,12 +191,12 @@ function listaPaginas(total, atual) {
  *  - porPagina   Itens por página — deve ser igual ao limite usado na API (padrão 5)
  *  - carregando  true enquanto a requisição está em andamento
  *  - erro        Mensagem de erro (string) para exibir no lugar da lista
- *  - onChange    ({ busca, tipo, pagina }) => void
- *                Chamado na montagem e sempre que busca (com atraso), tipo ou página mudam.
- *                `tipo` é null para "Todos". Faça a requisição aqui.
+ *  - onChange    ({ busca, tipo, periodo, pagina }) => void
+ *                Chamado na montagem e sempre que busca (com atraso), tipo, período ou página mudam.
+ *                `tipo` é null para "Todos"; `periodo` é "7", "30", "90" ou "todos".
  *  - onAcoes     (registro) => void, ao clicar em "•••"
  *
- * A filtragem e a paginação acontecem na API; o componente só exibe o que recebe.
+ * O componente pai aplica os filtros e a paginação; este componente exibe o resultado recebido.
  */
 export default function RegistrosTable({
   registros = [],
@@ -207,29 +207,12 @@ export default function RegistrosTable({
   onChange,
   onAcoes,
 }) {
-  const [busca, setBusca] = useState("");
-  const [buscaAplicada, setBuscaAplicada] = useState("");
-  const [tipo, setTipo] = useState("todos");
   const [pagina, setPagina] = useState(1);
 
-  // Atraso na busca para não chamar a API a cada tecla
+  // Avisa o componente pai sempre que a página muda
   useEffect(() => {
-    if (busca === buscaAplicada) return;
-    const id = setTimeout(() => {
-      setBuscaAplicada(busca);
-      setPagina(1);
-    }, ATRASO_BUSCA_MS);
-    return () => clearTimeout(id);
-  }, [busca, buscaAplicada]);
-
-  // Avisa o componente pai sempre que os parâmetros de consulta mudam
-  useEffect(() => {
-    onChange?.({
-      busca: buscaAplicada.trim(),
-      tipo: tipo === "todos" ? null : tipo,
-      pagina,
-    });
-  }, [buscaAplicada, tipo, pagina, onChange]);
+    onChange?.({ pagina });
+  }, [pagina, onChange]);
 
   const totalRegistros = Number.isFinite(total) ? total : registros.length;
   const totalPaginas = Math.max(1, Math.ceil(totalRegistros / porPagina));
@@ -237,11 +220,6 @@ export default function RegistrosTable({
   const fim = inicio + registros.length;
 
   const irPara = (p) => setPagina(Math.min(Math.max(p, 1), totalPaginas));
-
-  const escolherTipo = (chave) => {
-    setTipo(chave);
-    setPagina(1);
-  };
 
   return (
     <main className="rg-page">
@@ -254,57 +232,12 @@ export default function RegistrosTable({
             <div>
               <h1 className="rg-title">Registro de Atividades</h1>
               <p className="rg-subtitle">
-                Reuniões, vistorias e ocorrências por cliente
+                Reuniões e entrevistas por cliente
               </p>
             </div>
           </div>
 
-          <div className="rg-tools">
-            <label className="rg-search">
-              <IconSearch size={22} />
-              <input
-                type="search"
-                placeholder="Buscar por pauta, cliente ou resumo..."
-                value={busca}
-                onChange={(e) => setBusca(e.target.value)}
-              />
-            </label>
-
-            <button type="button" className="rg-btn">
-              <IconCalendar size={22} />
-              <span>Últimos 30 dias</span>
-              <IconChevronDown size={18} />
-            </button>
-          </div>
         </header>
-
-        {/* Filtro por tipo */}
-        <div className="rg-chips" role="group" aria-label="Filtrar por tipo">
-          <button
-            type="button"
-            className={`rg-chip ${tipo === "todos" ? "is-active" : ""}`}
-            aria-pressed={tipo === "todos"}
-            onClick={() => escolherTipo("todos")}
-          >
-            <IconFilter size={18} />
-            Todos
-          </button>
-          {Object.entries(TIPOS).map(([chave, t]) => {
-            const Ico = ICONES_TIPO[t.icon];
-            return (
-              <button
-                key={chave}
-                type="button"
-                className={`rg-chip ${tipo === chave ? "is-active" : ""}`}
-                aria-pressed={tipo === chave}
-                onClick={() => escolherTipo(chave)}
-              >
-                <Ico size={18} />
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
 
         {/* Tabela */}
         <section className={`rg-card ${carregando ? "is-loading" : ""}`} aria-busy={carregando}>

@@ -28,8 +28,7 @@ export default function LoginForm() {
       } else if (usuario.categoria === "Admin") {
         router.replace("/admin");
       } else {
-        await apiRequest("/auth/logout", { method: "POST" });
-        setErro("A área de cliente ainda não está disponível.");
+        router.replace("/cliente");
       }
     } catch (error) {
       setErro(error.message || "Não foi possível entrar. Tente novamente.");

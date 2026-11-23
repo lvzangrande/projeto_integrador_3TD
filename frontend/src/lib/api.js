@@ -1,9 +1,28 @@
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/+$/, "");
+const API_BASE_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080").replace(/\/+$/, "");
+
+function getApiUrl() {
+  let base = API_BASE_URL;
+  if (typeof window !== "undefined" && process.env.NODE_ENV !== "production") {
+    try {
+      const url = new URL(base);
+      const browserHost = window.location.hostname;
+      if (["localhost", "127.0.0.1"].includes(url.hostname) && ["localhost", "127.0.0.1"].includes(browserHost)) {
+        url.hostname = browserHost;
+        base = url.toString().replace(/\/+$/, "");
+      }
+    } catch {
+      // A URL inválida será apresentada como erro de conexão pelo fetch.
+    }
+  }
+
+  return /\/api$/i.test(base) ? base : `${base}/api`;
+}
 
 export async function apiRequest(path, options = {}) {
-  const response = await fetch(`${API_URL}${path.startsWith("/") ? path : `/${path}`}`, {
+  const apiUrl = getApiUrl();
+  const response = await fetch(`${apiUrl}${path.startsWith("/") ? path : `/${path}`}`, {
     ...options,
-    credentials: options.credentials || "include",
+    credentials: "include",
     headers: {
       ...(options.body ? { "Content-Type": "application/json" } : {}),
       ...options.headers,

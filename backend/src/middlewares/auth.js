@@ -66,7 +66,13 @@ export function verificarToken(token) {
 }
 
 export function autenticar(request, response, next) {
+<<<<<<< HEAD
   const usuario = verificarToken(lerCookie(request, COOKIE_NAME));
+=======
+  const token = lerCookie(request, COOKIE_NAME);
+  if (!token) return response.status(401).json({ erro: "Autenticação necessária. Entre na sua conta para continuar." });
+  const usuario = verificarToken(token);
+>>>>>>> main
   if (!usuario) return response.status(401).json({ erro: "Sua sessão expirou. Entre novamente." });
   request.usuarioAutenticado = usuario;
   next();
@@ -79,6 +85,7 @@ export function exigirFiliado(request, response, next) {
   next();
 }
 
+<<<<<<< HEAD
 export function exigirAdmin(request, response, next) {
   if (request.usuarioAutenticado?.categoria !== "Admin") {
     return response.status(403).json({ erro: "Esta ação está disponível somente para administradores." });
@@ -93,6 +100,8 @@ export function exigirClienteOuAdmin(request, response, next) {
   next();
 }
 
+=======
+>>>>>>> main
 export function definirCookieSessao(response, usuario) {
   response.cookie(COOKIE_NAME, criarToken(usuario), cookieOptions());
 }

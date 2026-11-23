@@ -1,5 +1,3 @@
-use DB_water_control
-
 -- ============================================
 -- POVOAMENTO DO BANCO DE DADOS
 -- SISTEMA DE GESTÃO HÍDRICA
@@ -19,6 +17,16 @@ INSERT INTO usuarios (nome, email, senha, cnpj, telefone, categoria, tema, statu
 ('Juliana Ferreira', 'juliana@empresa.com', '12345678901234567890123456789012', '89.012.345/0001-67', '(19) 99999-1008', 'Cliente', 'Claro', 'Ativo'),
 ('Lucas Rodrigues', 'lucas@empresa.com', '12345678901234567890123456789012', '90.123.456/0001-78', '(11) 99999-1009', 'Filiado', 'Escuro', 'Ativo'),
 ('Patricia Souza', 'patricia@empresa.com', '12345678901234567890123456789012', '10.234.567/0001-89', '(27) 99999-1010', 'Cliente', 'Claro', 'Inativo');
+
+UPDATE usuarios SET documento = cnpj, tipo_pessoa = 'juridica' WHERE documento IS NULL;
+UPDATE usuarios SET id_filiado = CASE id_usuario
+  WHEN 4 THEN 2
+  WHEN 5 THEN 2
+  WHEN 7 THEN 3
+  WHEN 8 THEN 3
+  WHEN 10 THEN 3
+  ELSE NULL
+END WHERE categoria = 'Cliente';
 
 
 -- 2. RESERVATORIOS
@@ -119,16 +127,16 @@ VALUES
 
 -- 8. REUNIOES
 INSERT INTO reunioes
-(id_usuario, momento_abertura, pauta, resumo, proximos_passos, tipo)
+(id_usuario, id_filiado, momento_abertura, pauta, resumo, proximos_passos, tipo)
 VALUES
-(1, '2026-10-01 09:00:00', 'Reunião de alinhamento geral', 'Discussão sobre o andamento do sistema de monitoramento hídrico.', 'Definir prioridades e acompanhar o desenvolvimento.', 'Reunião'),
-(2, '2026-10-03 10:00:00', 'Análise de consumo industrial', 'Foram avaliados os indicadores de consumo dos reservatórios.', 'Implementar medidas para redução do consumo.', 'Reunião'),
-(3, '2026-10-05 14:00:00', 'Entrevista com responsável técnico', 'Entrevista para levantamento dos processos de abastecimento.', 'Documentar os processos identificados.', 'Entrevista'),
-(4, '2026-10-07 11:00:00', 'Análise de vazamentos', 'Foram discutidas ocorrências de vazamentos nas instalações.', 'Realizar inspeção nas tubulações.', 'Reunião'),
-(5, '2026-10-10 09:30:00', 'Planejamento de manutenção', 'Planejamento das próximas manutenções preventivas.', 'Criar cronograma de manutenção.', 'Reunião'),
-(6, '2026-10-12 15:00:00', 'Entrevista com operador', 'Levantamento das dificuldades encontradas pelos operadores.', 'Avaliar melhorias na operação.', 'Entrevista'),
-(7, '2026-10-15 13:00:00', 'Indicadores de eficiência hídrica', 'Análise dos indicadores de eficiência e desperdício.', 'Gerar relatório comparativo mensal.', 'Reunião'),
-(8, '2026-10-18 10:30:00', 'Implantação de medidores', 'Discussão sobre a implantação de novos medidores.', 'Definir pontos de instalação.', 'Reunião'),
-(9, '2026-10-22 16:00:00', 'Monitoramento de reservatórios', 'Avaliação do funcionamento dos sensores e equipamentos.', 'Verificar possíveis falhas de comunicação.', 'Reunião'),
-(10, '2026-10-28 09:00:00', 'Resultados mensais', 'Apresentação dos resultados de consumo e ocorrências.', 'Preparar relatório para o próximo período.', 'Reunião');
+(4, 2, '2026-10-01 09:00:00', 'Reunião de alinhamento geral', 'Discussão sobre o andamento do sistema de monitoramento hídrico.', 'Definir prioridades e acompanhar o desenvolvimento.', 'Reunião'),
+(4, 2, '2026-10-03 10:00:00', 'Análise de consumo industrial', 'Foram avaliados os indicadores de consumo dos reservatórios.', 'Implementar medidas para redução do consumo.', 'Reunião'),
+(7, 3, '2026-10-05 14:00:00', 'Entrevista com responsável técnico', 'Entrevista para levantamento dos processos de abastecimento.', 'Documentar os processos identificados.', 'Entrevista'),
+(4, 2, '2026-10-07 11:00:00', 'Análise de vazamentos', 'Foram discutidas ocorrências de vazamentos nas instalações.', 'Realizar inspeção nas tubulações.', 'Reunião'),
+(5, 2, '2026-10-10 09:30:00', 'Planejamento de manutenção', 'Planejamento das próximas manutenções preventivas.', 'Criar cronograma de manutenção.', 'Reunião'),
+(8, 3, '2026-10-12 15:00:00', 'Entrevista com operador', 'Levantamento das dificuldades encontradas pelos operadores.', 'Avaliar melhorias na operação.', 'Entrevista'),
+(7, 3, '2026-10-15 13:00:00', 'Indicadores de eficiência hídrica', 'Análise dos indicadores de eficiência e desperdício.', 'Gerar relatório comparativo mensal.', 'Reunião'),
+(8, 3, '2026-10-18 10:30:00', 'Implantação de medidores', 'Discussão sobre a implantação de novos medidores.', 'Definir pontos de instalação.', 'Reunião'),
+(10, 3, '2026-10-22 16:00:00', 'Monitoramento de reservatórios', 'Avaliação do funcionamento dos sensores e equipamentos.', 'Verificar possíveis falhas de comunicação.', 'Reunião'),
+(10, 3, '2026-10-28 09:00:00', 'Resultados mensais', 'Apresentação dos resultados de consumo e ocorrências.', 'Preparar relatório para o próximo período.', 'Reunião');
 
