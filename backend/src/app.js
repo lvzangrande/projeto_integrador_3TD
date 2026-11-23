@@ -12,6 +12,7 @@ import { criarOcorrenciasController } from "./controllers/OcorrenciasController.
 import { criarLeiturasController } from "./controllers/LeiturasController.js";
 import { criarReunioesController } from "./controllers/ReunioesController.js";
 import { criarReservatoriosController } from "./controllers/ReservatoriosController.js";
+import { criarAdminController } from "./controllers/AdminController.js";
 import { criarAutenticacaoRoutes } from "./routes/autenticacaoRoutes.js";
 import { criarUsuarioRoutes } from "./routes/usuarioRoutes.js";
 import { criarSetorRoutes } from "./routes/setorRoutes.js";
@@ -20,6 +21,7 @@ import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
 import { criarLeiturasRoutes } from "./routes/leiturasRoutes.js";
 import { criarReunioesRoutes } from "./routes/reunioesRoutes.js";
 import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
+import { criarAdminRoutes } from "./routes/adminRoutes.js";
 
 import { criarAutenticacaoService } from "../services/AutenticacaoService.js";
 import { criarUsuarioService } from "../services/UsuarioService.js";
@@ -29,6 +31,7 @@ import { criarOcorrenciasService } from "../services/OcorrenciasService.js";
 import { criarLeiturasService } from "../services/LeiturasService.js";
 import { criarReunioesService } from "../services/ReunioesService.js";
 import { criarReservatoriosService } from "../services/ReservatoriosService.js";
+import { criarAdminService } from "../services/AdminService.js";
 
 import { criarUsuarioModel } from "../models/UsuarioModels.js";
 import { criarSetorModel } from "../models/SetorModels.js";
@@ -37,15 +40,20 @@ import { criarOcorrenciasModel } from "../models/OcorrenciasModel.js";
 import { criarLeiturasModel } from "../models/LeiturasModel.js";
 import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
+import { criarAdminModel } from "../models/AdminModel.js";
+import { criarAcessoModel } from "../models/AcessoModel.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
-const autenticacaoService = criarAutenticacaoService({ usuarioModel });
+const acessoModel = criarAcessoModel({ pool });
+const autenticacaoService = criarAutenticacaoService({ usuarioModel, acessoModel });
+const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
+api.use("/admin", criarAdminRoutes({ adminController: criarAdminController({ adminService: criarAdminService({ adminModel }) }) }));
 const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
 api.use("/usuario", usuarioRoutes);
 api.use("/usuarios", usuarioRoutes);

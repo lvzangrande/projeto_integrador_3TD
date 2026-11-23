@@ -3,7 +3,7 @@ import { limparCookieSessao, definirCookieSessao } from "../middlewares/auth.js"
 export function criarAutenticacaoController({ autenticacaoService }) {
   async function entrar(request, response, next) {
     try {
-      const sessao = await autenticacaoService.entrar(request.body ?? {});
+      const sessao = await autenticacaoService.entrar(request.body ?? {}, { ip: request.ip });
       definirCookieSessao(response, sessao.usuario);
       response.status(200).json({ sucesso: true, dados: sessao.usuario });
     } catch (erro) {
@@ -12,9 +12,14 @@ export function criarAutenticacaoController({ autenticacaoService }) {
     }
   }
 
-  function sair(_request, response) {
-    limparCookieSessao(response);
-    response.status(200).json({ sucesso: true, dados: { mensagem: "Sessão encerrada." } });
+  async function sair(request, response, next) {
+    try {
+      await autenticacaoService.registrarSaida(request.usuarioAutenticado, request.ip);
+      limparCookieSessao(response);
+      response.status(200).json({ sucesso: true, dados: { mensagem: "Sessão encerrada." } });
+    } catch (erro) {
+      next(erro);
+    }
   }
 
   function atual(request, response) {

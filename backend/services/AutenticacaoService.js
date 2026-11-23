@@ -24,8 +24,8 @@ async function conferirSenha(senha, armazenada) {
   return senhaBuffer.length === legadoBuffer.length && timingSafeEqual(senhaBuffer, legadoBuffer);
 }
 
-export function criarAutenticacaoService({ usuarioModel }) {
-  async function entrar({ email, senha }) {
+export function criarAutenticacaoService({ usuarioModel, acessoModel }) {
+  async function entrar({ email, senha }, { ip = null } = {}) {
     const emailLimpo = typeof email === "string" ? email.trim().toLowerCase() : "";
     if (!emailLimpo || typeof senha !== "string" || !senha) {
       throw Object.assign(new Error("Informe e-mail e senha."), { status: 400 });
@@ -34,6 +34,7 @@ export function criarAutenticacaoService({ usuarioModel }) {
     const usuario = await usuarioModel.buscarPorEmail(emailLimpo);
     const senhaValida = usuario && await conferirSenha(senha, usuario.senha);
     if (!senhaValida || usuario.status !== "Ativo") {
+      await acessoModel?.registrar({ idUsuario: usuario?.id_usuario ?? null, email: emailLimpo, evento: "Falha de autenticação", ip });
       throw Object.assign(new Error("E-mail ou senha inválidos."), { status: 401 });
     }
 
@@ -41,6 +42,8 @@ export function criarAutenticacaoService({ usuarioModel }) {
       const senhaHash = await gerarHashSenha(senha);
       await usuarioModel.atualizarSenha(usuario.id_usuario, senhaHash);
     }
+
+    await acessoModel?.registrar({ idUsuario: usuario.id_usuario, email: emailLimpo, evento: "Login", ip });
 
     return {
       usuario: {
@@ -53,5 +56,9 @@ export function criarAutenticacaoService({ usuarioModel }) {
     };
   }
 
-  return { entrar };
+  async function registrarSaida(usuario, ip = null) {
+    await acessoModel?.registrar({ idUsuario: usuario.id_usuario, email: usuario.email, evento: "Logout", ip });
+  }
+
+  return { entrar, registrarSaida };
 }

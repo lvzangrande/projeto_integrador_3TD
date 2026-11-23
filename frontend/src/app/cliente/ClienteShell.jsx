@@ -3,11 +3,14 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import ClienteHeader from "./ClienteHeader";
+import ThemeToggle from "@/components/ThemeToggle/ThemeToggle.jsx";
 import { apiRequest } from "@/lib/api";
+import useAppTheme from "@/hooks/useAppTheme";
 
 export default function ClienteShell({ children }) {
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
+  const { theme, toggleTheme } = useAppTheme();
 
   useEffect(() => {
     let ativo = true;
@@ -40,9 +43,10 @@ export default function ClienteShell({ children }) {
   }
 
   return (
-    <div className="cliente-shell">
+    <div className={`cliente-shell ${theme === "Claro" ? "theme-light" : ""}`}>
       {usuario ? (
         <>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
           <ClienteHeader nome={usuario.nome} onSair={handleSair} />
           <div className="cliente-content">{children}</div>
         </>
