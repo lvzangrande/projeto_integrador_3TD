@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { formatarLitrosPoupados, normalizarLitrosPoupados } from "./contadorAguaPoupada.js";
+import { formatarLitrosPoupados, normalizarLitrosPoupados } from "./contadorAguaPoupada.jsx";
 
 test("normaliza valores numéricos e DECIMAL serializado como texto", () => {
   assert.equal(normalizarLitrosPoupados({ litros_por_dia: 1250.7 }), 1250.7);
