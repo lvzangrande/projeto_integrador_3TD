@@ -21,6 +21,7 @@ import { criarOcorrenciasRoutes } from "./routes/ocorrenciasRoutes.js";
 import { criarLeiturasRoutes } from "./routes/leiturasRoutes.js";
 import { criarReunioesRoutes } from "./routes/reunioesRoutes.js";
 import { criarReservatoriosRoutes } from "./routes/reservatoriosRoutes.js";
+import { criarAdminRoutes } from "./routes/adminRoutes.js";
 import { criarClienteRoutes } from "./routes/clienteRoutes.js";
 
 import { criarAutenticacaoService } from "../services/AutenticacaoService.js";
@@ -61,6 +62,29 @@ const reunioesModel = criarReunioesModel({ pool });
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
+// Indicador agregado para a página inicial pública: média diária estimada
+// a partir do volume registrado em ocorrências resolvidas nos últimos 30 dias.
+api.get("/indicadores/agua-poupada", async (_request, response, next) => {
+  try {
+    const [[resultado]] = await pool.query(
+      `SELECT SUM(o.volume_perdido) AS volume_resolvido
+       FROM ocorrencias o
+       WHERE o.status = 'Resolvida'
+         AND o.momento_abertura >= DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY)
+         AND o.momento_abertura < DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)`,
+    );
+    response.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
+    return response.json({
+      sucesso: true,
+      dados: {
+        litros_por_dia: resultado.volume_resolvido === null ? null : Number(resultado.volume_resolvido) / 30,
+        periodo_dias: 30,
+      },
+    });
+  } catch (error) {
+    return next(error);
+  }
+});
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) }));
 api.use("/admin", criarAdminRoutes({ adminController: criarAdminController({ adminService: criarAdminService({ adminModel }) }) }));
 const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
