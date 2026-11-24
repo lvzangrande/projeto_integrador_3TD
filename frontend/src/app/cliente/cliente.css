@@ -292,10 +292,8 @@
   .cliente-modulo:hover { transform: none; }
 }
 
-<<<<<<< HEAD
 .cliente-setor__medidores { grid-column: 1 / -1; color: #9bb6cb; font-size: .8rem; line-height: 1.5; }
 .cliente-setor__medidores strong { color: #cfe7f5; }
-=======
 .cliente-shell.theme-light {
   --cliente-bg: #eef5f8;
   --cliente-line: rgba(30, 76, 99, .18);
@@ -320,4 +318,3 @@
 .cliente-shell.theme-light .cliente-home__eyebrow { color: #087fa8; }
 .cliente-shell.theme-light .cliente-modulo { background: linear-gradient(145deg, #fff, #f4f9fb); box-shadow: 0 12px 30px rgba(34, 72, 91, .1); }
 .cliente-shell.theme-light .cliente-modulo__icone { color: #087fa8; border-color: rgba(8, 127, 168, .2); background: rgba(8, 127, 168, .08); }
->>>>>>> 65076e32bf7f93a869e58de13fee7796e7e5a0e1

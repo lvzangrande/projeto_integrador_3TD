@@ -79,6 +79,13 @@ export function exigirFiliado(request, response, next) {
   next();
 }
 
+export function exigirAdmin(request, response, next) {
+  if (request.usuarioAutenticado?.categoria !== "Admin") {
+    return response.status(403).json({ erro: "Esta área está disponível somente para administradores." });
+  }
+  next();
+}
+
 export function exigirCliente(request, response, next) {
   if (request.usuarioAutenticado?.categoria !== "Cliente") {
     return response.status(403).json({ erro: "Esta área está disponível somente para clientes." });
