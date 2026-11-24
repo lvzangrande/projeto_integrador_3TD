@@ -2,19 +2,16 @@
 
 import { useEffect, useState } from "react";
 import { apiRequest } from "@/lib/api";
-
-const formatador = new Intl.NumberFormat("pt-BR", { maximumFractionDigits: 0 });
+import { formatarLitrosPoupados, normalizarLitrosPoupados } from "./contadorAguaPoupada.js";
 
 export default function ContadorAguaPoupada() {
-  const [litros, setLitros] = useState(null);
+  const [litros, setLitros] = useState(undefined);
 
   useEffect(() => {
     let ativo = true;
     const atualizar = () => apiRequest("/indicadores/agua-poupada")
       .then((dados) => {
-        if (ativo && typeof dados.litros_por_dia === "number" && Number.isFinite(dados.litros_por_dia)) {
-          setLitros(Math.max(0, dados.litros_por_dia));
-        }
+        if (ativo) setLitros(normalizarLitrosPoupados(dados));
       })
       .catch(() => { if (ativo) setLitros(null); });
 
@@ -27,8 +24,13 @@ export default function ContadorAguaPoupada() {
   }, []);
 
   return (
-    <span className="inicio__dado-valor" aria-live="polite" aria-atomic="true">
-      {litros === null ? "—" : `${formatador.format(litros)} L`}
+    <span
+      className={`inicio__dado-valor${litros === null ? " inicio__dado-valor--indisponivel" : ""}`}
+      aria-live="polite"
+      aria-atomic="true"
+      title={litros === null ? "Sem dados de referência para calcular a economia de água." : undefined}
+    >
+      {litros === undefined ? "—" : formatarLitrosPoupados(litros)}
     </span>
   );
 }

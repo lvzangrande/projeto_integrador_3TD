@@ -49,6 +49,15 @@ function criarEmailMime({ remetente, destinatario, link, validadeMinutos }) {
   return Buffer.from(partes.join("\r\n"), "utf8").toString("base64url");
 }
 
+function obterCodigoErroGoogle(payload) {
+  const erro = payload?.error;
+  if (typeof erro === "string") return erro;
+  if (!erro || typeof erro !== "object") return null;
+
+  const codigo = erro.status ?? erro.errors?.[0]?.reason ?? erro.code;
+  return typeof codigo === "string" || typeof codigo === "number" ? String(codigo) : null;
+}
+
 export function criarGmailEmailService({ env = process.env, fetchImpl = fetch } = {}) {
   let tokenCache = null;
 
@@ -78,7 +87,9 @@ export function criarGmailEmailService({ env = process.env, fetchImpl = fetch } 
     });
     const payload = await response.json().catch(() => ({}));
     if (!response.ok || typeof payload.access_token !== "string") {
-      throw new Error(`Falha na autenticação OAuth do Gmail (HTTP ${response.status}).`);
+      const codigo = obterCodigoErroGoogle(payload);
+      const detalhe = codigo ? `, código ${codigo}` : "";
+      throw new Error(`Falha na autenticação OAuth do Gmail (HTTP ${response.status}${detalhe}).`);
     }
 
     tokenCache = {
@@ -108,7 +119,10 @@ export function criarGmailEmailService({ env = process.env, fetchImpl = fetch } 
     });
     if (!response.ok) {
       if (response.status === 401 || response.status === 403) tokenCache = null;
-      throw new Error(`A API do Gmail recusou o envio (HTTP ${response.status}).`);
+      const payload = await response.json().catch(() => ({}));
+      const codigo = obterCodigoErroGoogle(payload);
+      const detalhe = codigo ? `, código ${codigo}` : "";
+      throw new Error(`A API do Gmail recusou o envio (HTTP ${response.status}${detalhe}).`);
     }
   }
 
