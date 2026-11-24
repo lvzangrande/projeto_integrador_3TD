@@ -62,6 +62,28 @@ export function criarClienteController({ pool }) {
          WHERE r.id_usuario = ?`,
         [idUsuario],
       );
+      const [leiturasPorDia] = await pool.query(
+        `SELECT DATE_FORMAT(l.momento_leitura, '%Y-%m-%d') AS data, COUNT(*) AS quantidade
+         FROM leituras l
+         INNER JOIN medidores m ON m.id_med = l.id_med
+         INNER JOIN setores s ON s.id_setor = m.id_setor
+         INNER JOIN reservatorios r ON r.id_reservatorio = s.id_reservatorio
+         WHERE r.id_usuario = ?
+           AND l.momento_leitura >= DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY)
+           AND l.momento_leitura < DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)
+         GROUP BY DATE(l.momento_leitura)
+         ORDER BY DATE(l.momento_leitura)`,
+        [idUsuario],
+      );
+      const [ocorrenciasPorStatus] = await pool.query(
+        `SELECT o.status, COUNT(*) AS quantidade
+         FROM ocorrencias o
+         INNER JOIN reservatorios r ON r.id_reservatorio = o.id_reservatorio
+         WHERE r.id_usuario = ?
+         GROUP BY o.status
+         ORDER BY o.status`,
+        [idUsuario],
+      );
       return response.status(200).json({
         sucesso: true,
         dados: {
@@ -70,6 +92,10 @@ export function criarClienteController({ pool }) {
           medidores: Number(medidores.total),
           ultima_leitura: leituras.ultima_leitura,
           ocorrencias: { total: Number(ocorrencias.total), em_andamento: Number(ocorrencias.em_andamento) },
+          graficos: {
+            leituras_por_dia: leiturasPorDia.map((item) => ({ data: item.data, quantidade: Number(item.quantidade) })),
+            ocorrencias_por_status: ocorrenciasPorStatus.map((item) => ({ status: item.status, quantidade: Number(item.quantidade) })),
+          },
         },
       });
     } catch (error) {

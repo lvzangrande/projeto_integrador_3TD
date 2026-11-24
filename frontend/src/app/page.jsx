@@ -9,8 +9,8 @@ import RolagemLenis from "@/components/Login/RolagemLenis";
 import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
 import TituloAgua from "@/components/Login/TituloAgua";
 import VazamentoCano from "@/components/Login/VazamentoCano";
+import ContadorAguaPoupada from "@/components/ContadorAguaPoupada";
 
-const litrosPoupadosPorDia = "000";
 const nivelDoReservatorio = 0.55;
 
 export default async function Inicio() {
@@ -37,9 +37,7 @@ export default async function Inicio() {
             <div className="inicio__dado">
               <MedidorAgua nivel={nivelDoReservatorio} />
               <div className="inicio__dado-textos">
-                <span className="inicio__dado-valor">
-                  {litrosPoupadosPorDia} L
-                </span>
+                <ContadorAguaPoupada />
                 <span className="inicio__dado-texto">
                   de água poupada por dia
                 </span>

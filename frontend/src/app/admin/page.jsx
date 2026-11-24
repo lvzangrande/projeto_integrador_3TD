@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
+import { createPortal } from "react-dom";
 import { useRouter } from "next/navigation";
 import { Line } from "react-chartjs-2";
 import {
@@ -251,9 +252,9 @@ function RecordsView({ section, records, data, reload, notify }) {
     </div>
     <div className="table-scroll"><table className="admin-table"><thead><tr>{config.columns.map(([key, label]) => <th key={key}>{label}</th>)}{showActions && <th>Ações</th>}</tr></thead>
       <tbody>{visible.map((row) => <tr key={row.id}>{config.columns.map(([key]) => <td key={key}>{key === "status" ? <span className={`record-status ${normalizeSearch(row[key]).replaceAll(" ", "-")}`}>{row[key]}</span> : formatValue(row[key])}</td>)}
-        {showActions && <td className="row-actions">{section === "alertas" ? row.status === "Ativo" && <button type="button" onClick={() => acknowledge(row)}>Reconhecer</button> : <><button type="button" onClick={() => startEdit(row)}>Editar</button>{section === "ocorrencias" ? row.status === "Aberta" && <button type="button" onClick={() => changeStatus(row)}>Descartar</button> : row.status && <button type="button" onClick={() => changeStatus(row)}>{row.status === "Ativo" ? "Inativar" : "Ativar"}</button>}</>}</td>}
+        {showActions && <td className="row-actions">{section === "alertas" ? row.status === "Ativo" && <button className="admin-row-action admin-row-action--warning" type="button" onClick={() => acknowledge(row)}>Reconhecer</button> : <><button className="admin-row-action admin-row-action--edit" type="button" onClick={() => startEdit(row)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>Editar</button>{section === "ocorrencias" ? row.status === "Aberta" && <button className="admin-row-action admin-row-action--discard" type="button" onClick={() => changeStatus(row)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2m3 0-1 14H6L5 6"/><path d="M10 11v5m4-5v5"/></svg>Descartar</button> : row.status && <button className="admin-row-action admin-row-action--warning" type="button" onClick={() => changeStatus(row)}>{row.status === "Ativo" ? "Inativar" : "Ativar"}</button>}</>}</td>}
       </tr>)}</tbody></table>{visible.length === 0 && <div className="empty-state">Nenhum registro encontrado para os filtros selecionados.</div>}</div>
-    {editing !== null && <div className="admin-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setEditing(null); }}>
+    {editing !== null && typeof document !== "undefined" && createPortal(<div className="admin-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setEditing(null); }}>
       <form className="admin-modal panel" onSubmit={save}><div className="panel-heading"><div><p className="eyebrow">{editing === "novo" ? "NOVO REGISTRO" : "EDITAR REGISTRO"}</p><h2>{config.title}</h2></div><button className="icon-button" type="button" onClick={() => setEditing(null)} aria-label="Fechar">×</button></div>
         <div className="admin-form-grid">{fields.map(([key, label, type = "text", required = false, options]) => {
           const choices = Array.isArray(options) ? options.map((value) => ({ value, label: value })) : typeof options === "string" ? optionsFor(options, data) : [];
@@ -265,12 +266,22 @@ function RecordsView({ section, records, data, reload, notify }) {
         {error && <p className="admin-form-error" role="alert">{error}</p>}
         <div className="admin-modal-actions"><button className="admin-action secondary" type="button" onClick={() => setEditing(null)}>Cancelar</button><button className="admin-action" type="submit" disabled={saving}>{saving ? "Salvando…" : "Salvar"}</button></div>
       </form>
-    </div>}
+    </div>, document.body)}
   </section>;
 }
 
 function ConsumptionChart({ readings }) {
-  const points = useMemo(() => readings.filter((reading) => reading.tipo_medidor !== "Nível").slice(0, 24).reverse(), [readings]);
+  const [periodo, setPeriodo] = useState("30");
+  const periodos = [{ valor: "1", rotulo: "24 horas" }, { valor: "7", rotulo: "7 dias" }, { valor: "30", rotulo: "30 dias" }, { valor: "90", rotulo: "90 dias" }, { valor: "todos", rotulo: "Tudo" }];
+  const points = useMemo(() => {
+    const limite = periodo === "todos" ? null : Date.now() - Number(periodo) * 24 * 60 * 60 * 1000;
+    return readings
+      .filter((reading) => reading.tipo_medidor !== "NÃ­vel")
+      .map((reading) => ({ reading, instante: new Date(reading.data_hora).getTime() }))
+      .filter(({ instante }) => Number.isFinite(instante) && (limite === null || instante >= limite))
+      .sort((a, b) => a.instante - b.instante)
+      .map(({ reading }) => reading);
+  }, [readings, periodo]);
   const data = useMemo(() => ({
     labels: points.map((reading) => {
       const date = new Date(reading.data_hora);
@@ -332,12 +343,18 @@ function ConsumptionChart({ readings }) {
     },
   }), [points]);
 
-  if (!points.length) return <div className="empty-state">Ainda não há leituras de vazão ou hidrômetro para mostrar.</div>;
-
-  return <div className="chart-wrap" role="img" aria-label="Gráfico Chart.js das últimas leituras reais de vazão e hidrômetro">
-    <div className="chart-y-label">L</div>
-    <div className="admin-chart-canvas"><Line data={data} options={options} aria-label="Leituras de vazão e hidrômetro em litros" role="img"/></div>
-  </div>;
+  return <>
+    <nav className="chart-period-filters" aria-label="Filtrar período do gráfico">
+      <span>Período</span>
+      {periodos.map(({ valor, rotulo }) => <button key={valor} type="button" aria-pressed={periodo === valor} onClick={() => setPeriodo(valor)}>{rotulo}</button>)}
+    </nav>
+    {!points.length
+      ? <div className="empty-state">Não há leituras de vazão ou hidrômetro no período selecionado.</div>
+      : <div className="chart-wrap" role="img" aria-label={`Gráfico das leituras de vazão e hidrômetro: ${periodos.find((item) => item.valor === periodo)?.rotulo}`}>
+        <div className="chart-y-label">L</div>
+        <div className="admin-chart-canvas"><Line data={data} options={options} aria-label="Leituras de vazão e hidrômetro em litros" role="img"/></div>
+      </div>}
+  </>;
 }
 
 function Dashboard({ data, go }) {
@@ -351,7 +368,7 @@ function Dashboard({ data, go }) {
       <article className="metric-card"><span className="metric-icon"><span className="tank-icon">▤</span></span><div><p>Reservatórios ativos</p><strong>{activeReservoirs.length} <small>/ {data.reservatorios.length}</small></strong><span className="metric-note"><b>{data.setores.length}</b> setores cadastrados</span></div></article>
       <article className="metric-card"><span className="metric-icon alert-metric"><Icon name="bell" size={20}/></span><div><p>Ocorrências abertas</p><strong className="metric-critical">{openOccurrences.length}</strong><span className="metric-note"><b className="attention">{critical.length} alta/extrema</b> · {activeAlerts} alerta(s) ativo(s)</span></div></article>
     </section>
-    <section className="content-grid"><article className="panel chart-panel"><div className="panel-heading"><div><p className="eyebrow">HISTÓRICO REGISTRADO</p><h2>Leituras de vazão e hidrômetro</h2></div><button className="select-button" type="button" onClick={() => go("leituras")}>Consultar histórico <span>→</span></button></div><div className="chart-legend"><span/><b>Valores gravados no banco (L)</b></div><ConsumptionChart readings={data.leituras}/></article>
+    <section className="content-grid"><article className="panel chart-panel"><div className="panel-heading"><div><p className="eyebrow">HISTÓRICO REGISTRADO</p><h2>Leituras de vazão e hidrômetro</h2></div><button className="select-button" type="button" onClick={() => go("leituras")}>Consultar histórico <span>→</span></button></div><ConsumptionChart readings={data.leituras}/></article>
       <article className="panel levels-panel"><div className="panel-heading"><div><p className="eyebrow">ÚLTIMA MEDIÇÃO</p><h2>Nível dos reservatórios</h2></div><button className="icon-button" type="button" aria-label="Ver reservatórios" onClick={() => go("reservatorios")}><Icon name="more"/></button></div>
         <div className="reservoir-list compact">{activeReservoirs.slice(0, 5).map((row) => { const level = Number(row.nivel); const hasLevel = row.nivel != null && Number.isFinite(level); return <div className="reservoir-row" key={row.id}><div className="reservoir-label"><span>{row.nome}</span></div><div className="level-track"><span className={!hasLevel ? "low" : level < 35 ? "low" : level < 45 ? "warning" : ""} style={{ width: `${hasLevel ? Math.max(0, Math.min(100, level)) : 0}%` }}/></div><strong className={hasLevel && level < 35 ? "level-low" : ""}>{hasLevel ? `${formatValue(level)}%` : "—"}</strong></div>; })}{activeReservoirs.length === 0 && <div className="empty-state">Nenhum reservatório ativo.</div>}</div>
         <button className="text-link" onClick={() => go("reservatorios")}>Gerenciar reservatórios <span>→</span></button>
@@ -467,8 +484,8 @@ export default function AdminDashboard() {
       <nav className={`main-nav ${mobileMenu ? "open" : ""}`} aria-label="Navegação administrativa">{sections.map((item) => <button key={item.id} className={active === item.id ? "active" : ""} onClick={() => { setActive(item.id); setMobileMenu(false); }}>{item.label}
         {item.id === "ocorrencias" && <span className="nav-badge">{data.ocorrencias.filter((row) => !["Resolvida", "Descartada"].includes(row.status)).length}</span>}{item.id === "alertas" && <span className="nav-badge">{data.alertas.filter((row) => row.status === "Ativo").length}</span>}</button>)}</nav>
       <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Ativar modo ${theme === "Escuro" ? "claro" : "escuro"}`} title={`Ativar modo ${theme === "Escuro" ? "claro" : "escuro"}`}><svg viewBox="0 0 24 24" aria-hidden="true">{theme === "Escuro" ? <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l-1.42 1.42m11.3-11.3 1.42-1.42"/></> : <path d="M20.5 15.3A8.5 8.5 0 0 1 8.7 3.5 8.5 8.5 0 1 0 20.5 15.3Z"/>}</svg><span>Modo {theme === "Escuro" ? "claro" : "escuro"}</span></button>
-      <button className="theme-toggle" type="button" onClick={logout} aria-label="Sair da conta">Sair · {usuario.nome}</button>
     </header>
+    <button className="logout-fab" type="button" onClick={logout} aria-label="Sair da conta" title="Sair da conta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>
     <div className="page-shell"><div className="page-title"><div><h1>{title[0]}</h1><p className="admin-page-subtitle">{active === "visao" ? "Indicadores e registros carregados do banco de dados." : title[1]}</p></div></div>
       {notice && <div className="admin-toast" role="status">{notice}</div>}
       {active === "visao" ? <Dashboard data={data} go={setActive}/>

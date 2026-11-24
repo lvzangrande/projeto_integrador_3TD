@@ -62,6 +62,10 @@ const reunioesModel = criarReunioesModel({ pool });
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
+<<<<<<< HEAD
+api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService }) }));
+api.use("/usuario", criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) }));
+=======
 api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) }));
 api.use("/admin", criarAdminRoutes({ adminController: criarAdminController({ adminService: criarAdminService({ adminModel }) }) }));
 const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
