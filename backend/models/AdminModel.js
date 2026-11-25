@@ -1,47 +1,5 @@
 export function criarAdminModel({ pool }) {
-  async function gerarAlertasDeNivel() {
-    await pool.query(`
-      UPDATE alertas a
-      JOIN medidores m ON m.id_med = a.id_med
-      JOIN setores s ON s.id_setor = m.id_setor
-      JOIN reservatorios r ON r.id_reservatorio = s.id_reservatorio
-      JOIN leituras l ON l.id_leitura = (
-        SELECT l2.id_leitura FROM leituras l2
-        WHERE l2.id_med = m.id_med
-        ORDER BY l2.momento_leitura DESC, l2.id_leitura DESC LIMIT 1
-      )
-      SET a.status = 'Resolvido'
-      WHERE a.status IN ('Ativo', 'Reconhecido')
-        AND ((a.tipo = 'Nível mínimo' AND l.volume_leitura >= r.nivel_min)
-          OR (a.tipo = 'Nível máximo' AND l.volume_leitura <= r.nivel_max))
-    `);
-
-    await pool.query(`
-      INSERT IGNORE INTO alertas (id_reservatorio, id_med, id_leitura, tipo, severidade, status, momento_alerta)
-      SELECT r.id_reservatorio, m.id_med, l.id_leitura,
-        CASE WHEN l.volume_leitura < r.nivel_min THEN 'Nível mínimo' ELSE 'Nível máximo' END,
-        'Crítico', 'Ativo', l.momento_leitura
-      FROM medidores m
-      JOIN setores s ON s.id_setor = m.id_setor
-      JOIN reservatorios r ON r.id_reservatorio = s.id_reservatorio
-      JOIN leituras l ON l.id_leitura = (
-        SELECT l2.id_leitura FROM leituras l2
-        WHERE l2.id_med = m.id_med
-        ORDER BY l2.momento_leitura DESC, l2.id_leitura DESC LIMIT 1
-      )
-      WHERE m.tipo = 'Nível' AND m.status = 'Ativo'
-        AND (l.volume_leitura < r.nivel_min OR l.volume_leitura > r.nivel_max)
-        AND NOT EXISTS (
-          SELECT 1 FROM alertas existente
-          WHERE existente.id_med = m.id_med
-            AND existente.tipo = CASE WHEN l.volume_leitura < r.nivel_min THEN 'Nível mínimo' ELSE 'Nível máximo' END
-            AND (existente.status = 'Ativo' OR existente.momento_alerta >= l.momento_leitura)
-        )
-    `);
-  }
-
   async function listarDados() {
-    await gerarAlertasDeNivel();
     const [usuarios] = await pool.query(`
       SELECT id_usuario AS id, nome, email, COALESCE(NULLIF(documento, ''), cnpj) AS documento,
         telefone, categoria, tema, status, id_filiado
@@ -113,17 +71,6 @@ export function criarAdminModel({ pool }) {
       LEFT JOIN usuarios u ON u.id_usuario = rp.id_usuario
       ORDER BY o.momento_abertura DESC, o.id_oc DESC
     `);
-    const [alertas] = await pool.query(`
-      SELECT a.id_alerta AS id, a.id_reservatorio, a.id_med, a.id_oc,
-        a.tipo, a.severidade, a.status, a.momento_alerta AS data_hora,
-        r.nome AS reservatorio, m.num_serie AS medidor,
-        CONCAT('#', o.id_oc, ' · ', o.tipo) AS ocorrencia
-      FROM alertas a
-      LEFT JOIN reservatorios r ON r.id_reservatorio = a.id_reservatorio
-      LEFT JOIN medidores m ON m.id_med = a.id_med
-      LEFT JOIN ocorrencias o ON o.id_oc = a.id_oc
-      ORDER BY a.momento_alerta DESC, a.id_alerta DESC
-    `);
     const [acessos] = await pool.query(`
       SELECT a.id_acesso AS id, a.id_usuario, COALESCE(u.nome, a.email_tentado, 'Usuário removido') AS usuario,
         a.evento, a.momento AS data_hora, a.ip
@@ -152,7 +99,6 @@ export function criarAdminModel({ pool }) {
       responsaveis,
       leituras,
       ocorrencias,
-      alertas,
       acessos,
       reunioes,
       tarifa: tarifas[0] || null,
@@ -248,16 +194,9 @@ export function criarAdminModel({ pool }) {
     }
   }
 
-  async function reconhecerAlerta(id) {
-    const [resultado] = await pool.query(
-      "UPDATE alertas SET status='Reconhecido' WHERE id_alerta=? AND status='Ativo'", [id],
-    );
-    if (resultado.affectedRows === 0) throw Object.assign(new Error("Alerta ativo não encontrado."), { status: 404 });
-  }
-
   async function registrarTarifa(valor, idUsuario) {
     return inserir("INSERT INTO tarifas (valor_m3, id_usuario) VALUES (?, ?)", [valor,idUsuario]);
   }
 
-  return { listarDados, criar, atualizar, alterarStatus, reconhecerAlerta, registrarTarifa };
+  return { listarDados, criar, atualizar, alterarStatus, registrarTarifa };
 }

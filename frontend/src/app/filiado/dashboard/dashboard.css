@@ -32,7 +32,7 @@
 
 .aff-dash__kpis {
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 14px;
 }
 
@@ -68,7 +68,12 @@
     border-color: var(--affiliate-accent);
 }
 
-.aff-dash__graficos,
+.aff-dash__graficos {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+}
+
 .aff-dash__listas {
     display: grid;
     grid-template-columns: minmax(0, 1.6fr) minmax(280px, 1fr);

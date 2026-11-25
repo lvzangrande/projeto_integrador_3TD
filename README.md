@@ -221,6 +221,7 @@ O projeto esta sem Tailwind e sem Bootstrap por padrao. Cada aluno pode instalar
 
 O container cria o banco indicado por `MYSQL_DATABASE`; `database/init/01-schema.sql` cria as tabelas nesse banco na primeira inicializacao.
 Para bancos criados anteriormente, aplique uma vez `database/migrations/20261118_filiado_integracao.sql` antes de usar login, cadastro de clientes ou reunioes. Bancos novos recebem as colunas pela definicao inicial. O script nao tenta adivinhar a carteira dos clientes antigos: preencha `usuarios.id_filiado` e `reunioes.id_filiado` para associar esses registros aos afiliados corretos.
+Para atualizar bancos antigos, aplique uma vez `database/migrations/20261125_remover_alertas.sql`.
 
 Para reiniciar o banco local do zero:
 

@@ -55,35 +55,6 @@ export async function garantirEsquemaAdministrativo(pool) {
   `);
 
   await pool.query(`
-    CREATE TABLE IF NOT EXISTS alertas (
-      id_alerta INT PRIMARY KEY AUTO_INCREMENT,
-      id_reservatorio INT NOT NULL,
-      id_med INT NULL,
-      id_leitura INT NULL,
-      id_oc INT NULL,
-      tipo VARCHAR(80) NOT NULL,
-      severidade ENUM('Informativo', 'Atenção', 'Crítico') NOT NULL DEFAULT 'Informativo',
-      status ENUM('Ativo', 'Reconhecido', 'Resolvido') NOT NULL DEFAULT 'Ativo',
-      momento_alerta DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-      INDEX idx_alertas_status_momento (status, momento_alerta),
-      UNIQUE KEY uq_alertas_leitura_tipo (id_leitura, tipo),
-      CONSTRAINT fk_alertas_reservatorio FOREIGN KEY (id_reservatorio)
-        REFERENCES reservatorios(id_reservatorio) ON DELETE CASCADE,
-      CONSTRAINT fk_alertas_medidor FOREIGN KEY (id_med)
-        REFERENCES medidores(id_med) ON DELETE SET NULL,
-      CONSTRAINT fk_alertas_ocorrencia FOREIGN KEY (id_oc)
-        REFERENCES ocorrencias(id_oc) ON DELETE SET NULL
-    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
-  `);
-
-  await adicionarColunaSeAusente(pool, "alertas", "id_leitura", "ALTER TABLE alertas ADD COLUMN id_leitura INT NULL");
-  const [indiceAlerta] = await pool.query(
-    `SELECT 1 FROM information_schema.statistics
-     WHERE table_schema = DATABASE() AND table_name = 'alertas' AND index_name = 'uq_alertas_leitura_tipo' LIMIT 1`,
-  );
-  if (indiceAlerta.length === 0) await pool.query("ALTER TABLE alertas ADD UNIQUE KEY uq_alertas_leitura_tipo (id_leitura, tipo)");
-
-  await pool.query(`
     CREATE TABLE IF NOT EXISTS acessos (
       id_acesso BIGINT PRIMARY KEY AUTO_INCREMENT,
       id_usuario INT NULL,

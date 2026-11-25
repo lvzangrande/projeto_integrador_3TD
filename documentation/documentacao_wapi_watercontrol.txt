@@ -35,8 +35,8 @@ A paleta combina azuis profundos, que transmitem confiança, com tons de água e
 | Slate Gray     | #3B4B5E     | Textos secundários.                                |
 | Cool Gray      | #8A94A6     | Bordas e divisores de conteúdo.                    |
 | Status Normal  | #0072B2     | Nível e consumo dentro dos limites.                |
-| Status Atenção | #E69F00     | Alertas de atenção.                                |
-| Status Crítico | #D55E00     | Alertas críticos e vazamentos.                     |
+| Status Atenção | #E69F00     | Ocorrências que exigem acompanhamento.             |
+| Status Crítico | #D55E00     | Ocorrências críticas e vazamentos.                 |
 
 
 ## 4. Escopo de Atuação
@@ -45,7 +45,7 @@ O Wapi fornece soluções nos seguintes pilares:
 
 - Gestão de Reservatórios: cadastro de reservatórios, setores, medidores e responsáveis, com limites mínimo e máximo.
 - Controle de Consumo: leituras manuais ou simuladas de nível e consumo, com histórico completo.
-- Prevenção de Perdas: registro e detecção de vazamentos e anomalias, com alertas.
+- Prevenção de Perdas: registro e acompanhamento de vazamentos e anomalias.
 - Economia e Planejamento: dashboard, relatórios e indicadores de economia de água e financeira.
 
 
@@ -54,7 +54,7 @@ O Wapi fornece soluções nos seguintes pilares:
 O Wapi utiliza as seguintes definições de fonte para o sistema:
 
 - Montserrat: aplicada nos títulos, menus, botões principais e nos grandes números do dashboard para dar destaque visual.
-- Roboto: aplicada nos textos, formulários, alertas e tabelas de leitura de dados.
+- Roboto: aplicada nos textos, formulários, mensagens e tabelas de leitura de dados.
 - Sans-Serif: utilizada como fonte genérica de fallback (reserva), garantindo o correto carregamento do texto caso a Montserrat ou a Roboto não estejam disponíveis.
 
 
@@ -67,7 +67,7 @@ O Wapi utiliza as seguintes definições de fonte para o sistema:
 O portal do WaterControl foi desenvolvido para resolver o desafio do "desperdício invisível": a água perdida sem que ninguém perceba. Os pilares de controle são:
 
 - Controle de Reservatórios e Setores: gestão da estrutura hídrica de cada cliente.
-- Gestão de Leituras, Alertas e Ocorrências: fluxo desde a leitura até o alerta e a correção do vazamento.
+- Gestão de Leituras e Ocorrências: fluxo desde o registro da leitura até o acompanhamento e a correção das ocorrências.
 - Controle de Acesso: três perfis (Admin, Filiado e Cliente), com histórico de acesso e cadastro manual de usuários.
 
 
@@ -87,7 +87,7 @@ Legenda:
 - RF004: CRUD de responsáveis vinculados a reservatórios e setores. (Obrigatório)
 - RF005: Diferenciação de perfis de acesso (Admin, Filiado e Cliente). (Obrigatório)
 - RF006: Área de login para usuários. (Complementar)
-- RF007: Mensagem de boas-vindas após o login, com resumo de alertas e ocorrências abertas. (Obrigatório)
+- RF007: Mensagem de boas-vindas após o login, com resumo de ocorrências abertas. (Obrigatório)
 - RF008: Cadastro de novos usuários feito manualmente pelo Admin, como alternativa ao cadastro de clientes pelo Filiado (RF010), que é o fluxo principal. (Obrigatório)
 - RF009: Histórico de acesso (data, hora, usuário, ação e IP) consultável pelo Admin. (Obrigatório)
 - RF010: Cadastro de novos clientes pelo Filiado. (Obrigatório)
@@ -96,10 +96,8 @@ Legenda:
 - RF013: Simulação automática de leituras de nível e consumo por medidor. (Obrigatório)
 - RF014: Definição de limites mínimo e máximo de nível por reservatório e de consumo por setor. (Obrigatório)
 - RF015: Registro de vazamentos e anomalias (tipo, severidade, local, descrição e status). (Obrigatório)
-- RF016: Geração automática de alertas ao violar limites ou detectar anomalia. (Obrigatório)
-- RF017: Central de alertas, com reconhecimento (ciência) e status de cada alerta. (Complementar)
 - RF018: Histórico de leituras com filtros por medidor, reservatório, setor e período. (Obrigatório)
-- RF019: Dashboard com indicadores (nível atual, consumo, alertas ativos e vazamentos abertos). (Obrigatório)
+- RF019: Dashboard com indicadores (nível atual, consumo e ocorrências abertas). (Obrigatório)
 - RF020: Gráficos de consumo e nível ao longo do tempo e por setor. (Obrigatório)
 - RF021: Painel de economia de água (m³) e financeira (R$). (Obrigatório)
 - RF022: Cadastro da tarifa da água (R$/m³) para o cálculo da economia. (Complementar)
@@ -139,7 +137,6 @@ Legenda:
 - RN003: O Filiado só acessa clientes que ele cadastrou; o Cliente só acessa os próprios dados.
 - RN004: Novos usuários são criados apenas pelo Filiado ou Admin. Não existe autocadastro.
 - RN005: Itens com histórico (reservatórios, setores, medidores, usuários) são apenas inativados, nunca apagados.
-- RN006: Enquanto um alerta do mesmo tipo e local estiver ativo, não é gerado outro igual.
 - RN007: Leituras simuladas são identificadas como tal e podem ser filtradas dos relatórios.
 - RN008: A leitura de um hidrômetro acumulado não pode ser menor que a anterior.
 - RN009: Economia de água = consumo de referência (baseline) - consumo real do período.
@@ -165,7 +162,7 @@ Legenda:
 
 O sistema utiliza um banco de dados relacional (db_watercontrol), garantindo a integridade referencial através de Chaves Primárias (PK) e Chaves Estrangeiras (FK).
 
-Total: 11 tabelas (usuarios, acessos, reservatorios, setores, medidores, responsaveis, leituras, ocorrencias, alertas, reunioes, tarifas).
+Total: 10 tabelas (usuarios, acessos, reservatorios, setores, medidores, responsaveis, leituras, ocorrencias, reunioes, tarifas).
 
 
 ### 3.1 Tabela: usuarios
@@ -248,8 +245,8 @@ Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
 | id_setor       | INT          | FK -> setores(id_setor), NULL       | Setor sob responsabilidade.            |
 | nome_resp      | VARCHAR(100) | NOT NULL                            | Nome do responsável.                   |
 | funcao         | VARCHAR(50)  | NULL                                | Função ou cargo.                       |
-| telefone_resp  | VARCHAR(20)  | NULL                                | Telefone para contato e alertas.       |
-| email_resp     | VARCHAR(100) | NULL                                | E-mail para contato e alertas.         |
+| telefone_resp  | VARCHAR(20)  | NULL                                | Telefone de contato.                   |
+| email_resp     | VARCHAR(100) | NULL                                | E-mail de contato.                     |
 
 
 ### 3.7 Tabela: leituras
@@ -280,21 +277,7 @@ Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
 | id_resp           | INT                                                                                   | FK -> responsaveis(id_resp), NULL    | Responsável pelo tratamento.      |
 
 
-### 3.9 Tabela: alertas
-
-| Campo       | Tipo                                                       | Restrições / Chaves                | Descrição                          |
-|-------------|------------------------------------------------------------|------------------------------------|------------------------------------|
-| id_alerta   | INT                                                        | PK, AUTO_INCREMENT                 | Identificador do alerta.           |
-| id_res      | INT                                                        | FK -> reservatorios(id_res)        | Reservatório do alerta.            |
-| id_med      | INT                                                        | FK -> medidores(id_med), NULL      | Medidor que originou o alerta.     |
-| id_oc       | INT                                                        | FK -> ocorrencias(id_oc), NULL     | Ocorrência relacionada.            |
-| tipo        | ENUM('Nível mínimo','Nível máximo','Consumo excedido','Anomalia') | NOT NULL                    | Motivo do alerta.                  |
-| severidade  | ENUM('Informativo','Atenção','Crítico')                    | NOT NULL                           | Gravidade.                         |
-| status      | ENUM('Ativo','Reconhecido','Resolvido')                    | DEFAULT 'Ativo'                    | Situação do alerta.                |
-| data_hora   | DATETIME                                                   | NOT NULL                           | Quando foi gerado.                 |
-
-
-### 3.10 Tabela: reunioes
+### 3.9 Tabela: reunioes
 
 | Campo            | Tipo                      | Restrições / Chaves      | Descrição                     |
 |------------------|---------------------------|--------------------------|-------------------------------|
@@ -308,7 +291,7 @@ Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
 | proximos_passos  | TEXT                      | NULL                     | Ações combinadas.             |
 
 
-### 3.11 Tabela: tarifas
+### 3.10 Tabela: tarifas
 
 | Campo            | Tipo                                                       | Restrições / Chaves            | Descrição                          |
 |------------------|------------------------------------------------------------|--------------------------------|------------------------------------|
@@ -319,7 +302,7 @@ Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
 | vigencia_inicio  | DATE                                                       | NOT NULL                       | Início da vigência.                |
 
 
-### 3.12 Resumo dos relacionamentos (derivado das FKs acima)
+### 3.11 Resumo dos relacionamentos (derivado das FKs acima)
 
 - usuarios.id_filiado -> usuarios.id_user (auto-relacionamento: Filiado que cadastrou o Cliente)
 - acessos.id_user -> usuarios.id_user (opcional)
@@ -334,9 +317,6 @@ Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
 - ocorrencias.id_res -> reservatorios.id_res
 - ocorrencias.id_setor -> setores.id_setor (opcional)
 - ocorrencias.id_resp -> responsaveis.id_resp (opcional)
-- alertas.id_res -> reservatorios.id_res
-- alertas.id_med -> medidores.id_med (opcional)
-- alertas.id_oc -> ocorrencias.id_oc (opcional)
 - reunioes.id_filiado -> usuarios.id_user
 - reunioes.id_cliente -> usuarios.id_user
 - tarifas.id_cliente -> usuarios.id_user (opcional; vazio = tarifa padrão)
@@ -347,9 +327,9 @@ Armazena os dados de todos os perfis do sistema (Admins, Filiados e Clientes).
 O fluxo de acesso aos módulos foi pensado para reduzir cliques e dar clareza visual. O seletor de tema (claro, escuro e daltônico) fica no cabeçalho de todas as páginas.
 
 - Páginas de Acesso Público: Home / Login / Redefinir Senha (sem autocadastro: o acesso é criado pelo Filiado, ao cadastrar o cliente, ou pelo Admin).
-- Área do Admin: Dashboard -> Gestão de Usuários (Cadastrar/Editar/Ativar/Inativar) -> Gestão de Clientes, Reservatórios, Setores, Medidores, Responsáveis, Ocorrências, Alertas e Reuniões (CRUD) -> Histórico de Leituras (somente visualização) -> Histórico de Acesso -> Tarifas -> Relatórios.
+- Área do Admin: Dashboard -> Gestão de Usuários (Cadastrar/Editar/Ativar/Inativar) -> Gestão de Clientes, Reservatórios, Setores, Medidores, Responsáveis, Ocorrências e Reuniões (CRUD) -> Histórico de Leituras (somente visualização) -> Histórico de Acesso -> Tarifas -> Relatórios.
 - Área do Filiado: Painel -> Cadastrar Cliente -> Meus Clientes -> Registrar Reunião/Entrevista -> Histórico de Reuniões.
-- Área do Cliente: Boas-vindas e Dashboard -> Reservatórios e Setores -> Medidores e Responsáveis -> Registrar ou Simular Leitura -> Limites -> Ocorrências -> Central de Alertas -> Histórico de Leituras -> Painel de Economia -> Relatórios.
+- Área do Cliente: Boas-vindas e Dashboard -> Reservatórios e Setores -> Medidores e Responsáveis -> Registrar ou Simular Leitura -> Limites -> Ocorrências -> Histórico de Leituras -> Relatórios.
 
 
 ### 4.1 Wireframe
@@ -374,7 +354,7 @@ Legenda: PFE = Front-end; PBE = Back-end.
 | Área do Filiado (Clientes, Reuniões e Entrevistas)               | PFE: Lucas / PBE: Gustavo  |
 | Reservatórios, Setores, Medidores e Responsáveis                 | PFE: Vitor / PBE: Nicolas  |
 | Leituras, Simulador e Limites                                    | PFE: Lucas / PBE: Nicolas  |
-| Ocorrências e Alertas                                            | PFE: Vitor / PBE: Nicolas  |
+| Ocorrências                                                      | PFE: Vitor / PBE: Nicolas  |
 | Dashboard, Painel de Economia e Relatórios                       | PFE: Lucas / PBE: Nicolas  |
 
 
@@ -432,22 +412,17 @@ Foco Principal: Implementação das funcionalidades obrigatórias do sistema
 | Construção dos formulários visuais, tabelas e botões de cadastro no Front-end      | Vitor       | Alta       | 12h             |
 
 
-### 12/11 - 19/11 | Semana 4: Monitoramento de Consumo e Alertas de Vazamentos
+### 12/11 - 19/11 | Semana 4: Monitoramento de Consumo e Ocorrências
 
 Foco Principal: Melhorias e otimizações das funcionalidades e fluxo do sistema
 
 | Atividade / Requisito                                                                          | Responsável | Prioridade | Horas Estimadas |
 |------------------------------------------------------------------------------------------------|-------------|------------|-----------------|
-| Gerenciamento do quadro de testes de alertas e condução de reuniões da Sprint                  | Lucas       | Alta       | 3h              |
-| Construção da interface da Central de Alertas e Notificações (em parceria com Vitor)           | Lucas       | Alta       | 4h              |
 | Painel de simulação visual e controle do simulador no Front-end                                | Lucas       | Média      | 3h              |
 | Suporte na simulação de comunicação de sensores                                                | Lucas       | Baixa      | 2h              |
 | Motor do simulador de consumo automático por medidor                                           | Gustavo     | Alta       | 8h              |
 | Regras de validação de leituras (evita hidrômetro decrescente/datas futuras)                   | Gustavo     | Alta       | 2h              |
-| Algoritmo para detecção de vazamentos ocultos e disparos de alertas                            | Gustavo     | Alta       | 3h              |
 | Ciclo de vida das ocorrências (Aberta -> Em análise -> Em reparo -> Resolvida, ou Descartada)  | Nicolas     | Alta       | 7h              |
-| Regras de histórico e prevenção de alertas duplicados no banco de dados                        | Nicolas     | Média      | 4h              |
-| Desenvolvimento da interface da Central de Alertas e mensagem de boas-vindas                   | Vitor       | Alta       | 11h             |
 
 
 ### 19/11 - 26/11 | Semana 5: Dashboards Executivos, Relatórios e Testes Finais
