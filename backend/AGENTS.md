@@ -98,12 +98,11 @@ Implementar no backend todos os módulos necessários para os requisitos obrigat
 5. Responsáveis
 6. Leituras
 7. Ocorrências
-8. Alertas
-9. Reuniões/entrevistas
-10. Tarifas
-11. Histórico de acessos
-12. Dashboard e indicadores
-13. Relatórios
+8. Reuniões/entrevistas
+9. Tarifas
+10. Histórico de acessos
+11. Dashboard e indicadores
+12. Relatórios
 
 Cada módulo deve manter CRUD conforme o requisito, exceto leituras: o Admin pode consultar o histórico, mas não criar, alterar ou excluir leituras. Leituras não podem ser apagadas.
 
@@ -119,7 +118,6 @@ Usar rotas REST em plural e preservar o prefixo `/api` quando o frontend solicit
 - `/api/responsaveis`
 - `/api/leituras`
 - `/api/ocorrencias`
-- `/api/alertas`
 - `/api/reunioes`
 - `/api/tarifas`
 - `/api/acessos`
@@ -149,12 +147,6 @@ DELETE /api/reservatorios/:id
 ```
 
 Repetir o padrão GET/POST/GET/:id/PUT/:id/DELETE/:id nos demais recursos CRUD.
-
-Para alertas:
-
-```text
-PATCH /api/alertas/:id/reconhecer
-```
 
 Para ocorrências:
 
@@ -192,7 +184,7 @@ Não existe autocadastro. Usuários novos devem ser criados pelo Admin ou pelo F
 
 Um Filiado só pode acessar clientes cadastrados por ele, conforme `id_filiado`.
 
-Um Cliente só pode acessar reservatórios, setores, medidores, responsáveis, leituras, ocorrências, alertas e relatórios próprios.
+Um Cliente só pode acessar reservatórios, setores, medidores, responsáveis, leituras, ocorrências e relatórios próprios.
 
 O Admin possui visão global, exceto que não altera ou exclui leituras.
 
@@ -237,30 +229,11 @@ Alterar `status` para `Inativo`, nunca deletar fisicamente esses registros.
 
 Leituras são imutáveis: não criar PUT/PATCH/DELETE.
 
-Alertas e ocorrências seguem fluxo próprio, não devem ser excluídos fisicamente.
+Ocorrências seguem fluxo próprio, não devem ser excluídas fisicamente.
 
 Usar transações quando houver criação/atualização com múltiplas tabelas.
 
-## 10. Regras de alerta
-
-Gerar alerta automático quando houver:
-
-- nível mínimo atingido
-- nível máximo excedido
-- consumo excedido por setor
-- anomalia detectada
-
-Não gerar alerta duplicado enquanto existir alerta ativo do mesmo tipo e local.
-
-Status de alerta permitido:
-
-- `Ativo`
-- `Reconhecido`
-- `Resolvido`
-
-Uma ocorrência deve relacionar-se opcionalmente a um alerta e vice-versa conforme a modelagem existente.
-
-## 11. Dashboard e cálculos
+## 10. Dashboard e cálculos
 
 Implementar:
 
@@ -274,7 +247,6 @@ GET /api/dashboard/economia
 O resumo deve conter pelo menos:
 
 - nível atual agregado
-- alertas ativos
 - ocorrências abertas
 - consumo de referência
 - consumo real
@@ -296,7 +268,7 @@ Dashboard adaptado ao perfil:
 
 Fuso horário `America/Sao_Paulo`, unidades em litros/m³, data brasileira e moeda brasileira.
 
-## 12. Relatórios
+## 11. Relatórios
 
 Implementar relatórios de:
 
@@ -314,7 +286,7 @@ GET /api/relatorios/economia.txt
 
 Os relatórios devem aplicar os mesmos filtros e isolamento por perfil usados pelas consultas normais.
 
-## 13. Respostas HTTP e erros
+## 12. Respostas HTTP e erros
 
 Usar status HTTP coerentes:
 
@@ -332,7 +304,7 @@ Manter o middleware central de erros. Não expor stack, SQL ou credenciais em re
 
 Para erros conhecidos, não deixar o controller acessar detalhes internos do banco.
 
-## 14. Segurança
+## 13. Segurança
 
 - Nunca armazenar senha em texto puro.
 - Hash de senha nunca deve ser devolvido.
@@ -345,7 +317,7 @@ Para erros conhecidos, não deixar o controller acessar detalhes internos do ban
 - Aplicar autorização no backend; não confiar em dados enviados pelo frontend.
 - Usar variáveis `.env` e não commitar segredos.
 
-## 15. Convenções de código
+## 14. Convenções de código
 
 - Código e nomes técnicos em inglês podem ser mantidos no padrão já existente.
 - Mensagens e enums persistidos devem seguir os textos da documentação em português, exceto quando a tabela atual exigir outra grafia.
@@ -357,14 +329,14 @@ Para erros conhecidos, não deixar o controller acessar detalhes internos do ban
 - Encapsular erros de domínio em classes ou tipos próprios, evitando comparação por texto quando possível.
 - Usar transações para operações compostas.
 
-## 16. Ordem de implementação obrigatória
+## 15. Ordem de implementação obrigatória
 
 1. Corrigir/reconciliar schema e pool.
 2. Implementar health/auth/usuários.
 3. Implementar histórico de acessos.
 4. Implementar reservatórios, setores, medidores e responsáveis.
 5. Implementar leituras, validações e histórico.
-6. Implementar ocorrências e alertas.
+6. Implementar ocorrências.
 7. Implementar reuniões, tarifas e isolamento por perfil.
 8. Implementar dashboard, economia e relatórios.
 9. Adicionar testes básicos dos módulos e endpoints críticos.
@@ -372,7 +344,7 @@ Para erros conhecidos, não deixar o controller acessar detalhes internos do ban
 
 Não iniciar pelo frontend. Não iniciar por outra API paralela. Não trocar Express por outro framework.
 
-## 17. Critérios de conclusão
+## 16. Critérios de conclusão
 
 A implementação será considerada concluída quando:
 

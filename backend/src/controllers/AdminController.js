@@ -21,10 +21,6 @@ export function criarAdminController({ adminService }) {
       await adminService.alterarStatus(req.params.recurso, req.params.id, req.body?.status);
       return { atualizado: true };
     }),
-    reconhecerAlerta: (req, res, next) => executar(res, next, 200, async () => {
-      await adminService.reconhecerAlerta(req.params.id);
-      return { reconhecido: true };
-    }),
     definirTarifa: (req, res, next) => executar(res, next, 201, async () => {
       await adminService.definirTarifa(req.body?.valor, req.usuarioAutenticado.id_usuario);
       return { salva: true };

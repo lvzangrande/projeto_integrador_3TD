@@ -74,8 +74,8 @@ export default async function Inicio() {
             </article>
             <article className="sobre__card sobre__item-scroll">
               <span className="sobre__numero">02</span>
-              <h3>Identifique alertas</h3>
-              <p>Receba sinais sobre situações que merecem atenção e investigue possíveis alterações antes que elas se tornem um problema maior.</p>
+              <h3>Acompanhe ocorrências</h3>
+              <p>Consulte os registros da operação e acompanhe as ações tomadas para resolver cada situação.</p>
             </article>
             <article className="sobre__card sobre__item-scroll">
               <span className="sobre__numero">03</span>

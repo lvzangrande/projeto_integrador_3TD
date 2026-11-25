@@ -31,7 +31,6 @@ const sections = [
   { id: "responsaveis", label: "Responsáveis" },
   { id: "leituras", label: "Leituras" },
   { id: "ocorrencias", label: "Ocorrências" },
-  { id: "alertas", label: "Alertas" },
   { id: "acessos", label: "Histórico de acesso" },
   { id: "reunioes", label: "Reuniões" },
   { id: "relatorios", label: "Relatórios" },
@@ -40,7 +39,7 @@ const sections = [
 const titles = Object.fromEntries(sections.map(({ id, label }) => [id, [label, "Gestão administrativa WaterControl."]]));
 const emptyData = {
   usuarios: [], reservatorios: [], setores: [], medidores: [], responsaveis: [], leituras: [],
-  ocorrencias: [], alertas: [], acessos: [], reunioes: [], tarifa: null,
+  ocorrencias: [], acessos: [], reunioes: [], tarifa: null,
 };
 
 const configs = {
@@ -83,9 +82,6 @@ const configs = {
     ["status", "Status", "select", true, ["Aberta", "Em análise", "Em reparo", "Resolvida", "Descartada"]],
     ["acao_corretiva", "Ação corretiva", "textarea"],
   ], columns: [["tipo", "Ocorrência"], ["severidade", "Severidade"], ["reservatorio", "Reservatório"], ["setor", "Setor"], ["abertura", "Abertura"], ["status", "Status"]] },
-  alertas: { title: "Central de alertas", intro: "Alertas gravados no banco. Registre ciência para mudar um alerta ativo para Reconhecido.", readOnly: true, fields: [], columns: [
-    ["tipo", "Alerta"], ["severidade", "Severidade"], ["reservatorio", "Reservatório"], ["medidor", "Medidor"], ["ocorrencia", "Ocorrência"], ["status", "Status"], ["data_hora", "Data e hora"],
-  ] },
   acessos: { title: "Histórico de acesso", intro: "Últimos 500 logins, falhas de autenticação e encerramentos de sessão registrados pela API.", readOnly: true, fields: [], columns: [
     ["usuario", "Usuário / e-mail"], ["evento", "Evento"], ["data_hora", "Data e hora"], ["ip", "IP"],
   ] },
@@ -99,7 +95,7 @@ const configs = {
 function Icon({ name, size = 18 }) {
   const paths = {
     search: <><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></>,
-    bell: <><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4"/></>,
+    file: <><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7m-7 4h7"/></>,
     drop: <><path d="M12 22a8 8 0 0 0 8-8c0-4-8-13-8-13S4 10 4 14a8 8 0 0 0 8 8Z"/><path d="M8 15a4 4 0 0 0 4 4"/></>,
     more: <><circle cx="5" cy="12" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/></>,
   };
@@ -220,13 +216,6 @@ function RecordsView({ section, records, data, reload, notify }) {
     } catch (changeError) { notify(changeError.message || "Não foi possível atualizar o status."); }
   }
 
-  async function acknowledge(row) {
-    try {
-      await apiRequest(`/admin/alertas/${row.id}/reconhecer`, { method: "PATCH", body: JSON.stringify({}) });
-      await reload(); notify("Alerta reconhecido.");
-    } catch (changeError) { notify(changeError.message || "Não foi possível reconhecer o alerta."); }
-  }
-
   function exportText() {
     const content = [config.title, `Gerado em ${new Date().toLocaleString("pt-BR")}`, "",
       ...visible.map((row) => config.columns.map(([key, label]) => `${label}: ${formatValue(row[key])}`).join(" | ")),
@@ -235,7 +224,7 @@ function RecordsView({ section, records, data, reload, notify }) {
     const link = document.createElement("a"); link.href = url; link.download = `watercontrol-${section}.txt`; link.click(); URL.revokeObjectURL(url);
   }
 
-  const showActions = !config.readOnly || section === "alertas";
+  const showActions = !config.readOnly;
   return <section className="panel section-panel admin-records">
     <div className="panel-heading"><div><p className="eyebrow">{visible.length} REGISTRO(S)</p><h2>{config.title}</h2><p className="admin-intro">{config.intro}</p></div>
       <div className="record-tools"><label className="search-box"><Icon name="search" size={17}/><input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Buscar nesta lista" aria-label="Buscar registros"/></label>
@@ -254,7 +243,7 @@ function RecordsView({ section, records, data, reload, notify }) {
     </div>
     <div className="table-scroll"><table className="admin-table"><thead><tr>{config.columns.map(([key, label]) => <th key={key}>{label}</th>)}{showActions && <th>Ações</th>}</tr></thead>
       <tbody>{visible.map((row) => <tr key={row.id}>{config.columns.map(([key]) => <td key={key}>{key === "status" ? <span className={`record-status ${normalizeSearch(row[key]).replaceAll(" ", "-")}`}>{row[key]}</span> : formatValue(row[key])}</td>)}
-        {showActions && <td className="row-actions">{section === "alertas" ? row.status === "Ativo" && <button className="admin-row-action admin-row-action--warning" type="button" onClick={() => acknowledge(row)}>Reconhecer</button> : <><button className="admin-row-action admin-row-action--edit" type="button" onClick={() => startEdit(row)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>Editar</button>{section === "ocorrencias" ? row.status === "Aberta" && <button className="admin-row-action admin-row-action--discard" type="button" onClick={() => changeStatus(row)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2m3 0-1 14H6L5 6"/><path d="M10 11v5m4-5v5"/></svg>Descartar</button> : row.status && <button className="admin-row-action admin-row-action--warning" type="button" onClick={() => changeStatus(row)}>{row.status === "Ativo" ? "Inativar" : "Ativar"}</button>}</>}</td>}
+        {showActions && <td className="row-actions"><button className="admin-row-action admin-row-action--edit" type="button" onClick={() => startEdit(row)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>Editar</button>{section === "ocorrencias" ? row.status === "Aberta" && <button className="admin-row-action admin-row-action--discard" type="button" onClick={() => changeStatus(row)}><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2m3 0-1 14H6L5 6"/><path d="M10 11v5m4-5v5"/></svg>Descartar</button> : row.status && <button className="admin-row-action admin-row-action--warning" type="button" onClick={() => changeStatus(row)}>{row.status === "Ativo" ? "Inativar" : "Ativar"}</button>}</td>}
       </tr>)}</tbody></table>{visible.length === 0 && <div className="empty-state">Nenhum registro encontrado para os filtros selecionados.</div>}</div>
     {editing !== null && typeof document !== "undefined" && createPortal(<div className="admin-modal-backdrop" role="presentation" onMouseDown={(event) => { if (event.target === event.currentTarget) setEditing(null); }}>
       <form className="admin-modal panel" onSubmit={save}><div className="panel-heading"><div><p className="eyebrow">{editing === "novo" ? "NOVO REGISTRO" : "EDITAR REGISTRO"}</p><h2>{config.title}</h2></div><button className="icon-button" type="button" onClick={() => setEditing(null)} aria-label="Fechar">×</button></div>
@@ -363,12 +352,11 @@ function Dashboard({ data, go }) {
   const activeReservoirs = data.reservatorios.filter((row) => row.status === "Ativo");
   const openOccurrences = data.ocorrencias.filter((row) => !["Resolvida", "Descartada"].includes(row.status));
   const critical = openOccurrences.filter((row) => ["Alta", "Extrema"].includes(row.severidade));
-  const activeAlerts = data.alertas.filter((row) => row.status === "Ativo").length;
   return <>
     <section className="metric-grid" aria-label="Indicadores do banco de dados">
       <article className="metric-card"><span className="metric-icon"><Icon name="drop" size={20}/></span><div><p>Leituras registradas</p><strong>{data.leituras.length} <small>registros</small></strong><span className="metric-note">Histórico imutável dos medidores</span></div></article>
       <article className="metric-card"><span className="metric-icon"><span className="tank-icon">▤</span></span><div><p>Reservatórios ativos</p><strong>{activeReservoirs.length} <small>/ {data.reservatorios.length}</small></strong><span className="metric-note"><b>{data.setores.length}</b> setores cadastrados</span></div></article>
-      <article className="metric-card"><span className="metric-icon alert-metric"><Icon name="bell" size={20}/></span><div><p>Ocorrências abertas</p><strong className="metric-critical">{openOccurrences.length}</strong><span className="metric-note"><b className="attention">{critical.length} alta/extrema</b> · {activeAlerts} alerta(s) ativo(s)</span></div></article>
+      <article className="metric-card"><span className="metric-icon"><Icon name="file" size={20}/></span><div><p>Ocorrências abertas</p><strong className="metric-critical">{openOccurrences.length}</strong><span className="metric-note"><b className="attention">{critical.length} alta/extrema</b></span></div></article>
     </section>
     <section className="content-grid"><article className="panel chart-panel"><div className="panel-heading"><div><p className="eyebrow">HISTÓRICO REGISTRADO</p><h2>Leituras de vazão e hidrômetro</h2></div><button className="select-button" type="button" onClick={() => go("leituras")}>Consultar histórico <span>→</span></button></div><ConsumptionChart readings={data.leituras}/></article>
       <article className="panel levels-panel"><div className="panel-heading"><div><p className="eyebrow">ÚLTIMA MEDIÇÃO</p><h2>Nível dos reservatórios</h2></div><button className="icon-button" type="button" aria-label="Ver reservatórios" onClick={() => go("reservatorios")}><Icon name="more"/></button></div>
@@ -376,8 +364,8 @@ function Dashboard({ data, go }) {
         <button className="text-link" onClick={() => go("reservatorios")}>Gerenciar reservatórios <span>→</span></button>
       </article>
     </section>
-    <section className="panel alerts-panel"><div className="panel-heading"><div><p className="eyebrow">MONITORAMENTO DE OCORRÊNCIAS</p><h2>Ocorrências abertas <span className="count-pill">{openOccurrences.length}</span></h2></div><button className="text-link" onClick={() => go("ocorrencias")}>Abrir central <span>→</span></button></div>
-      <div className="alert-list">{openOccurrences.slice(0, 4).map((item) => <article className={`alert-row ${normalizeSearch(item.severidade)}`} key={item.id}><span className="alert-symbol">!</span><div className="alert-copy"><div className="alert-heading"><strong>{item.tipo}</strong><span className={`severity ${normalizeSearch(item.severidade)}`}>{item.severidade}</span></div><p>{item.reservatorio || "Sem reservatório"} · {item.setor || "Sem setor"}</p></div><time>{formatValue(item.abertura)}</time></article>)}{openOccurrences.length === 0 && <div className="empty-state">Nenhuma ocorrência em aberto.</div>}</div>
+    <section className="panel occurrences-panel"><div className="panel-heading"><div><p className="eyebrow">REGISTROS DA OPERAÇÃO</p><h2>Ocorrências abertas <span className="count-pill">{openOccurrences.length}</span></h2></div><button className="text-link" onClick={() => go("ocorrencias")}>Abrir ocorrências <span>→</span></button></div>
+      <div className="occurrence-list">{openOccurrences.slice(0, 4).map((item) => <article className={`occurrence-row ${normalizeSearch(item.severidade)}`} key={item.id}><span className="occurrence-symbol">•</span><div className="occurrence-copy"><div className="occurrence-heading"><strong>{item.tipo}</strong><span className={`severity ${normalizeSearch(item.severidade)}`}>{item.severidade}</span></div><p>{item.reservatorio || "Sem reservatório"} · {item.setor || "Sem setor"}</p></div><time>{formatValue(item.abertura)}</time></article>)}{openOccurrences.length === 0 && <div className="empty-state">Nenhuma ocorrência em aberto.</div>}</div>
     </section>
   </>;
 }
@@ -477,7 +465,7 @@ export default function AdminDashboard() {
     <header className="topbar"><a className="brand" href="/admin" aria-label="WAPI Water Control início"><Image src="/logo-wapi.png" alt="WAPI Water Control" width={147} height={62} priority/></a>
       <button className="mobile-menu-toggle" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Abrir navegação">☰</button>
       <nav className={`main-nav ${mobileMenu ? "open" : ""}`} aria-label="Navegação administrativa">{sections.map((item) => <button key={item.id} className={active === item.id ? "active" : ""} onClick={() => { setActive(item.id); setMobileMenu(false); }}>{item.label}
-        {item.id === "ocorrencias" && <span className="nav-badge">{data.ocorrencias.filter((row) => !["Resolvida", "Descartada"].includes(row.status)).length}</span>}{item.id === "alertas" && <span className="nav-badge">{data.alertas.filter((row) => row.status === "Ativo").length}</span>}</button>)}</nav>
+        {item.id === "ocorrencias" && <span className="nav-badge">{data.ocorrencias.filter((row) => !["Resolvida", "Descartada"].includes(row.status)).length}</span>}</button>)}</nav>
       <ThemeToggle theme={theme} onToggle={toggleTheme} placement="inline" />
     </header>
     <button className="logout-fab" type="button" onClick={logout} aria-label="Sair da conta" title="Sair da conta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>

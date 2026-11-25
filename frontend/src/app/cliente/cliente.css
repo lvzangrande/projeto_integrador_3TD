@@ -232,7 +232,6 @@
 .cliente-card h3 { margin: 18px 0 10px; color: #d5ebf9; font-size: .95rem; }
 .cliente-tag { flex: 0 0 auto; padding: 6px 10px; border: 1px solid rgba(155, 182, 203, .26); border-radius: 999px; color: #c7d6e1; background: rgba(125, 153, 173, .1); font-size: .73rem; }
 .cliente-tag--ativo { border-color: rgba(74, 222, 128, .32); color: #a7f3c3; background: rgba(34, 197, 94, .11); }
-.cliente-tag--alerta { border-color: rgba(251, 146, 60, .4); color: #ffd0a6; background: rgba(249, 115, 22, .12); }
 .cliente-detalhes { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px 22px; margin: 18px 0 0; }
 .cliente-detalhes--compacto { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 .cliente-detalhes div { min-width: 0; }
@@ -288,7 +287,6 @@
 .cliente-notice--destaque { padding: 22px; border-color: rgba(251, 191, 36, .32); background: rgba(113, 75, 15, .2); }
 .cliente-notice--destaque h2 { margin: 0 0 7px; color: #ffe4ad; font-size: 1.08rem; }
 .cliente-notice--destaque p { color: #e1d3b9; }
-.cliente-alerta { border-left: 3px solid rgba(251, 146, 60, .75); }
 .cliente-link-acao { display: inline-flex; gap: 8px; margin-top: 18px; color: #72dff6; font-weight: 600; text-decoration: none; }
 .cliente-link-acao:hover { color: #b5f0fa; }
 .cliente-lista-check { display: grid; gap: 10px; margin: 16px 0 0; padding-left: 20px; color: #c6d9e6; line-height: 1.5; }
