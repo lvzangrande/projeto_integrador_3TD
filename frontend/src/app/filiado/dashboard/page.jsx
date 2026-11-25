@@ -41,12 +41,6 @@ const STATUS = {
 };
 const statusDe = (s) => (STATUS[s] ? s : "normal");
 
-const SEVERIDADES = [
-  { chave: "critico", rotulo: "Crítico", status: "critico" },
-  { chave: "atencao", rotulo: "Atenção", status: "atencao" },
-  { chave: "informativo", rotulo: "Informativo", status: "normal" },
-];
-
 export default function DashboardFiliado() {
   const [clientes, setClientes] = useState([]);
   const [reunioes, setReunioes] = useState([]);
@@ -95,13 +89,10 @@ export default function DashboardFiliado() {
       resumo: {
         clientesAtivos: clientes.filter((cliente) => cliente.status === "Ativo").length,
         reunioesRegistradas: reunioes.length,
-        alertasAtivos: null,
-        alertasCriticos: null,
         ocorrenciasAbertas: null,
       },
       economia: null,
       cadastros,
-      alertasPorSeveridade: null,
       clientesAtencao: [...clientes]
         .sort((a, b) => new Date(b.criado_em) - new Date(a.criado_em))
         .slice(0, 5)
@@ -202,12 +193,6 @@ function Kpis({ dados, periodo }) {
       </div>
 
       <div className="aff-kpi">
-        <span className="aff-kpi__label">Alertas ativos</span>
-        <strong className="aff-kpi__valor"><span aria-label="Indisponível">—</span></strong>
-        <span className="aff-kpi__nota">Consulta indisponível para afiliados</span>
-      </div>
-
-      <div className="aff-kpi">
         <span className="aff-kpi__label">Economia da carteira</span>
         {economia ? (
           <>
@@ -253,15 +238,6 @@ function Graficos({ dados, periodo, onPeriodoChange }) {
         <GraficoCadastros serie={dados.cadastros} periodo={periodo} />
       </div>
 
-      <div className="aff-panel">
-        <div className="aff-panel__head">
-          <div>
-            <h2>Alertas por severidade</h2>
-            <p>Consulta de alertas indisponível para afiliados</p>
-          </div>
-        </div>
-        <AlertasPorSeveridade valores={dados.alertasPorSeveridade} />
-      </div>
     </section>
   );
 }
@@ -297,37 +273,6 @@ function GraficoCadastros({ serie, periodo }) {
         <ConsumoLineChart serie={serie} formatarDiaMes={formatarDiaMes} formatarInteiro={formatarInteiro} />
       </div>
     </>
-  );
-}
-
-function AlertasPorSeveridade({ valores }) {
-  if (!valores) return <p className="aff-vazio">O backend ainda não disponibiliza dados de alertas para esta carteira.</p>;
-  const total = SEVERIDADES.reduce((soma, s) => soma + valores[s.chave], 0);
-
-  if (!total) {
-    return (
-      <p className="aff-vazio aff-status--normal">
-        <IconeStatus status="normal" /> Nenhum alerta ativo na carteira.
-      </p>
-    );
-  }
-
-  const maior = Math.max(...SEVERIDADES.map((s) => valores[s.chave]));
-
-  return (
-    <ul className="aff-sev">
-      {SEVERIDADES.map(({ chave, rotulo, status }) => (
-        <li key={chave} className={`aff-sev__item aff-status--${status}`}>
-          <span className="aff-sev__rotulo">
-            <IconeStatus status={status} /> {rotulo}
-          </span>
-          <span className="aff-sev__valor">{formatarInteiro(valores[chave])}</span>
-          <span className="aff-sev__trilho" aria-hidden="true">
-            <span className="aff-sev__barra" style={{ width: `${(valores[chave] / maior) * 100}%` }} />
-          </span>
-        </li>
-      ))}
-    </ul>
   );
 }
 

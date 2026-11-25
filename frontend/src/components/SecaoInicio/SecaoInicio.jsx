@@ -18,7 +18,7 @@ export default function SecaoInicio() {
       <div className="inicio__palco">
         <div className="inicio__conteudo">
           <TituloAgua>Sistema de controle de água</TituloAgua>
-          <p className="inicio__descricao">Faça seu login e acompanhe consumo e alertas.</p>
+          <p className="inicio__descricao">Faça seu login e acompanhe o consumo e as ocorrências.</p>
 
           <div className="inicio__dado-textos">
             <span className="inicio__dado-valor">Cada gota conta</span>

@@ -26,20 +26,6 @@ const modulos = [
     icon: <><path d="M12 3 2.8 20h18.4L12 3Z" /><path d="M12 9v4m0 3h.01" /></>,
   },
   {
-    href: "/cliente/alertas",
-    titulo: "Central de alertas",
-    descricao: "Entenda a disponibilidade dos alertas e veja as ocorrências.",
-    detalhe: "Atenção e prevenção",
-    icon: <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" />,
-  },
-  {
-    href: "/cliente/economia",
-    titulo: "Painel de economia",
-    descricao: "Consulte quais dados são necessários para calcular economia.",
-    detalhe: "Eficiência hídrica",
-    icon: <><path d="M4 19V5m0 14h16" /><path d="m7 15 4-4 3 2 5-6" /></>,
-  },
-  {
     href: "/cliente/relatorios",
     titulo: "Relatórios",
     descricao: "Filtre leituras e ocorrências e exporte um arquivo CSV.",

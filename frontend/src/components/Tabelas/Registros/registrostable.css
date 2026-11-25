@@ -256,11 +256,11 @@
     background: rgba(30, 120, 190, 0.12);
   }
   
-  .rg-row--alert {
+  .rg-row--occurrence {
     background: rgba(30, 130, 210, 0.22);
   }
   
-  .rg-row--alert:hover {
+  .rg-row--occurrence:hover {
     background: rgba(30, 130, 210, 0.28);
   }
   

@@ -345,12 +345,12 @@ export default function RegistrosTable({
                     const t = infoTipo(r.tipo);
                     const IcoTipo = ICONES_TIPO[t.icon];
                     const cliente = normalizarCliente(r.cliente);
-                    const alerta = t.chave === "ocorrencia";
+                    const ocorrencia = t.chave === "ocorrencia";
                     const pauta = r.pauta || "—";
                     const resumo = r.resumo || "—";
 
                     return (
-                      <tr key={r.id ?? `${inicio}-${i}`} className={alerta ? "rg-row rg-row--alert" : "rg-row"}>
+                      <tr key={r.id ?? `${inicio}-${i}`} className={ocorrencia ? "rg-row rg-row--occurrence" : "rg-row"}>
                         <td>
                           <span className={`rg-tipo rg-tipo--${t.chave}`}>
                             <IcoTipo size={22} />

@@ -239,14 +239,10 @@ export function criarAdminService({ adminModel }) {
     await adminModel.alterarStatus(recurso, registroId, status);
   }
 
-  async function reconhecerAlerta(recebidoId) {
-    await adminModel.reconhecerAlerta(id(recebidoId, "alerta"));
-  }
-
   async function definirTarifa(valor, idUsuario) {
     const valorValidado = numero(valor, "Tarifa", { minimo: 0.0001 });
     await adminModel.registrarTarifa(valorValidado, id(idUsuario, "usuário"));
   }
 
-  return { dados, criar, atualizar, alterarStatus, reconhecerAlerta, definirTarifa };
+  return { dados, criar, atualizar, alterarStatus, definirTarifa };
 }
