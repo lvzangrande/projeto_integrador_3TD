@@ -4,7 +4,7 @@ export function criarAutenticacaoController({ autenticacaoService, recuperacaoSe
   async function entrar(request, response, next) {
     try {
       const sessao = await autenticacaoService.entrar(request.body ?? {}, { ip: request.ip });
-      definirCookieSessao(response, sessao.usuario);
+      definirCookieSessao(response, { ...sessao.usuario, session_version: sessao.sessionVersion });
       response.status(200).json({ sucesso: true, dados: sessao.usuario });
     } catch (erro) {
       if (erro.status) return response.status(erro.status).json({ erro: erro.message });
@@ -28,7 +28,7 @@ export function criarAutenticacaoController({ autenticacaoService, recuperacaoSe
 
   async function solicitarRedefinicao(request, response, next) {
     try {
-      const dados = await recuperacaoSenhaService.solicitarRedefinicao(request.body?.cpf, request.ip);
+      const dados = await recuperacaoSenhaService.solicitarRedefinicao(request.body?.email);
       response.status(202).json({ sucesso: true, dados });
     } catch (erro) {
       if (erro.status) return response.status(erro.status).json({ erro: erro.message });

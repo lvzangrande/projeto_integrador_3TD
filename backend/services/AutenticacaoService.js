@@ -53,6 +53,7 @@ export function criarAutenticacaoService({ usuarioModel, acessoModel }) {
         categoria: usuario.categoria,
         tema: usuario.tema,
       },
+      sessionVersion: Number(usuario.session_version || 0),
     };
   }
 

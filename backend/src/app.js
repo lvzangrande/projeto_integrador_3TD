@@ -43,9 +43,9 @@ import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
 import { criarAdminModel } from "../models/AdminModel.js";
 import { criarAcessoModel } from "../models/AcessoModel.js";
-import { criarRecuperacaoSenhaJsonModel } from "../models/RecuperacaoSenhaJsonModel.js";
+import { criarRecuperacaoSenhaModel } from "../models/RecuperacaoSenhaModel.js";
 import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaService.js";
-import { criarSmsService } from "../services/SmsService.js";
+import { criarEmailService } from "../services/EmailService.js";
 import { criarClienteLeiturasService } from "../services/ClienteLeiturasService.js";
 import { criarClienteLeiturasModel } from "../models/ClienteLeiturasModel.js";
 import { criarIndicadoresController } from "./controllers/IndicadoresController.js";
@@ -57,11 +57,11 @@ const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
 const acessoModel = criarAcessoModel({ pool });
 const autenticacaoService = criarAutenticacaoService({ usuarioModel, acessoModel });
-const recuperacaoSenhaModel = criarRecuperacaoSenhaJsonModel({ pool });
+const recuperacaoSenhaModel = criarRecuperacaoSenhaModel({ pool });
 const recuperacaoSenhaService = criarRecuperacaoSenhaService({
   usuarioModel,
   recuperacaoSenhaModel,
-  smsService: criarSmsService(),
+  emailService: criarEmailService(),
 });
 const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });

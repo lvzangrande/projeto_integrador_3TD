@@ -4,7 +4,7 @@ export function criarUsuarioModel({ pool }) {
 
   async function buscarPorEmail(email) {
     const [linhas] = await pool.query(
-      "SELECT id_usuario, nome, email, senha, cnpj, telefone, categoria, tema, status FROM usuarios WHERE email = ? LIMIT 1",
+      "SELECT id_usuario, nome, email, senha, cnpj, telefone, categoria, tema, status, session_version FROM usuarios WHERE email = ? LIMIT 1",
       [email],
     );
     return linhas[0] || null;

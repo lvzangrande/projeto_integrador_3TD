@@ -1,4 +1,5 @@
 import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
+import { pool } from "../config/database.js";
 
 const COOKIE_NAME = "wapi_session";
 const SESSION_SECONDS = 60 * 60 * 8;
@@ -31,6 +32,7 @@ export function criarToken(usuario) {
     nome: usuario.nome,
     email: usuario.email,
     categoria: usuario.categoria,
+    ver: Number(usuario.session_version || 0),
     iat: agora,
     exp: agora + SESSION_SECONDS,
   }));
@@ -59,15 +61,23 @@ export function verificarToken(token) {
   try {
     const claims = JSON.parse(Buffer.from(partes[1], "base64url").toString("utf8"));
     if (!Number.isInteger(claims.sub) || claims.exp <= Math.floor(Date.now() / 1000)) return null;
-    return { id_usuario: claims.sub, nome: claims.nome, email: claims.email, categoria: claims.categoria };
+    return { id_usuario: claims.sub, nome: claims.nome, email: claims.email, categoria: claims.categoria, session_version: Number(claims.ver || 0) };
   } catch {
     return null;
   }
 }
 
-export function autenticar(request, response, next) {
+export async function autenticar(request, response, next) {
   const usuario = verificarToken(lerCookie(request, COOKIE_NAME));
   if (!usuario) return response.status(401).json({ erro: "Sua sessão expirou. Entre novamente." });
+  try {
+    const [rows] = await pool.query("SELECT session_version FROM usuarios WHERE id_usuario = ?", [usuario.id_usuario]);
+    if (!rows.length || Number(rows[0].session_version || 0) !== usuario.session_version) {
+      return response.status(401).json({ erro: "Sua sessão expirou. Entre novamente." });
+    }
+  } catch (error) {
+    return next(error);
+  }
   request.usuarioAutenticado = usuario;
   next();
 }

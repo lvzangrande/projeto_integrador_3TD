@@ -24,6 +24,36 @@ export async function garantirEsquemaAdministrativo(pool) {
     await adicionarColunaSeAusente(pool, tabela, coluna, sql);
   }
 
+  // A autenticação e a recuperação de senha dependem destas estruturas. Mantê-las
+  // aqui também atualiza bancos locais existentes quando o servidor é reiniciado.
+  await adicionarColunaSeAusente(
+    pool,
+    "usuarios",
+    "session_version",
+    "ALTER TABLE usuarios ADD COLUMN session_version INT NOT NULL DEFAULT 0",
+  );
+  const [senhaColumns] = await pool.query(
+    `SELECT character_maximum_length AS tamanho FROM information_schema.columns
+     WHERE table_schema = DATABASE() AND table_name = 'usuarios' AND column_name = 'senha' LIMIT 1`,
+  );
+  if (senhaColumns[0]?.tamanho < 255) {
+    await pool.query("ALTER TABLE usuarios MODIFY senha VARCHAR(255) NOT NULL");
+  }
+
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS password_reset_tokens (
+      id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY,
+      user_id INT NOT NULL,
+      token_hash CHAR(64) NOT NULL UNIQUE,
+      expires_at DATETIME NOT NULL,
+      used_at DATETIME NULL,
+      created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+      INDEX idx_password_reset_user (user_id, used_at, expires_at),
+      CONSTRAINT fk_password_reset_user FOREIGN KEY (user_id)
+        REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+  `);
+
   await pool.query(`
     CREATE TABLE IF NOT EXISTS alertas (
       id_alerta INT PRIMARY KEY AUTO_INCREMENT,
