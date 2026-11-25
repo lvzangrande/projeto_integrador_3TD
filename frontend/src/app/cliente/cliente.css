@@ -258,9 +258,9 @@
 .cliente-leitura-form__cabecalho { display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; margin-bottom: 16px; }
 .cliente-leitura-form__cabecalho h2 { margin: 0; color: var(--affiliate-text); font-size: 1.08rem; }
 .cliente-leitura-form__cabecalho > p { max-width: 400px; margin: 3px 0 0; color: var(--affiliate-muted); font-size: .8rem; line-height: 1.5; }
-.cliente-leitura-form__campos { display: grid; grid-template-columns: minmax(250px, 1.7fr) repeat(2, minmax(180px, 1fr)); gap: 13px; }
+.cliente-leitura-form__campos { display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(0, .9fr) minmax(0, 1fr); gap: 13px; }
 .cliente-leitura-form__campos label { display: grid; min-width: 0; gap: 6px; color: var(--affiliate-muted); font-size: .78rem; }
-.cliente-leitura-form__campos input, .cliente-leitura-form__campos select { width: 100%; min-width: 0; min-height: 42px; padding: 8px 10px; border: 1px solid rgba(128, 190, 225, .27); border-radius: 9px; color: var(--affiliate-text); background: #09243b; color-scheme: dark; font: inherit; }
+.cliente-leitura-form__campos input, .cliente-leitura-form__campos select { box-sizing: border-box; width: 100%; min-width: 0; max-width: 100%; min-height: 42px; padding: 8px 10px; border: 1px solid rgba(128, 190, 225, .27); border-radius: 9px; color: var(--affiliate-text); background: #09243b; color-scheme: dark; font: inherit; }
 .cliente-leitura-form__campos select:disabled, .cliente-leitura-form__campos input:disabled { opacity: .65; }
 .cliente-leitura-form__campos input:focus-visible, .cliente-leitura-form__campos select:focus-visible { outline: 2px solid var(--affiliate-accent); outline-offset: 2px; }
 .cliente-leitura-form__ajuda { margin: 10px 0 14px; color: var(--affiliate-muted); font-size: .78rem; line-height: 1.5; }
@@ -280,6 +280,7 @@
 .cliente-tabela th { color: #99dff1; background: rgba(16, 52, 82, .8); font-size: .72rem; letter-spacing: .04em; }
 .cliente-tabela td { color: #d8e7f1; }
 .cliente-tabela tbody tr:last-child td { border-bottom: 0; }
+.cliente-tabela tbody tr:hover { background: rgba(69, 201, 237, .07); }
 
 .cliente-notice { display: flex; align-items: flex-start; gap: 13px; margin: 0 0 18px; padding: 16px; border: 1px solid rgba(96, 165, 250, .28); border-radius: 14px; color: #d2e4f0; background: rgba(22, 78, 112, .22); line-height: 1.6; }
 .cliente-notice p { margin: 0; }
@@ -386,6 +387,24 @@
 .cliente-shell.theme-light .cliente-filtros input,
 .cliente-shell.theme-light .cliente-filtros select { color: #17384c; border-color: rgba(30, 104, 139, .32); background: #fff; color-scheme: light; }
 .cliente-shell.theme-light .cliente-leitura-form__campos input::placeholder { color: #718998; }
+.cliente-shell.theme-light .cliente-filtros {
+  border-color: rgba(30, 76, 99, .18);
+  background: linear-gradient(145deg, rgba(255, 255, 255, .96), rgba(239, 247, 250, .95));
+  box-shadow: 0 10px 26px rgba(34, 72, 91, .1);
+}
+.cliente-shell.theme-light .cliente-filtros label,
+.cliente-shell.theme-light .cliente-leitura-form__campos label { color: #526f80; }
+.cliente-shell.theme-light .cliente-leitura-form__ajuda,
+.cliente-shell.theme-light .cliente-leitura-form__cabecalho > p { color: #5d7686; }
+.cliente-shell.theme-light .cliente-botao--secundario { color: #24485d; border-color: rgba(30, 104, 139, .28); background: #e8f3f7; }
+.cliente-shell.theme-light .cliente-botao--secundario:hover { background: #d9edf4; }
+.cliente-shell.theme-light .cliente-tabela-wrap { border-color: rgba(30, 76, 99, .2); box-shadow: 0 10px 26px rgba(34, 72, 91, .1); }
+.cliente-shell.theme-light .cliente-tabela { background: rgba(255, 255, 255, .96); }
+.cliente-shell.theme-light .cliente-tabela th,
+.cliente-shell.theme-light .cliente-tabela td { border-bottom-color: rgba(30, 76, 99, .12); }
+.cliente-shell.theme-light .cliente-tabela th { color: #28556d; background: #e5f1f5; }
+.cliente-shell.theme-light .cliente-tabela td { color: #284b60; }
+.cliente-shell.theme-light .cliente-tabela tbody tr:hover { background: rgba(8, 127, 168, .07); }
 .cliente-shell.theme-light .cliente-inline-sucesso { color: #14532d; border-color: rgba(21, 128, 61, .3); background: rgba(220, 252, 231, .8); }
 .cliente-shell.theme-light .cliente-home__resumo summary:hover { background: rgba(8, 127, 168, .07); }
 .cliente-shell.theme-light .cliente-home__abrir { color: #087fa8; }
