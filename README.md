@@ -43,9 +43,13 @@ Template para alunos criarem forks com a mesma stack de frontend, backend e banc
 ```bash
 cd backend
 npm install
+npm install redis
 
 cd ../frontend
 npm install
+npm install three @types/three @react-three/fiber @react-three/drei
+npm install lenis
+npm install chart.js react-chartjs-2 
 ```
 
 2. Copie os arquivos de ambiente:
