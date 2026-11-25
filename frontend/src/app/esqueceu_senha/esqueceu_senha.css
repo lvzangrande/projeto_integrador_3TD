@@ -294,6 +294,36 @@
 .pagina-esqueceu-senha__alternar:hover { text-decoration: underline; }
 .pagina-esqueceu-senha__alternar:disabled { cursor: wait; opacity: .7; }
 
+.pagina-esqueceu-senha__metodos {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 5px;
+  border-radius: 999px;
+  background: #e8f3f8;
+}
+
+.pagina-esqueceu-senha__metodo {
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--cor-azul-profundo);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagina-esqueceu-senha__metodo--ativo {
+  background: var(--cor-branca);
+  box-shadow: 0 2px 8px rgba(10, 53, 96, .16);
+}
+
+.pagina-esqueceu-senha__metodo:focus-visible {
+  outline: 3px solid var(--cor-azul-agua);
+  outline-offset: 2px;
+}
+
 @media (max-width: 760px) {
   .pagina-esqueceu-senha {
     padding: 32px 16px;

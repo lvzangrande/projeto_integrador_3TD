@@ -44,7 +44,10 @@ import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
 import { criarAdminModel } from "../models/AdminModel.js";
 import { criarAcessoModel } from "../models/AcessoModel.js";
 import { criarRecuperacaoSenhaModel } from "../models/RecuperacaoSenhaModel.js";
-import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaService.js";
+import { criarRecuperacaoSenhaJsonModel } from "../models/RecuperacaoSenhaJsonModel.js";
+import { criarRecuperacaoSenhaService as criarRecuperacaoSenhaSmsServiceFactory } from "../services/RecuperacaoSenhaService.js";
+import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaEmailService.js";
+import { criarSmsService } from "../services/SmsService.js";
 import { criarEmailService } from "../services/EmailService.js";
 import { criarClienteLeiturasService } from "../services/ClienteLeiturasService.js";
 import { criarClienteLeiturasModel } from "../models/ClienteLeiturasModel.js";
@@ -63,6 +66,11 @@ const recuperacaoSenhaService = criarRecuperacaoSenhaService({
   recuperacaoSenhaModel,
   emailService: criarEmailService(),
 });
+const recuperacaoSenhaSmsService = criarRecuperacaoSenhaSmsServiceFactory({
+  usuarioModel,
+  recuperacaoSenhaModel: criarRecuperacaoSenhaJsonModel({ pool }),
+  smsService: criarSmsService(),
+});
 const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });
 const clienteLeiturasService = criarClienteLeiturasService({
@@ -72,7 +80,7 @@ const indicadoresService = criarIndicadoresService({ indicadoresModel: criarIndi
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
-api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) }));
+api.use("/auth", criarAutenticacaoRoutes({ autenticacaoController: criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService, recuperacaoSenhaSmsService }) }));
 api.use("/admin", criarAdminRoutes({ adminController: criarAdminController({ adminService: criarAdminService({ adminModel }) }) }));
 const usuarioRoutes = criarUsuarioRoutes({ usuarioController: criarUsuarioController({ usuarioService }) });
 api.use("/usuario", usuarioRoutes);

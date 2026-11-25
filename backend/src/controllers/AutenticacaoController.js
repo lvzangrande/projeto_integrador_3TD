@@ -1,6 +1,6 @@
 import { limparCookieSessao, definirCookieSessao } from "../middlewares/auth.js";
 
-export function criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService }) {
+export function criarAutenticacaoController({ autenticacaoService, recuperacaoSenhaService, recuperacaoSenhaSmsService = recuperacaoSenhaService }) {
   async function entrar(request, response, next) {
     try {
       const sessao = await autenticacaoService.entrar(request.body ?? {}, { ip: request.ip });
@@ -36,6 +36,26 @@ export function criarAutenticacaoController({ autenticacaoService, recuperacaoSe
     }
   }
 
+  async function solicitarRedefinicaoPorCpf(request, response, next) {
+    try {
+      const dados = await recuperacaoSenhaSmsService.solicitarRedefinicao(request.body?.cpf, request.ip);
+      response.status(202).json({ sucesso: true, dados });
+    } catch (erro) {
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
+      next(erro);
+    }
+  }
+
+  async function redefinirSenhaPorCpf(request, response, next) {
+    try {
+      const dados = await recuperacaoSenhaSmsService.redefinirSenha(request.body ?? {});
+      response.status(200).json({ sucesso: true, dados });
+    } catch (erro) {
+      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
+      next(erro);
+    }
+  }
+
   async function redefinirSenha(request, response, next) {
     try {
       const dados = await recuperacaoSenhaService.redefinirSenha(request.body ?? {});
@@ -46,5 +66,5 @@ export function criarAutenticacaoController({ autenticacaoService, recuperacaoSe
     }
   }
 
-  return { entrar, sair, atual, solicitarRedefinicao, redefinirSenha };
+  return { entrar, sair, atual, solicitarRedefinicao, redefinirSenha, solicitarRedefinicaoPorCpf, redefinirSenhaPorCpf };
 }
