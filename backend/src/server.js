@@ -1,4 +1,3 @@
-import "dotenv/config";
 import { pool, checkDatabaseConnection } from "./config/database.js";
 import { garantirEsquemaAdministrativo } from "./config/adminSchema.js";
 import app from "./app.js";
