@@ -10,10 +10,13 @@ export function criarUsuarioModel({ pool }) {
     return linhas[0] || null;
   }
 
-  async function buscarContaParaRecuperacao(email) {
+  async function buscarContaParaRecuperacaoPorCpf(cpf) {
+    const cpfFormatado = `${cpf.slice(0, 3)}.${cpf.slice(3, 6)}.${cpf.slice(6, 9)}-${cpf.slice(9)}`;
     const [linhas] = await pool.query(
-      "SELECT id_usuario, email, status FROM usuarios WHERE email = ? LIMIT 1",
-      [email],
+      `SELECT id_usuario, status, telefone FROM usuarios
+       WHERE documento IN (?, ?) OR cnpj IN (?, ?)
+       LIMIT 1`,
+      [cpf, cpfFormatado, cpf, cpfFormatado],
     );
     return linhas[0] || null;
   }
@@ -73,7 +76,7 @@ export function criarUsuarioModel({ pool }) {
 
   return {
     buscarPorEmail,
-    buscarContaParaRecuperacao,
+    buscarContaParaRecuperacaoPorCpf,
     atualizarSenha,
     listarClientesDoFiliado,
     buscarPorId,

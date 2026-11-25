@@ -74,7 +74,8 @@
 
 .pagina-esqueceu-senha__logo:focus-visible,
 .pagina-esqueceu-senha__voltar:focus-visible,
-.pagina-esqueceu-senha__botao:focus-visible {
+.pagina-esqueceu-senha__botao:focus-visible,
+.pagina-esqueceu-senha__alternar:focus-visible {
   outline: 3px solid var(--cor-azul-agua);
   outline-offset: 3px;
 }
@@ -277,6 +278,21 @@
 .pagina-esqueceu-senha__voltar:hover {
   text-decoration: underline;
 }
+
+.pagina-esqueceu-senha__alternar {
+  align-self: center;
+  border: 0;
+  padding: 4px 8px;
+  background: transparent;
+  color: var(--cor-azul-profundo);
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.pagina-esqueceu-senha__alternar:hover { text-decoration: underline; }
+.pagina-esqueceu-senha__alternar:disabled { cursor: wait; opacity: .7; }
 
 @media (max-width: 760px) {
   .pagina-esqueceu-senha {

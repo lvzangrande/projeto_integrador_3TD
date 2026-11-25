@@ -1,70 +1,71 @@
-import { createHash, randomBytes } from "node:crypto";
+import { createHmac } from "node:crypto";
 import { gerarHashSenha } from "./AutenticacaoService.js";
 
 const RESPOSTA_GENERICA = {
-  mensagem: "Se houver uma conta ativa com esse e-mail, enviaremos um link de recuperação.",
+  mensagem: "Se houver uma conta ativa com esse CPF e telefone cadastrado, enviaremos um código por SMS.",
 };
+const TAMANHO_CODIGO = 6;
 
-function hashToken(token) {
-  return createHash("sha256").update(token).digest("hex");
+function validarCpf(valor) {
+  const cpf = typeof valor === "string" ? valor.replace(/\D/g, "") : "";
+  if (cpf.length !== 11 || /^(\d)\1+$/.test(cpf)) return null;
+
+  for (const posicao of [9, 10]) {
+    let soma = 0;
+    for (let indice = 0; indice < posicao; indice += 1) {
+      soma += Number(cpf[indice]) * (posicao + 1 - indice);
+    }
+    const digito = ((soma * 10) % 11) % 10;
+    if (digito !== Number(cpf[posicao])) return null;
+  }
+  return cpf;
 }
 
-function validarEmail(email) {
-  const emailLimpo = typeof email === "string" ? email.trim().toLowerCase() : "";
-  if (emailLimpo.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailLimpo)) {
-    throw Object.assign(new Error("Digite um e-mail válido."), { status: 400 });
+function obterTelefoneE164(telefone) {
+  const digitos = String(telefone ?? "").replace(/\D/g, "");
+  if (digitos.length === 10 || digitos.length === 11) return `+55${digitos}`;
+  if ((digitos.length === 12 || digitos.length === 13) && digitos.startsWith("55")) {
+    return `+${digitos}`;
   }
-  return emailLimpo;
+  return null;
 }
 
 function obterValidadeMinutos(env) {
   const configurada = Number.parseInt(env.PASSWORD_RESET_TTL_MINUTES, 10);
-  return Number.isFinite(configurada) ? Math.min(60, Math.max(5, configurada)) : 30;
+  return Number.isFinite(configurada) ? Math.min(10, Math.max(3, configurada)) : 5;
 }
 
-function criarLink(frontendUrl, token) {
-  let link;
-  try {
-    link = new URL("/esqueceu_senha/trocar-senha", frontendUrl);
-  } catch {
-    throw new Error("A URL do frontend para redefinição de senha não está configurada corretamente.");
+function hashCodigo(codigo, env) {
+  const segredo = env.JWT_SECRET?.trim();
+  if (!segredo || segredo.length < 32) {
+    throw Object.assign(new Error("Configure um JWT_SECRET com pelo menos 32 caracteres no backend/.env."), { status: 503 });
   }
-  if (!["http:", "https:"].includes(link.protocol)) {
-    throw new Error("A URL do frontend para redefinição de senha não está configurada corretamente.");
-  }
-  link.searchParams.set("token", token);
-  return link.toString();
+  return createHmac("sha256", segredo).update(codigo).digest("hex");
 }
 
-function obterUrlBaseFrontend(env) {
-  const configurada = env.FRONTEND_URL?.trim();
-  const valor = configurada || (env.NODE_ENV === "production" ? "" : "http://localhost:3000");
-  try {
-    const url = new URL(valor);
-    if (!["http:", "https:"].includes(url.protocol)) throw new Error("Protocolo inválido");
-    return url.origin;
-  } catch {
-    throw Object.assign(new Error("O envio de recuperação está temporariamente indisponível."), { status: 503 });
-  }
+function erroCodigoInvalido() {
+  return Object.assign(new Error("Código inválido ou expirado. Solicite outro código SMS."), { status: 400 });
 }
 
 export function criarRecuperacaoSenhaService({
   usuarioModel,
   recuperacaoSenhaModel,
-  gmailEmailService,
+  smsService,
   env = process.env,
   agora = () => Date.now(),
 }) {
-  async function solicitarRedefinicao(email) {
-    const emailLimpo = validarEmail(email);
-    // Falha igual para qualquer endereço quando o Gmail não está configurado.
-    gmailEmailService.validarConfiguracao();
-    const frontendUrl = obterUrlBaseFrontend(env);
+  async function solicitarRedefinicao(cpfRecebido, origem = null) {
+    const cpf = validarCpf(cpfRecebido);
+    if (!cpf) {
+      throw Object.assign(new Error("Digite um CPF válido."), { status: 400 });
+    }
+
+    smsService.validarConfiguracao();
+    hashCodigo("000000", env);
 
     let usuario;
     try {
-      // Consulta somente os dados necessários para confirmar que a conta existe e está ativa.
-      usuario = await usuarioModel.buscarContaParaRecuperacao(emailLimpo);
+      usuario = await usuarioModel.buscarContaParaRecuperacaoPorCpf(cpf);
     } catch (error) {
       console.error("Falha ao consultar a conta para recuperação de senha:", error.message);
       throw Object.assign(
@@ -74,70 +75,91 @@ export function criarRecuperacaoSenhaService({
     }
     if (!usuario || usuario.status !== "Ativo") return RESPOSTA_GENERICA;
 
+    const destinatario = obterTelefoneE164(usuario.telefone);
+    if (!destinatario) return RESPOSTA_GENERICA;
+
+    // O Twilio Verify gera e valida o código. O hash local representa a solicitação
+    // pendente e impede que uma verificação aprovada seja reutilizada para outra troca.
+    const hashToken = hashCodigo(`twilio-verify:${usuario.id_usuario}`, env);
+    const origemHash = origem ? hashCodigo(`ip:${origem}`, env) : null;
+    const validadeMinutos = obterValidadeMinutos(env);
+    const expiraEm = new Date(agora() + validadeMinutos * 60_000)
+      .toISOString()
+      .slice(0, 19)
+      .replace("T", " ");
+
     let hashCriado = null;
     try {
-      const token = randomBytes(32).toString("hex");
-      const tokenHash = hashToken(token);
-      const validadeMinutos = obterValidadeMinutos(env);
-      const expiraEm = new Date(agora() + validadeMinutos * 60_000)
-        .toISOString()
-        .slice(0, 19)
-        .replace("T", " ");
       const criado = await recuperacaoSenhaModel.criarToken({
         idUsuario: usuario.id_usuario,
-        hashToken: tokenHash,
+        hashToken,
         expiraEm,
+        origemHash,
       });
       if (!criado) return RESPOSTA_GENERICA;
-      hashCriado = tokenHash;
+      hashCriado = hashToken;
 
-      const link = criarLink(frontendUrl, token);
-      await gmailEmailService.enviarEmailRedefinicao({
-        destinatario: usuario.email,
-        link,
-        validadeMinutos,
-      });
+      await smsService.enviarCodigo({ destinatario });
     } catch (error) {
       if (hashCriado) {
         try {
           await recuperacaoSenhaModel.revogarToken(hashCriado);
         } catch (erroRevogacao) {
-          console.error("Falha ao invalidar token de recuperação não enviado:", erroRevogacao.message);
+          console.error("Falha ao invalidar código SMS não enviado:", erroRevogacao.message);
         }
       }
-      // Mantém a resposta igual para endereços existentes e inexistentes.
-      console.error("Falha ao processar recuperação de senha:", error.message);
+      console.error("Falha ao processar recuperação por SMS:", error.message);
     }
 
     return RESPOSTA_GENERICA;
   }
 
-  async function redefinirSenha({ token, senha }) {
-    if (typeof token !== "string" || !/^[a-f0-9]{64}$/.test(token)) {
-      throw Object.assign(new Error("Este link é inválido ou expirou. Solicite outro link de recuperação."), { status: 400 });
-    }
+  async function redefinirSenha({ cpf: cpfRecebido, codigo, senha }) {
+    const cpf = validarCpf(cpfRecebido);
+    if (!cpf) throw Object.assign(new Error("Digite um CPF válido."), { status: 400 });
+    if (typeof codigo !== "string" || !/^\d{6}$/.test(codigo)) throw erroCodigoInvalido();
     if (typeof senha !== "string" || senha.length < 8 || senha.length > 72 || !/[A-Za-z]/.test(senha) || !/\d/.test(senha)) {
       throw Object.assign(new Error("A senha deve ter entre 8 e 72 caracteres e conter letras e números."), { status: 400 });
     }
 
-    const tokenHash = hashToken(token);
-    if (!await recuperacaoSenhaModel.tokenValido(tokenHash)) {
-      throw Object.assign(new Error("Este link é inválido ou expirou. Solicite outro link de recuperação."), { status: 400 });
+    hashCodigo("000000", env);
+    const usuario = await usuarioModel.buscarContaParaRecuperacaoPorCpf(cpf);
+    if (!usuario || usuario.status !== "Ativo") throw erroCodigoInvalido();
+
+    const destinatario = obterTelefoneE164(usuario.telefone);
+    if (!destinatario) throw erroCodigoInvalido();
+
+    const hashToken = hashCodigo(`twilio-verify:${usuario.id_usuario}`, env);
+    const temSolicitacaoAtiva = await recuperacaoSenhaModel.possuiTokenAtivo(
+      usuario.id_usuario,
+      hashToken,
+    );
+    if (!temSolicitacaoAtiva) throw erroCodigoInvalido();
+
+    let codigoValido;
+    try {
+      smsService.validarConfiguracao();
+      codigoValido = await smsService.validarCodigo({ destinatario, codigo });
+    } catch (erro) {
+      console.error("Falha ao validar código pelo Twilio Verify:", erro.message);
+      throw Object.assign(
+        new Error("Não foi possível validar o código agora. Solicite outro SMS e tente novamente."),
+        { status: 503 },
+      );
     }
-    const atualizado = await recuperacaoSenhaModel.redefinirSenha(tokenHash, await gerarHashSenha(senha));
-    if (!atualizado) {
-      throw Object.assign(new Error("Este link é inválido ou expirou. Solicite outro link de recuperação."), { status: 400 });
+    if (!codigoValido) {
+      await recuperacaoSenhaModel.registrarTentativaInvalida(usuario.id_usuario, hashToken);
+      throw erroCodigoInvalido();
     }
+
+    const atualizado = await recuperacaoSenhaModel.redefinirSenha(
+      usuario.id_usuario,
+      hashToken,
+      await gerarHashSenha(senha),
+    );
+    if (!atualizado) throw erroCodigoInvalido();
     return { mensagem: "Senha redefinida com sucesso." };
   }
 
-  async function validarToken(token) {
-    if (typeof token !== "string" || !/^[a-f0-9]{64}$/.test(token)
-      || !await recuperacaoSenhaModel.tokenValido(hashToken(token))) {
-      throw Object.assign(new Error("Este link é inválido ou expirou. Solicite outro link de recuperação."), { status: 400 });
-    }
-    return { valido: true };
-  }
-
-  return { solicitarRedefinicao, validarToken, redefinirSenha };
+  return { solicitarRedefinicao, redefinirSenha };
 }

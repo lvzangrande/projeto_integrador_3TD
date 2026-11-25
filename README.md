@@ -43,7 +43,6 @@ Template para alunos criarem forks com a mesma stack de frontend, backend e banc
 ```bash
 cd backend
 npm install
-npm install redis
 
 cd ../frontend
 npm install
@@ -127,16 +126,15 @@ DB_NAME=DB_water_control
 JWT_SECRET=replace-with-a-random-secret-of-at-least-32-characters
 COOKIE_SECURE=false
 COOKIE_SAME_SITE=strict
-GMAIL_CLIENT_ID=
-GMAIL_CLIENT_SECRET=
-GMAIL_REFRESH_TOKEN=
-GMAIL_SENDER=
-PASSWORD_RESET_TTL_MINUTES=30
+TWILIO_API_KEY_SID=
+TWILIO_API_KEY_SECRET=
+TWILIO_VERIFY_SERVICE_SID=
+PASSWORD_RESET_TTL_MINUTES=5
 ```
 
-O envio de recuperação usa a Gmail API com OAuth 2.0. No Google Cloud, habilite a Gmail API e crie um cliente OAuth. Autorize a conta remetente com o escopo `https://www.googleapis.com/auth/gmail.send` e acesso offline; configure client ID, client secret, refresh token e o endereço da mesma conta em `GMAIL_CLIENT_ID`, `GMAIL_CLIENT_SECRET`, `GMAIL_REFRESH_TOKEN` e `GMAIL_SENDER`. Mantenha essas credenciais somente no backend. O refresh token precisa ser renovado se o consentimento for revogado ou expirar. Veja a [documentação OAuth para aplicações web](https://developers.google.com/identity/protocols/oauth2/web-server) e o [guia de envio da Gmail API](https://developers.google.com/workspace/gmail/api/guides/sending).
+Para a recuperação, o usuário informa o CPF e recebe por SMS um código de seis dígitos no telefone cadastrado. O backend usa Twilio Verify, que gera e confere o código; configure `TWILIO_API_KEY_SID`, `TWILIO_API_KEY_SECRET` e `TWILIO_VERIFY_SERVICE_SID` em `backend/.env`. Use uma API key Standard e mantenha o segredo somente no backend. A solicitação expira localmente em cinco minutos; há limite de um pedido por conta a cada minuto e cinco pedidos por IP a cada 15 minutos. O hash da solicitação e os limites ficam em `backend/data/recuperacao-senha.json`.
 
-Para obter o refresh token, adicione `https://developers.google.com/oauthplayground` como redirect URI do cliente OAuth, abra o [OAuth Playground](https://developers.google.com/oauthplayground), habilite “Use your own OAuth credentials” nas configurações, informe o client ID e o client secret, autorize o escopo `gmail.send` com a conta remetente e troque o código por tokens. Se o consentimento OAuth externo estiver em modo de teste, o Google expira refresh tokens em sete dias para escopos Gmail; publique o consentimento ou renove o token conforme a política do projeto.
+O arquivo JSON é criado automaticamente, ignorado pelo Git e adequado para uma única instância local do backend. Em conta Trial, abra **Identity → Verify → Overview → Try out Verify**, conclua um teste para um telefone verificado e copie o SID real `VA...` da requisição de exemplo para `TWILIO_VERIFY_SERVICE_SID`. A página **Services** pode exigir upgrade para criar e administrar um serviço próprio. O Trial aceita somente destinatários verificados e usa um template fixo; consulte os [limites do Verify Trial](https://www.twilio.com/docs/usage/trials/try-out-verify).
 
 Para rodar varios grupos no mesmo servidor, mude pelo menos as portas publicadas no host e a URL publica da API. Exemplo para um segundo grupo:
 
@@ -165,14 +163,13 @@ DB_PORT=3306
 DB_USER=app_user
 DB_PASSWORD=app_password
 DB_NAME=DB_water_control
-GMAIL_CLIENT_ID=
-GMAIL_CLIENT_SECRET=
-GMAIL_REFRESH_TOKEN=
-GMAIL_SENDER=
-PASSWORD_RESET_TTL_MINUTES=30
+TWILIO_API_KEY_SID=
+TWILIO_API_KEY_SECRET=
+TWILIO_VERIFY_SERVICE_SID=
+PASSWORD_RESET_TTL_MINUTES=5
 ```
 
-Para executar o backend fora do Docker, copie essas variáveis para `backend/.env`. A conta configurada em `GMAIL_SENDER` deve ser a que concedeu o refresh token.
+Para executar o backend fora do Docker, configure essas variáveis em `backend/.env`. O telefone Twilio usado como remetente deve estar no formato internacional E.164.
 
 Frontend (`frontend/.env.local`):
 
@@ -196,7 +193,7 @@ Rotas iniciais:
 - `GET /` retorna uma mensagem basica da API.
 - `GET /api/health` retorna status da API e testa a conexao com MySQL.
 - `POST /api/auth/login`, `POST /api/auth/logout` e `GET /api/auth/me` controlam a sessao por cookie HTTPOnly.
-- `POST /api/auth/esqueci-senha` solicita um link enviado pela Gmail API; `GET /api/auth/verificar-token-redefinicao` valida o link; `POST /api/auth/redefinir-senha` consome o token e salva a nova senha.
+- `POST /api/auth/esqueci-senha` solicita um código SMS usando o CPF; `POST /api/auth/redefinir-senha` valida CPF e código e salva a nova senha.
 - `GET/POST /api/usuario` lista e cadastra clientes na carteira do afiliado autenticado.
 - `GET/POST /api/reunioes` lista e registra encontros vinculados a um cliente da carteira.
 

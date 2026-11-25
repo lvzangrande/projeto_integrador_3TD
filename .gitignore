@@ -30,4 +30,6 @@ Thumbs.db
 
 # docker/mysql local data
 mysql-data/
+backend/data/recuperacao-senha.json
+backend/data/.recuperacao-senha-*.tmp
 backend/.gitignore

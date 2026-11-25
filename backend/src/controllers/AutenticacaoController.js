@@ -28,7 +28,7 @@ export function criarAutenticacaoController({ autenticacaoService, recuperacaoSe
 
   async function solicitarRedefinicao(request, response, next) {
     try {
-      const dados = await recuperacaoSenhaService.solicitarRedefinicao(request.body?.email);
+      const dados = await recuperacaoSenhaService.solicitarRedefinicao(request.body?.cpf, request.ip);
       response.status(202).json({ sucesso: true, dados });
     } catch (erro) {
       if (erro.status) return response.status(erro.status).json({ erro: erro.message });
@@ -46,15 +46,5 @@ export function criarAutenticacaoController({ autenticacaoService, recuperacaoSe
     }
   }
 
-  async function validarTokenRedefinicao(request, response, next) {
-    try {
-      const dados = await recuperacaoSenhaService.validarToken(request.query?.token);
-      response.status(200).json({ sucesso: true, dados });
-    } catch (erro) {
-      if (erro.status) return response.status(erro.status).json({ erro: erro.message });
-      next(erro);
-    }
-  }
-
-  return { entrar, sair, atual, solicitarRedefinicao, validarTokenRedefinicao, redefinirSenha };
+  return { entrar, sair, atual, solicitarRedefinicao, redefinirSenha };
 }

@@ -43,19 +43,19 @@ import { criarReunioesModel } from "../models/ReunioesModel.js";
 import { criarReservatoriosModel } from "../models/ReservatoriosModels.js";
 import { criarAdminModel } from "../models/AdminModel.js";
 import { criarAcessoModel } from "../models/AcessoModel.js";
-import { criarRecuperacaoSenhaModel } from "../models/RecuperacaoSenhaModel.js";
+import { criarRecuperacaoSenhaJsonModel } from "../models/RecuperacaoSenhaJsonModel.js";
 import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaService.js";
-import { criarGmailEmailService } from "../services/GmailEmailService.js";
+import { criarSmsService } from "../services/SmsService.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
 const acessoModel = criarAcessoModel({ pool });
 const autenticacaoService = criarAutenticacaoService({ usuarioModel, acessoModel });
-const recuperacaoSenhaModel = criarRecuperacaoSenhaModel({ pool });
+const recuperacaoSenhaModel = criarRecuperacaoSenhaJsonModel({ pool });
 const recuperacaoSenhaService = criarRecuperacaoSenhaService({
   usuarioModel,
   recuperacaoSenhaModel,
-  gmailEmailService: criarGmailEmailService(),
+  smsService: criarSmsService(),
 });
 const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });
