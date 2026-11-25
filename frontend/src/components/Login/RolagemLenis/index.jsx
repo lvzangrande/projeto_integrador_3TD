@@ -9,12 +9,11 @@ function atualizarEfeitosDeRolagem() {
   const progressoInicio = Math.min(Math.max(window.scrollY / alturaInicio, 0), 1);
 
   document
-    .querySelectorAll(".inicio__cabecalho, .inicio__conteudo, .inicio__ilustracao")
+    .querySelectorAll(".inicio__cabecalho, .inicio__ilustracao")
     .forEach((item) => {
-      const direcao = item.classList.contains("inicio__ilustracao") ? 1 : -1;
       const opacidade = 1 - Math.min(Math.max((progressoInicio - 0.2) / 0.8, 0), 1);
       item.style.opacity = opacidade.toFixed(3);
-      item.style.transform = `translateX(${progressoInicio * 160 * direcao}px)`;
+      item.style.transform = `translateX(${-progressoInicio * 160}px)`;
     });
 
   document.querySelectorAll(".sobre__item-scroll").forEach((item) => {
