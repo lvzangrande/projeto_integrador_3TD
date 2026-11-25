@@ -61,11 +61,21 @@ export function criarRecuperacaoSenhaService({
     gmailEmailService.validarConfiguracao();
     const frontendUrl = obterUrlBaseFrontend(env);
 
+    let usuario;
+    try {
+      // Consulta somente os dados necessários para confirmar que a conta existe e está ativa.
+      usuario = await usuarioModel.buscarContaParaRecuperacao(emailLimpo);
+    } catch (error) {
+      console.error("Falha ao consultar a conta para recuperação de senha:", error.message);
+      throw Object.assign(
+        new Error("A recuperação de senha está temporariamente indisponível. Tente novamente mais tarde."),
+        { status: 503 },
+      );
+    }
+    if (!usuario || usuario.status !== "Ativo") return RESPOSTA_GENERICA;
+
     let hashCriado = null;
     try {
-      const usuario = await usuarioModel.buscarPorEmail(emailLimpo);
-      if (!usuario || usuario.status !== "Ativo") return RESPOSTA_GENERICA;
-
       const token = randomBytes(32).toString("hex");
       const tokenHash = hashToken(token);
       const validadeMinutos = obterValidadeMinutos(env);

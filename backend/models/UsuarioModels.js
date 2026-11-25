@@ -10,6 +10,14 @@ export function criarUsuarioModel({ pool }) {
     return linhas[0] || null;
   }
 
+  async function buscarContaParaRecuperacao(email) {
+    const [linhas] = await pool.query(
+      "SELECT id_usuario, email, status FROM usuarios WHERE email = ? LIMIT 1",
+      [email],
+    );
+    return linhas[0] || null;
+  }
+
   async function atualizarSenha(id, senha) {
     await pool.query("UPDATE usuarios SET senha = ? WHERE id_usuario = ?", [senha, id]);
   }
@@ -63,5 +71,13 @@ export function criarUsuarioModel({ pool }) {
     return buscarPorId(resultado.insertId);
   }
 
-  return { buscarPorEmail, atualizarSenha, listarClientesDoFiliado, buscarPorId, buscarClienteDoFiliado, criarCliente };
+  return {
+    buscarPorEmail,
+    buscarContaParaRecuperacao,
+    atualizarSenha,
+    listarClientesDoFiliado,
+    buscarPorId,
+    buscarClienteDoFiliado,
+    criarCliente,
+  };
 }

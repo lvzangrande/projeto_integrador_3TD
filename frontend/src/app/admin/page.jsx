@@ -15,6 +15,7 @@ import {
   Tooltip,
 } from "chart.js";
 import { apiRequest } from "@/lib/api";
+import ThemeToggle from "@/components/ThemeToggle/ThemeToggle.jsx";
 import "./admin.css";
 import OceanBackground from "./OceanBackground";
 
@@ -483,7 +484,7 @@ export default function AdminDashboard() {
       <button className="mobile-menu-toggle" onClick={() => setMobileMenu(!mobileMenu)} aria-label="Abrir navegação">☰</button>
       <nav className={`main-nav ${mobileMenu ? "open" : ""}`} aria-label="Navegação administrativa">{sections.map((item) => <button key={item.id} className={active === item.id ? "active" : ""} onClick={() => { setActive(item.id); setMobileMenu(false); }}>{item.label}
         {item.id === "ocorrencias" && <span className="nav-badge">{data.ocorrencias.filter((row) => !["Resolvida", "Descartada"].includes(row.status)).length}</span>}{item.id === "alertas" && <span className="nav-badge">{data.alertas.filter((row) => row.status === "Ativo").length}</span>}</button>)}</nav>
-      <button className="theme-toggle" type="button" onClick={toggleTheme} aria-label={`Ativar modo ${theme === "Escuro" ? "claro" : "escuro"}`} title={`Ativar modo ${theme === "Escuro" ? "claro" : "escuro"}`}><svg viewBox="0 0 24 24" aria-hidden="true">{theme === "Escuro" ? <><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l-1.42 1.42m11.3-11.3 1.42-1.42"/></> : <path d="M20.5 15.3A8.5 8.5 0 0 1 8.7 3.5 8.5 8.5 0 1 0 20.5 15.3Z"/>}</svg><span>Modo {theme === "Escuro" ? "claro" : "escuro"}</span></button>
+      <ThemeToggle theme={theme} onToggle={toggleTheme} placement="inline" />
     </header>
     <button className="logout-fab" type="button" onClick={logout} aria-label="Sair da conta" title="Sair da conta"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5m5 5H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg></button>
     <div className="page-shell"><div className="page-title"><div><h1>{title[0]}</h1><p className="admin-page-subtitle">{active === "visao" ? "Indicadores e registros carregados do banco de dados." : title[1]}</p></div></div>
