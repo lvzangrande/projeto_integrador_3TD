@@ -9,6 +9,7 @@ import {
   skyVertexShader,
   skyFragmentShader,
 } from './oceanShaders';
+import './OceanBackground.css';
 
 export default function OceanBackground({ theme = 'Escuro' }) {
   const hostRef = useRef(null);

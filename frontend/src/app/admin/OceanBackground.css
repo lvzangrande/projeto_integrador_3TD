@@ -1,0 +1,48 @@
+.ocean-background {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  background: linear-gradient(180deg, #030d17 0%, #06182a 24%, #0e3446 33%, #082a3c 37%, #051d2c 62%, #020f19 100%);
+}
+
+.ocean-background canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.ocean-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 12, 23, .34) 0%, rgba(3, 14, 26, .1) 26%, rgba(3, 14, 26, 0) 48%, rgba(2, 12, 23, .26) 100%),
+    radial-gradient(ellipse at 50% 55%, rgba(0, 0, 0, 0) 55%, rgba(2, 10, 20, .32) 100%);
+}
+
+.ocean-sun {
+  display: none;
+  position: absolute;
+  z-index: 1;
+  top: clamp(125px, 18vh, 220px);
+  right: 14%;
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff9dc 0%, #ffe9a6 45%, rgba(255, 218, 137, .78) 62%, rgba(255, 218, 137, 0) 74%);
+  box-shadow: 0 0 64px 22px rgba(255, 218, 137, .28);
+  pointer-events: none;
+}
+
+.theme-light .ocean-background {
+  display: block;
+  background: linear-gradient(180deg, #8dc9e8 0%, #c5e3ee 35%, #79bfce 62%, #3b9bac 100%);
+}
+
+.theme-light .ocean-sun { display: block; }
+.theme-light .ocean-vignette {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, .12) 0%, rgba(225, 246, 251, .02) 38%, rgba(5, 61, 82, .08) 100%),
+    radial-gradient(ellipse at 50% 52%, rgba(255, 255, 255, 0) 56%, rgba(21, 82, 99, .1) 100%);
+}

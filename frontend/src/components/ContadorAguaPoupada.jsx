@@ -28,7 +28,9 @@ export default function ContadorAguaPoupada() {
       className={`inicio__dado-valor${litros === null ? " inicio__dado-valor--indisponivel" : ""}`}
       aria-live="polite"
       aria-atomic="true"
-      title={litros === null ? "Sem dados de referência para calcular a economia de água." : undefined}
+      title={litros === null
+        ? "São necessárias duas leituras recentes de cada hidrômetro real e ativo e um limite diário configurado para o setor."
+        : "Estimativa comparada aos limites diários cadastrados por setor."}
     >
       {litros === undefined ? "—" : formatarLitrosPoupados(litros)}
     </span>

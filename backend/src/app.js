@@ -46,6 +46,12 @@ import { criarAcessoModel } from "../models/AcessoModel.js";
 import { criarRecuperacaoSenhaJsonModel } from "../models/RecuperacaoSenhaJsonModel.js";
 import { criarRecuperacaoSenhaService } from "../services/RecuperacaoSenhaService.js";
 import { criarSmsService } from "../services/SmsService.js";
+import { criarClienteLeiturasService } from "../services/ClienteLeiturasService.js";
+import { criarClienteLeiturasModel } from "../models/ClienteLeiturasModel.js";
+import { criarIndicadoresController } from "./controllers/IndicadoresController.js";
+import { criarIndicadoresRoutes } from "./routes/indicadoresRoutes.js";
+import { criarIndicadoresService } from "../services/IndicadoresService.js";
+import { criarIndicadoresModel } from "../models/IndicadoresModel.js";
 
 const usuarioModel = criarUsuarioModel({ pool });
 const usuarioService = criarUsuarioService({ usuarioModel });
@@ -59,6 +65,10 @@ const recuperacaoSenhaService = criarRecuperacaoSenhaService({
 });
 const adminModel = criarAdminModel({ pool });
 const reunioesModel = criarReunioesModel({ pool });
+const clienteLeiturasService = criarClienteLeiturasService({
+  clienteLeiturasModel: criarClienteLeiturasModel({ pool }),
+});
+const indicadoresService = criarIndicadoresService({ indicadoresModel: criarIndicadoresModel({ pool }) });
 
 const api = express.Router();
 api.get("/", (_request, response) => response.json({ message: "API WaterControl" }));
@@ -75,7 +85,8 @@ api.use("/medidores", criarMedidoresRoutes({ medidorController: criarMedidoresCo
 api.use("/ocorrencias", criarOcorrenciasRoutes({ ocorrenciasController: criarOcorrenciasController({ ocorrenciasService: criarOcorrenciasService({ ocorrenciasModel: criarOcorrenciasModel({ pool }) }) }) }));
 api.use("/leituras", criarLeiturasRoutes({ leituraController: criarLeiturasController({ leituraService: criarLeiturasService({ leituraModel: criarLeiturasModel({ pool }) }) }) }));
 api.use("/reservatorios", criarReservatoriosRoutes({ reservatoriosController: criarReservatoriosController({ reservatoriosService: criarReservatoriosService({ reservatoriosModel: criarReservatoriosModel({ pool }) }) }) }));
-api.use("/cliente/portal", criarClienteRoutes({ pool }));
+api.use("/cliente/portal", criarClienteRoutes({ pool, clienteLeiturasService }));
+api.use("/indicadores", criarIndicadoresRoutes({ indicadoresController: criarIndicadoresController({ indicadoresService }) }));
 
 const app = express();
 app.use(helmet());

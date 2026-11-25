@@ -39,8 +39,9 @@ export default async function Inicio() {
               <div className="inicio__dado-textos">
                 <ContadorAguaPoupada />
                 <span className="inicio__dado-texto">
-                  de água poupada por dia
+                  de água poupada estimada por dia
                 </span>
+                <small className="inicio__dado-nota">comparada aos limites diários cadastrados por setor</small>
               </div>
             </div>
           </div>

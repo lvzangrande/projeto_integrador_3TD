@@ -1,12 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
-import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Filler, Tooltip } from "chart.js";
-import { Doughnut, Line } from "react-chartjs-2";
 import { ClienteStatus, formatarData, useClientePortal } from "./_components/ClientePage";
-
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, ArcElement, Filler, Tooltip);
 
 const modulos = [
   {
@@ -99,7 +94,17 @@ export default function ClienteHome() {
 
       </details>
 
-      <GraficosCliente dados={data?.graficos} />
+      <section className="cliente-leitura-acoes" aria-label="Registrar leituras manuais">
+        <div>
+          <p className="cliente-home__eyebrow">ENTRADA MANUAL</p>
+          <h2>Registrar leitura</h2>
+          <p>Escolha o tipo de medição para abrir o formulário correspondente.</p>
+        </div>
+        <div className="cliente-leitura-acoes__botoes">
+          <Link className="cliente-botao" href="/cliente/leituras#registrar-nivel">Registrar nível</Link>
+          <Link className="cliente-botao cliente-botao--secundario" href="/cliente/leituras#registrar-consumo">Registrar consumo</Link>
+        </div>
+      </section>
 
       <section className="cliente-home__modulos" aria-label="Páginas do portal do cliente">
         {modulos.map((modulo) => (
@@ -114,91 +119,7 @@ export default function ClienteHome() {
           </Link>
         ))}
       </section>
-      <p className="cliente-home__nota">Selecione um cartão para abrir sua página. As consultas são somente leitura.</p>
+      <p className="cliente-home__nota">Consulte os dados da sua operação e registre leituras manuais em Leituras e medidores.</p>
     </main>
-  );
-}
-
-function GraficosCliente({ dados }) {
-  const serieLeituras = useMemo(() => {
-    const porData = new Map((dados?.leituras_por_dia || []).map((item) => [item.data, Number(item.quantidade) || 0]));
-    const hoje = new Date();
-    return Array.from({ length: 30 }, (_, indice) => {
-      const dia = new Date(hoje.getFullYear(), hoje.getMonth(), hoje.getDate() - 29 + indice);
-      const chave = `${dia.getFullYear()}-${String(dia.getMonth() + 1).padStart(2, "0")}-${String(dia.getDate()).padStart(2, "0")}`;
-      return { data: chave, quantidade: porData.get(chave) || 0 };
-    });
-  }, [dados?.leituras_por_dia]);
-
-  const dadosLinha = useMemo(() => ({
-    labels: serieLeituras.map(({ data }) => `${data.slice(8, 10)}/${data.slice(5, 7)}`),
-    datasets: [{
-      data: serieLeituras.map(({ quantidade }) => quantidade),
-      borderColor: "#45c9ed",
-      backgroundColor: "rgba(69, 201, 237, .14)",
-      borderWidth: 2.5,
-      pointRadius: 2,
-      pointHoverRadius: 5,
-      pointBackgroundColor: "#72dff6",
-      fill: true,
-      tension: .35,
-    }],
-  }), [serieLeituras]);
-
-  const ocorrencias = dados?.ocorrencias_por_status || [];
-  const dadosOcorrencias = useMemo(() => ({
-    labels: ocorrencias.map((item) => item.status),
-    datasets: [{
-      data: ocorrencias.map((item) => Number(item.quantidade) || 0),
-      backgroundColor: ["#45c9ed", "#f2b84b", "#f07867", "#62c995", "#8193a7"],
-      borderColor: "#0b2740",
-      borderWidth: 3,
-      hoverOffset: 6,
-    }],
-  }), [ocorrencias]);
-
-  const opcoesLinha = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    interaction: { intersect: false, mode: "index" },
-    plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: (item) => `${item.parsed.y} ${item.parsed.y === 1 ? "leitura" : "leituras"}` } },
-    },
-    scales: {
-      x: { grid: { display: false }, border: { display: false }, ticks: { color: "#91aabd", maxTicksLimit: 7, maxRotation: 0 } },
-      y: { beginAtZero: true, grid: { color: "rgba(145, 170, 189, .13)" }, border: { display: false }, ticks: { color: "#91aabd", precision: 0, stepSize: 1 } },
-    },
-  }), []);
-
-  const opcoesRosca = useMemo(() => ({
-    responsive: true,
-    maintainAspectRatio: false,
-    cutout: "68%",
-    plugins: {
-      legend: { position: "bottom", labels: { color: "#c1d5e2", usePointStyle: true, pointStyle: "circle", padding: 18 } },
-      tooltip: { callbacks: { label: (item) => ` ${item.label}: ${item.parsed}` } },
-    },
-  }), []);
-
-  return (
-    <section className="cliente-graficos" aria-label="Gráficos da operação">
-      <article className="cliente-grafico">
-        <div className="cliente-grafico__titulo"><h2>Leituras registradas</h2><p>Quantidade por dia nos últimos 30 dias</p></div>
-        <div className="cliente-grafico__canvas">
-          {serieLeituras.some((item) => item.quantidade > 0)
-            ? <Line data={dadosLinha} options={opcoesLinha} aria-label="Leituras registradas por dia nos últimos 30 dias" role="img" />
-            : <p className="cliente-grafico__vazio">Sem leituras registradas neste período.</p>}
-        </div>
-      </article>
-      <article className="cliente-grafico">
-        <div className="cliente-grafico__titulo"><h2>Ocorrências por status</h2><p>Distribuição dos registros da operação</p></div>
-        <div className="cliente-grafico__canvas cliente-grafico__canvas--rosca">
-          {ocorrencias.some((item) => Number(item.quantidade) > 0)
-            ? <Doughnut data={dadosOcorrencias} options={opcoesRosca} aria-label="Ocorrências agrupadas por status" role="img" />
-            : <p className="cliente-grafico__vazio">Nenhuma ocorrência registrada.</p>}
-        </div>
-      </article>
-    </section>
   );
 }

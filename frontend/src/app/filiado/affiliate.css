@@ -10,13 +10,15 @@
 }
 
 .affiliate-shell {
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   color: var(--affiliate-text);
   background: radial-gradient(900px 460px at 90% -10%, rgba(32, 142, 195, .19), transparent 68%), var(--affiliate-bg);
   font-family: Roboto, "Segoe UI", system-ui, sans-serif;
 }
 
-.affiliate-content { min-height: calc(100vh - var(--affiliate-header-h)); padding: 34px 24px 56px; }
+.affiliate-content { position: relative; z-index: 1; min-height: calc(100vh - var(--affiliate-header-h)); padding: 34px 24px 56px; }
 .affiliate-content > * { animation: affiliate-page-enter 420ms cubic-bezier(.2,.7,.25,1) both; }
 
 @keyframes affiliate-page-enter {

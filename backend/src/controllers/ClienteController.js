@@ -22,7 +22,7 @@ function erroFiltro(response, message) {
   return response.status(400).json({ erro: message });
 }
 
-export function criarClienteController({ pool }) {
+export function criarClienteController({ pool, clienteLeiturasService }) {
   async function resumo(request, response, next) {
     const idUsuario = idCliente(request);
     try {
@@ -62,28 +62,6 @@ export function criarClienteController({ pool }) {
          WHERE r.id_usuario = ?`,
         [idUsuario],
       );
-      const [leiturasPorDia] = await pool.query(
-        `SELECT DATE_FORMAT(l.momento_leitura, '%Y-%m-%d') AS data, COUNT(*) AS quantidade
-         FROM leituras l
-         INNER JOIN medidores m ON m.id_med = l.id_med
-         INNER JOIN setores s ON s.id_setor = m.id_setor
-         INNER JOIN reservatorios r ON r.id_reservatorio = s.id_reservatorio
-         WHERE r.id_usuario = ?
-           AND l.momento_leitura >= DATE_SUB(CURRENT_DATE(), INTERVAL 29 DAY)
-           AND l.momento_leitura < DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)
-         GROUP BY DATE(l.momento_leitura)
-         ORDER BY DATE(l.momento_leitura)`,
-        [idUsuario],
-      );
-      const [ocorrenciasPorStatus] = await pool.query(
-        `SELECT o.status, COUNT(*) AS quantidade
-         FROM ocorrencias o
-         INNER JOIN reservatorios r ON r.id_reservatorio = o.id_reservatorio
-         WHERE r.id_usuario = ?
-         GROUP BY o.status
-         ORDER BY o.status`,
-        [idUsuario],
-      );
       return response.status(200).json({
         sucesso: true,
         dados: {
@@ -92,10 +70,6 @@ export function criarClienteController({ pool }) {
           medidores: Number(medidores.total),
           ultima_leitura: leituras.ultima_leitura,
           ocorrencias: { total: Number(ocorrencias.total), em_andamento: Number(ocorrencias.em_andamento) },
-          graficos: {
-            leituras_por_dia: leiturasPorDia.map((item) => ({ data: item.data, quantidade: Number(item.quantidade) })),
-            ocorrencias_por_status: ocorrenciasPorStatus.map((item) => ({ status: item.status, quantidade: Number(item.quantidade) })),
-          },
         },
       });
     } catch (error) {
@@ -109,7 +83,7 @@ export function criarClienteController({ pool }) {
         `SELECT r.id_reservatorio, r.nome AS reservatorio, r.capacidade, r.localizacao,
                 r.nivel_min, r.nivel_max, r.status AS status_reservatorio, r.tipo AS tipo_reservatorio,
                 s.id_setor, s.nome AS setor, s.consumo_max_dia, s.status AS status_setor, s.tipo AS tipo_setor,
-                m.id_med AS id_medidor, m.num_serie AS medidor, m.tipo AS tipo_medidor,
+                m.id_med AS id_medidor, m.num_serie AS medidor, m.tipo AS tipo_medidor, m.status AS status_medidor,
                 (SELECT COUNT(*) FROM responsaveis resp WHERE resp.id_reservatorio = r.id_reservatorio AND resp.id_usuario = r.id_usuario) AS total_responsaveis
          FROM reservatorios r
          LEFT JOIN setores s ON s.id_reservatorio = r.id_reservatorio
@@ -149,7 +123,7 @@ export function criarClienteController({ pool }) {
             setores.push(setor);
           }
           if (row.id_medidor !== null) {
-            setor.medidores.push({ id_medidor: row.id_medidor, numero_serie: row.medidor, tipo: row.tipo_medidor });
+            setor.medidores.push({ id_medidor: row.id_medidor, numero_serie: row.medidor, tipo: row.tipo_medidor, status: row.status_medidor });
           }
         }
       }
@@ -211,6 +185,24 @@ export function criarClienteController({ pool }) {
     }
   }
 
+  async function registrarLeitura(request, response, next) {
+    try {
+      const leitura = await clienteLeiturasService.registrarManual({
+        ...request.body,
+        id_usuario: idCliente(request),
+      });
+      return response.status(201).json({ sucesso: true, dados: leitura });
+    } catch (error) {
+      if (error.statusCode === 400 || error.statusCode === 404) {
+        return response.status(error.statusCode).json({ erro: error.message });
+      }
+      if (error instanceof TypeError) {
+        return response.status(400).json({ erro: error.message });
+      }
+      return next(error);
+    }
+  }
+
   async function ocorrencias(request, response, next) {
     const status = request.query.status || "";
     if (status && !STATUS_OCORRENCIAS.has(status)) return erroFiltro(response, "Status de ocorrência inválido.");
@@ -232,5 +224,5 @@ export function criarClienteController({ pool }) {
     }
   }
 
-  return { resumo, estrutura, leituras, ocorrencias };
+  return { resumo, estrutura, leituras, registrarLeitura, ocorrencias };
 }

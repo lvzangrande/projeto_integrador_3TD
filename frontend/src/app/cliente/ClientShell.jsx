@@ -1,13 +1,20 @@
 "use client";
-import { useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import AffiliateHeader from "@/components/HeaderAfiliado/AffiliateHeader.jsx";
+import ThemeToggle from "@/components/ThemeToggle/ThemeToggle.jsx";
+import OceanBackground from "@/app/admin/OceanBackground.jsx";
 import { apiRequest } from "@/lib/api";
+import useAppTheme from "@/hooks/useAppTheme";
+
+export const ClienteThemeContext = createContext("Escuro");
+
 export default function ClientShell({ children }) {
   const pathname = usePathname();
   const router = useRouter();
   const [usuario, setUsuario] = useState(null);
   const [verificando, setVerificando] = useState(true);
+  const { theme, toggleTheme } = useAppTheme();
   const mostrarHeader = pathname?.replace(/\/+$/, "") === "/cliente";
   useEffect(() => {
     let ativo = true;
@@ -40,20 +47,18 @@ export default function ClientShell({ children }) {
       router.refresh();
     }
   }
-  if (verificando || !usuario)
-    return (
-      <div className="affiliate-shell">
-        <div className="affiliate-content" role="status">
-          Verificando sua sessão...
-        </div>
-      </div>
-    );
   return (
-    <div className="affiliate-shell cliente-shell">
-      {mostrarHeader && (
-        <AffiliateHeader nome={usuario.nome} onSair={handleSair} />
-      )}
-      <div className="affiliate-content">{children}</div>
-    </div>
+    <ClienteThemeContext.Provider value={theme}>
+      <div className={`affiliate-shell cliente-shell ${theme === "Claro" ? "theme-light" : ""}`}>
+        <OceanBackground theme={theme} />
+        <ThemeToggle theme={theme} onToggle={toggleTheme} />
+        {verificando || !usuario ? (
+          <div className="affiliate-content" role="status">Verificando sua sessão...</div>
+        ) : <>
+          {mostrarHeader && <AffiliateHeader nome={usuario.nome} onSair={handleSair} />}
+          <div className="affiliate-content">{children}</div>
+        </>}
+      </div>
+    </ClienteThemeContext.Provider>
   );
 }

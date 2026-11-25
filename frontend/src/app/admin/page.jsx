@@ -16,6 +16,7 @@ import {
 } from "chart.js";
 import { apiRequest } from "@/lib/api";
 import ThemeToggle from "@/components/ThemeToggle/ThemeToggle.jsx";
+import useAppTheme from "@/hooks/useAppTheme";
 import "./admin.css";
 import OceanBackground from "./OceanBackground";
 
@@ -418,7 +419,7 @@ export default function AdminDashboard() {
   const [loadError, setLoadError] = useState("");
   const [notice, setNotice] = useState("");
   const [savingTariff, setSavingTariff] = useState(false);
-  const [theme, setTheme] = useState("Escuro");
+  const { theme, toggleTheme } = useAppTheme();
 
   async function reload() {
     const result = await apiRequest("/admin/dados");
@@ -442,7 +443,6 @@ export default function AdminDashboard() {
         else setLoadError(error.message || "Não foi possível carregar os dados administrativos.");
       } finally { if (mounted) setLoading(false); }
     })();
-    try { if (localStorage.getItem("watercontrol-admin-theme") === "Claro") setTheme("Claro"); } catch { /* armazenamento local indisponível */ }
     return () => { mounted = false; };
   }, [router]);
 
@@ -461,12 +461,6 @@ export default function AdminDashboard() {
     setSavingTariff(true);
     try { await apiRequest("/admin/tarifa", { method: "PUT", body: JSON.stringify({ valor }) }); await reload(); notify("Tarifa salva no banco de dados."); }
     finally { setSavingTariff(false); }
-  }
-
-  function toggleTheme() {
-    const next = theme === "Escuro" ? "Claro" : "Escuro";
-    setTheme(next);
-    try { localStorage.setItem("watercontrol-admin-theme", next); } catch { /* armazenamento local indisponível */ }
   }
 
   async function logout() {
