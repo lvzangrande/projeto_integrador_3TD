@@ -209,7 +209,6 @@ export default function RegistrosTable({
 }) {
   const [busca, setBusca] = useState("");
   const [buscaAplicada, setBuscaAplicada] = useState("");
-  const [tipo, setTipo] = useState("todos");
   const [pagina, setPagina] = useState(1);
 
   // Atraso na busca para não chamar a API a cada tecla
@@ -226,10 +225,10 @@ export default function RegistrosTable({
   useEffect(() => {
     onChange?.({
       busca: buscaAplicada.trim(),
-      tipo: tipo === "todos" ? null : tipo,
+      tipo: null,
       pagina,
     });
-  }, [buscaAplicada, tipo, pagina, onChange]);
+  }, [buscaAplicada, pagina, onChange]);
 
   const totalRegistros = Number.isFinite(total) ? total : registros.length;
   const totalPaginas = Math.max(1, Math.ceil(totalRegistros / porPagina));
@@ -237,11 +236,6 @@ export default function RegistrosTable({
   const fim = inicio + registros.length;
 
   const irPara = (p) => setPagina(Math.min(Math.max(p, 1), totalPaginas));
-
-  const escolherTipo = (chave) => {
-    setTipo(chave);
-    setPagina(1);
-  };
 
   return (
     <main className="rg-page">
@@ -269,42 +263,8 @@ export default function RegistrosTable({
                 onChange={(e) => setBusca(e.target.value)}
               />
             </label>
-
-            <button type="button" className="rg-btn">
-              <IconCalendar size={22} />
-              <span>Últimos 30 dias</span>
-              <IconChevronDown size={18} />
-            </button>
           </div>
         </header>
-
-        {/* Filtro por tipo */}
-        <div className="rg-chips" role="group" aria-label="Filtrar por tipo">
-          <button
-            type="button"
-            className={`rg-chip ${tipo === "todos" ? "is-active" : ""}`}
-            aria-pressed={tipo === "todos"}
-            onClick={() => escolherTipo("todos")}
-          >
-            <IconFilter size={18} />
-            Todos
-          </button>
-          {Object.entries(TIPOS).map(([chave, t]) => {
-            const Ico = ICONES_TIPO[t.icon];
-            return (
-              <button
-                key={chave}
-                type="button"
-                className={`rg-chip ${tipo === chave ? "is-active" : ""}`}
-                aria-pressed={tipo === chave}
-                onClick={() => escolherTipo(chave)}
-              >
-                <Ico size={18} />
-                {t.label}
-              </button>
-            );
-          })}
-        </div>
 
         {/* Tabela */}
         <section className={`rg-card ${carregando ? "is-loading" : ""}`} aria-busy={carregando}>
@@ -312,7 +272,6 @@ export default function RegistrosTable({
             <table className="rg-table">
               <thead>
                 <tr>
-                  <th><span className="rg-th"><IconTag size={26} />Tipo</span></th>
                   <th><span className="rg-th"><IconClipboard size={26} />Pauta</span></th>
                   <th><span className="rg-th"><IconUser size={26} />Cliente</span></th>
                   <th><span className="rg-th"><IconCalendar size={26} />Data e horário</span></th>
@@ -324,26 +283,25 @@ export default function RegistrosTable({
               <tbody>
                 {erro && (
                   <tr>
-                    <td colSpan={6} className="rg-empty">{erro}</td>
+                    <td colSpan={5} className="rg-empty">{erro}</td>
                   </tr>
                 )}
 
                 {!erro && carregando && registros.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="rg-empty">Carregando registros...</td>
+                    <td colSpan={5} className="rg-empty">Carregando registros...</td>
                   </tr>
                 )}
 
                 {!erro && !carregando && registros.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="rg-empty">Nenhum registro encontrado.</td>
+                    <td colSpan={5} className="rg-empty">Nenhum registro encontrado.</td>
                   </tr>
                 )}
 
                 {!erro &&
                   registros.map((r, i) => {
                     const t = infoTipo(r.tipo);
-                    const IcoTipo = ICONES_TIPO[t.icon];
                     const cliente = normalizarCliente(r.cliente);
                     const ocorrencia = t.chave === "ocorrencia";
                     const pauta = r.pauta || "—";
@@ -351,13 +309,6 @@ export default function RegistrosTable({
 
                     return (
                       <tr key={r.id ?? `${inicio}-${i}`} className={ocorrencia ? "rg-row rg-row--occurrence" : "rg-row"}>
-                        <td>
-                          <span className={`rg-tipo rg-tipo--${t.chave}`}>
-                            <IcoTipo size={22} />
-                            {t.label}
-                          </span>
-                        </td>
-
                         <td>
                           <span className="rg-pauta">{pauta}</span>
                         </td>

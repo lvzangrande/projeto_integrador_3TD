@@ -1,3 +1,17 @@
 .affiliate-history-page { max-width: 1240px; margin: 0 auto; }
 .affiliate-history-page > .botao-voltar { display: inline-flex; align-self: flex-start; width: auto; min-height: 40px; margin: 0; padding: 0 14px; border: 1px solid var(--affiliate-line); border-radius: 11px; background: rgba(10, 39, 64, .72); color: var(--affiliate-text); font: inherit; font-size: .84rem; cursor: pointer; }
 .affiliate-history-page > .botao-voltar:hover { border-color: rgba(69, 201, 237, .55); background: var(--affiliate-panel-raised); }
+
+/* ===== Botão Voltar: canto superior esquerdo da tela (somente esta página) ===== */
+.affiliate-content:has(.affiliate-history-page) { padding-top: 72px; }
+.affiliate-content > .affiliate-history-page { animation: none; } /* transform da animação quebraria o position: fixed */
+.affiliate-shell .affiliate-content .affiliate-history-page .botao-voltar,
+.affiliate-shell .affiliate-content .affiliate-history-page > .botao-voltar {
+  position: fixed !important;
+  top: 20px !important;
+  left: 24px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 50;
+  margin: 0 !important;
+}

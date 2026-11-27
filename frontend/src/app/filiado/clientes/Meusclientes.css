@@ -266,3 +266,35 @@
 .mc .cartao { box-shadow:0 14px 36px rgba(0,10,30,.18); }
 .mc th { background:rgba(14,50,84,.4); }
 @media(max-width:640px) { .mc main { padding:0 10px 28px; } .mc .mc-cabecalho { padding:18px 16px; } }
+
+/* ===== Botão Voltar: canto superior esquerdo da tela (somente esta página) ===== */
+.affiliate-content:has(.mc) { padding-top: 72px; }
+.affiliate-content > .mc { animation: none; } /* transform da animação quebraria o position: fixed */
+.affiliate-shell .affiliate-content .mc .botao-voltar,
+.affiliate-shell .affiliate-content .mc > .botao-voltar {
+  position: fixed !important;
+  top: 20px !important;
+  left: 24px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 50;
+  margin: 0 !important;
+}
+.affiliate-shell .affiliate-content .mc .mc-voltar-wrap { position: static !important; height: 0; margin: 0 !important; padding: 0 !important; max-width: none; }
+
+/* Container: sem painel único; cabeçalho, busca e tabela como cartões separados */
+.affiliate-content > .mc { min-height: 0; justify-content: flex-start; }
+.affiliate-shell .affiliate-content .mc,
+.affiliate-shell.theme-light .affiliate-content .mc,
+.affiliate-shell .affiliate-content .mc main,
+.affiliate-shell.theme-light .affiliate-content .mc main {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+.affiliate-content .mc main { display: grid; gap: 18px; }
+.affiliate-content .mc .mc-cabecalho,
+.affiliate-content .mc .filtros { margin: 0; }
+.affiliate-content .mc .busca { height: 54px; }

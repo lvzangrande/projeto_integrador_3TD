@@ -48,7 +48,7 @@ const configs = {
     ["telefone", "Telefone", "text"], ["categoria", "Perfil", "select", true, ["Admin", "Filiado", "Cliente"]],
     ["id_filiado", "Filiado responsável", "select", false, "filiados"], ["tema", "Tema", "select", true, ["Claro", "Escuro"]],
     ["status", "Status", "select", true, ["Ativo", "Inativo"]], ["senha", "Senha inicial", "password"],
-  ], columns: [["nome", "Nome"], ["email", "E-mail"], ["categoria", "Perfil"], ["tema", "Tema"], ["status", "Status"]] },
+  ], columns: [["nome", "Nome"], ["email", "E-mail"], ["categoria", "Perfil"], ["status", "Status"]] },
   reservatorios: { title: "Reservatórios", intro: "Capacidade e limites são armazenados em litros. O nível atual vem da última leitura de nível.", fields: [
     ["nome", "Nome", "text", true], ["id_usuario", "Conta responsável", "select", true, "contas"],
     ["tipo", "Tipo", "select", true, ["Torre de resfriamento", "Tanque de processo", "Decantador", "Reservatório de água bruta", "Reservatório de agua tratada", "Cisterna", "Tanque elevado", "Outro"]],

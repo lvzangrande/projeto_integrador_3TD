@@ -23,7 +23,7 @@
 
 @keyframes affiliate-page-enter {
   from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  to { opacity: 1; transform: none; }
 }
 
 /* Todas as páginas internas compartilham o mesmo fundo e largura de leitura. */
@@ -201,3 +201,72 @@
 @media (max-width: 850px) {
   .affiliate-shell.theme-light .affiliate-header { padding: 8px 84px; }
 }
+
+/* ===== Ajustes: botão Voltar no extremo superior esquerdo, páginas internas ===== */
+.affiliate-content:has(.botao-voltar) { padding-top: 72px; }
+
+/* Fixo na viewport: nunca depende do container da página nem cobre o título.
+   Seletor forte + !important para vencer as regras antigas (absolute top/left 0). */
+.affiliate-shell .affiliate-content .botao-voltar,
+.affiliate-shell .affiliate-content .mc .botao-voltar,
+.affiliate-shell .affiliate-content .affiliate-history-page > .botao-voltar,
+.affiliate-shell .affiliate-content .aff-dash > .botao-voltar {
+  position: fixed !important;
+  top: 20px !important;
+  left: 24px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 50;
+  margin: 0 !important;
+}
+.affiliate-content .mc .mc-voltar-wrap,
+.affiliate-content .affiliate-back,
+.affiliate-content .rr-back {
+  position: static !important;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  max-width: none;
+}
+/* Meus Clientes: sem container único opaco; cabeçalho, busca e tabela viram cartões separados */
+.affiliate-content > .mc { min-height: 0; justify-content: flex-start; }
+.affiliate-shell .affiliate-content .mc,
+.affiliate-shell.theme-light .affiliate-content .mc,
+.affiliate-shell .affiliate-content .mc main,
+.affiliate-shell.theme-light .affiliate-content .mc main {
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+  padding-left: 0;
+  padding-right: 0;
+}
+.affiliate-content .mc main { display: grid; gap: 18px; }
+.affiliate-content .mc .mc-cabecalho,
+.affiliate-content .mc .filtros { margin: 0; }
+.affiliate-content .mc .busca { height: 54px; }
+
+/* Dashboard: ícones de status com tamanho fixo e lista estilizada */
+.aff-icone { width: 20px; height: 20px; flex: 0 0 20px; }
+.aff-lista { margin: 0; }
+.aff-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--affiliate-line);
+  border-radius: 12px;
+  color: var(--affiliate-text);
+  font-size: .9rem;
+}
+.aff-linha:hover { border-color: var(--affiliate-accent); }
+.aff-linha__nome { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aff-linha__status { color: var(--affiliate-muted); font-size: .8rem; }
+.aff-linha__meta { color: var(--affiliate-muted); font-size: .78rem; white-space: nowrap; }
+.aff-status--normal .aff-icone { color: #19c995; }
+.aff-status--atencao .aff-icone { color: #f5a524; }
+.aff-status--critico .aff-icone { color: #ff5d5d; }
+.aff-reuniao { padding: 12px 14px; border: 1px solid var(--affiliate-line); border-radius: 12px; }
+.aff-reuniao__topo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.aff-reuniao__topo time { color: var(--affiliate-muted); font-size: .78rem; }
+.aff-reuniao p { margin: 6px 0 0; color: var(--affiliate-muted); font-size: .86rem; }
+.aff-panel .aff-btn { display: inline-block; margin-top: 12px; }

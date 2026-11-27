@@ -189,12 +189,11 @@
   }
   
   /* Larguras proporcionais: a tabela sempre cabe no contêiner */
-  .rg-table th:nth-child(1) { width: 16%; }
+  .rg-table th:nth-child(1) { width: 26%; }
   .rg-table th:nth-child(2) { width: 22%; }
-  .rg-table th:nth-child(3) { width: 19%; }
-  .rg-table th:nth-child(4) { width: 16%; }
-  .rg-table th:nth-child(5) { width: 21%; }
-  .rg-table th:nth-child(6) { width: 6%; }
+  .rg-table th:nth-child(3) { width: 20%; }
+  .rg-table th:nth-child(4) { width: 25%; }
+  .rg-table th:nth-child(5) { width: 7%; }
   
   .rg-table thead tr {
     background: var(--panel-head);

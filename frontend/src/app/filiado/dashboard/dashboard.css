@@ -240,3 +240,43 @@
         padding: 18px;
     }
 }
+
+/* ===== Botão Voltar: canto superior esquerdo da tela (somente esta página) ===== */
+.affiliate-content:has(.aff-dash) { padding-top: 72px; }
+.affiliate-content > .aff-dash { animation: none; } /* transform da animação quebraria o position: fixed */
+.affiliate-shell .affiliate-content .aff-dash .botao-voltar,
+.affiliate-shell .affiliate-content .aff-dash > .botao-voltar {
+  position: fixed !important;
+  top: 20px !important;
+  left: 24px !important;
+  right: auto !important;
+  bottom: auto !important;
+  z-index: 50;
+  margin: 0 !important;
+}
+
+/* Ícones de status com tamanho fixo e listas estilizadas */
+.aff-icone { width: 20px; height: 20px; flex: 0 0 20px; }
+.aff-lista { margin: 0; }
+.aff-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 12px;
+  border: 1px solid var(--affiliate-line);
+  border-radius: 12px;
+  color: var(--affiliate-text);
+  font-size: .9rem;
+}
+.aff-linha:hover { border-color: var(--affiliate-accent); }
+.aff-linha__nome { flex: 1; min-width: 0; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.aff-linha__status { color: var(--affiliate-muted); font-size: .8rem; }
+.aff-linha__meta { color: var(--affiliate-muted); font-size: .78rem; white-space: nowrap; }
+.aff-status--normal .aff-icone { color: #19c995; }
+.aff-status--atencao .aff-icone { color: #f5a524; }
+.aff-status--critico .aff-icone { color: #ff5d5d; }
+.aff-reuniao { padding: 12px 14px; border: 1px solid var(--affiliate-line); border-radius: 12px; }
+.aff-reuniao__topo { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.aff-reuniao__topo time { color: var(--affiliate-muted); font-size: .78rem; }
+.aff-reuniao p { margin: 6px 0 0; color: var(--affiliate-muted); font-size: .86rem; }
+.aff-panel .aff-btn { display: inline-block; margin-top: 12px; }
