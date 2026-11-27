@@ -1,4 +1,8 @@
-const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:8080/api").replace(/\/+$/, "");
+const API_URL = (
+  process.env.NODE_ENV === "production"
+    ? "/api"
+    : process.env.NEXT_PUBLIC_API_URL || "/api"
+).replace(/\/+$/, "");
 
 export async function apiRequest(path, options = {}) {
   const response = await fetch(`${API_URL}${path.startsWith("/") ? path : `/${path}`}`, {

@@ -2,6 +2,20 @@ import { createHash, randomBytes } from "node:crypto";
 import { gerarHashSenha } from "./AutenticacaoService.js";
 
 const RESPOSTA_GENERICA = { mensagem: "Se o e-mail existir, enviaremos as instruções para redefinir sua senha." };
+const FRONTEND_URL_PRODUCAO = "http://watercontrol.10.189.87.231.sslip.io";
+
+function obterUrlFrontend(env) {
+  const configurada = env.FRONTEND_URL?.trim();
+  const localhostEmProducao = env.NODE_ENV === "production"
+    && configurada
+    && /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?(?:\/|$)/i.test(configurada);
+
+  return (localhostEmProducao
+    ? FRONTEND_URL_PRODUCAO
+    : configurada || (env.NODE_ENV === "production" ? FRONTEND_URL_PRODUCAO : "http://localhost:3000")
+  ).replace(/\/$/, "");
+}
+
 const emailValido = (email) => typeof email === "string" && email.length <= 100
   && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 const hashToken = (token) => createHash("sha256").update(token).digest("hex");
@@ -16,7 +30,7 @@ export function criarRecuperacaoSenhaService({ usuarioModel, recuperacaoSenhaMod
     const token = randomBytes(32).toString("hex");
     const expiresAt = new Date(Date.now() + 30 * 60_000);
     await recuperacaoSenhaModel.criarToken({ idUsuario: usuario.id_usuario, tokenHash: hashToken(token), expiresAt });
-    const baseUrl = (env.FRONTEND_URL || "http://localhost:3000").replace(/\/$/, "");
+    const baseUrl = obterUrlFrontend(env);
     const link = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
     try {
       await emailService.enviarLinkRedefinicao({ destinatario: usuario.email, link });

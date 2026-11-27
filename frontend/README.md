@@ -26,7 +26,12 @@ cp .env.example .env.local
 Variavel principal:
 
 ```env
-NEXT_PUBLIC_API_URL=http://localhost:8080
+NEXT_PUBLIC_API_URL=/api
 ```
+
+In production, the browser uses the frontend's public domain and the Next.js
+server proxies `/api` to the `backend` service over the Docker network. Keep
+`NEXT_PUBLIC_API_URL=/api` and set the backend's `FRONTEND_URL` to the
+frontend's public origin so its CORS policy accepts browser requests.
 
 As instrucoes completas do projeto ficam no `README.md` da raiz.

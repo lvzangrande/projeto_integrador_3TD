@@ -1,6 +1,6 @@
 import test from "node:test";
 import assert from "node:assert/strict";
-import { criarRecuperacaoSenhaService } from "./RecuperacaoSenhaService.js";
+import { criarRecuperacaoSenhaService } from "./RecuperacaoSenhaEmailService.js";
 
 function criarMocks() {
   const chamadas = { criado: null, redefinido: null, email: null };

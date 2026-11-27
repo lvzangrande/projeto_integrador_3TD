@@ -9,6 +9,7 @@ import RolagemLenis from "@/components/Login/RolagemLenis";
 import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
 import TituloAgua from "@/components/Login/TituloAgua";
 import VazamentoCano from "@/components/Login/VazamentoCano";
+import ContadorAguaPoupada from "@/components/ContadorAguaPoupada";
 
 
 const nivelDoReservatorio = 0.55;

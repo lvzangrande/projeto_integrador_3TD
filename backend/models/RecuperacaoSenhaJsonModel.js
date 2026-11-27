@@ -182,7 +182,7 @@ export function criarRecuperacaoSenhaJsonModel({
       let resultado;
       try {
         [resultado] = await pool.query(
-          "UPDATE usuarios SET senha = ? WHERE id_usuario = ?",
+          "UPDATE usuarios SET senha = ?, session_version = session_version + 1 WHERE id_usuario = ?",
           [senhaHash, token.idUsuario],
         );
       } catch (erro) {

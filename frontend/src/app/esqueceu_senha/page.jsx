@@ -87,7 +87,7 @@ export default function EsqueceuSenha() {
   const subtitulo = etapa === "concluido" ? "Sua nova senha já está valendo. Use-a para entrar na sua conta."
     : etapa === "email-enviado" ? "Se o e-mail informado estiver cadastrado, enviaremos um link para redefinir sua senha. O link expira em 30 minutos."
       : redefinindo ? "Use de 8 a 72 caracteres, com letras e números."
-        : etapa === "codigo" ? "Digite o código de 6 números enviado ao telefone cadastrado. Ele expira em 5 minutos."
+        : etapa === "codigo" ? "Se houver uma conta ativa com esse CPF, enviaremos um código ao telefone cadastrado. Ele expira em 5 minutos."
           : metodo === "cpf" ? "Informe o CPF da sua conta. Enviaremos um código para o telefone cadastrado."
             : "Informe o e-mail da sua conta. Enviaremos um link para criar uma nova senha.";
 

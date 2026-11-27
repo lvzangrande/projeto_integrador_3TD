@@ -136,6 +136,10 @@ Para a recuperação, o usuário informa o CPF e recebe por SMS um código de se
 
 O arquivo JSON é criado automaticamente, ignorado pelo Git e adequado para uma única instância local do backend. Em conta Trial, abra **Identity → Verify → Overview → Try out Verify**, conclua um teste para um telefone verificado e copie o SID real `VA...` da requisição de exemplo para `TWILIO_VERIFY_SERVICE_SID`. A página **Services** pode exigir upgrade para criar e administrar um serviço próprio. O Trial aceita somente destinatários verificados e usa um template fixo; consulte os [limites do Verify Trial](https://www.twilio.com/docs/usage/trials/try-out-verify).
 
+A recuperacao por e-mail atualmente usa Mailtrap; as variaveis `GMAIL_*` listadas no Coolify nao sao consumidas pelo codigo. Em sandbox, `MAILTRAP_SANDBOX_ID` e obrigatorio. Para envio real, configure `MAILTRAP_USE_SANDBOX=false`, um token Mailtrap e um remetente verificado em `MAIL_FROM_EMAIL`.
+
+No deploy Compose atual, as variaveis `TWILIO_*` nao sao encaminhadas ao ambiente de runtime do backend (passa-las como build args nao basta). Por isso, a opcao CPF/SMS nao funcionara no Coolify ate essas variaveis chegarem ao container em runtime. Nao alterei arquivos Docker.
+
 Para rodar varios grupos no mesmo servidor, mude pelo menos as portas publicadas no host e a URL publica da API. Exemplo para um segundo grupo:
 
 ```env
@@ -248,7 +252,7 @@ Para cada grupo, configure valores diferentes para:
 - `FRONTEND_URL`
 - `NEXT_PUBLIC_API_URL`
 
-Em deploy com dominio/reverse proxy, `NEXT_PUBLIC_API_URL` deve apontar para a URL publica real do backend, por exemplo `https://api-grupo-01.seudominio.com/api`.
+No deploy pelo `docker-compose.yml`, o frontend encaminha `/api` ao servico `backend` pela rede interna do Docker. Use `NEXT_PUBLIC_API_URL=/api` e configure `FRONTEND_URL` com a origem publica do frontend (por exemplo, `http://watercontrol.10.189.87.231.sslip.io`). O dominio publico do Coolify deve apontar para o servico frontend; nao e necessario expor a porta do backend ao navegador.
 
 ## Observacoes Para Alunos
 
