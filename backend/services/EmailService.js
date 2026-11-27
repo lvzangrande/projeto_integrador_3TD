@@ -1,30 +1,43 @@
-import { MailtrapClient } from "mailtrap";
+import nodemailer from "nodemailer";
 
-export function criarEmailService({ env = process.env } = {}) {
-  async function enviarLinkRedefinicao({ destinatario, link }) {
-    const token = env.MAILTRAP_API_KEY?.trim();
-    const fromEmail = env.MAIL_FROM_EMAIL?.trim();
-    const fromName = env.MAIL_FROM_NAME?.trim() || "WAPI";
-    const usarSandbox = env.MAILTRAP_USE_SANDBOX === "true";
-    const sandboxId = usarSandbox ? Number(env.MAILTRAP_SANDBOX_ID) : undefined;
+export function criarEmailService({ env = process.env, nodemailerModule = nodemailer } = {}) {
+  const gmailUser = env.GMAIL_USER?.trim();
+  const appPassword = env.GMAIL_APP_PASSWORD?.replace(/\s+/g, "");
+  const fromName = env.MAIL_FROM_NAME?.trim() || "WAPI";
 
-    if (!token || !fromEmail) {
-      throw new Error("Configure MAILTRAP_API_KEY e MAIL_FROM_EMAIL no backend/.env.");
-    }
-    if (usarSandbox && (!Number.isInteger(sandboxId) || sandboxId <= 0)) {
-      throw new Error("Configure MAILTRAP_SANDBOX_ID para usar o sandbox Mailtrap.");
-    }
-
-    const client = new MailtrapClient({ token, sandbox: usarSandbox, sandboxId });
-    await client.send({
-      from: { email: fromEmail, name: fromName },
-      to: [{ email: destinatario }],
-      subject: "Redefinição de senha — WAPI",
-      text: `Recebemos uma solicitação para redefinir sua senha. Acesse: ${link}\n\nEste link expira em 30 minutos. Se você não solicitou, ignore esta mensagem.`,
-      html: `<p>Recebemos uma solicitação para redefinir sua senha.</p><p><a href="${link}" style="display:inline-block;padding:12px 20px;background:#0a3560;color:white;text-decoration:none;border-radius:6px">Redefinir minha senha</a></p><p>Este link expira em 30 minutos. Se você não solicitou, ignore esta mensagem.</p><p>Se o botão não funcionar, copie este endereço:<br><a href="${link}">${link}</a></p>`,
-      category: "Redefinição de senha",
-    });
+  if (!gmailUser || !appPassword) {
+    throw new Error("Configure GMAIL_USER e GMAIL_APP_PASSWORD no ambiente do backend.");
+  }
+  if (!/^[^\s@]+@gmail\.com$/i.test(gmailUser)) {
+    throw new Error("GMAIL_USER deve ser um endereço Gmail válido.");
   }
 
-  return { enviarLinkRedefinicao };
+  const transporter = nodemailerModule.createTransport({
+    service: "gmail",
+    auth: { user: gmailUser, pass: appPassword },
+  });
+
+  async function verificarConexao() {
+    try {
+      return await transporter.verify();
+    } catch {
+      throw new Error("Não foi possível verificar a conexão SMTP do Gmail.");
+    }
+  }
+
+  async function enviarLinkRedefinicao({ destinatario, link }) {
+    try {
+      await transporter.sendMail({
+        from: { name: fromName, address: gmailUser },
+        to: destinatario,
+        subject: "Redefinição de senha — WAPI",
+        text: `Recebemos uma solicitação para redefinir sua senha. Acesse: ${link}\n\nEste link expira em 30 minutos. Se você não solicitou, ignore esta mensagem.`,
+        html: `<p>Recebemos uma solicitação para redefinir sua senha.</p><p><a href="${link}" style="display:inline-block;padding:12px 20px;background:#0a3560;color:white;text-decoration:none;border-radius:6px">Redefinir minha senha</a></p><p>Este link expira em 30 minutos. Se você não solicitou, ignore esta mensagem.</p><p>Se o botão não funcionar, copie este endereço:<br><a href="${link}">${link}</a></p>`,
+      });
+    } catch {
+      throw new Error("Falha ao enviar e-mail de recuperação pelo Gmail SMTP.");
+    }
+  }
+
+  return { enviarLinkRedefinicao, verificarConexao };
 }
