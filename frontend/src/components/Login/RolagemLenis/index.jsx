@@ -35,17 +35,26 @@ function atualizarEfeitosDeRolagem() {
 export default function RolagemLenis() {
   useEffect(() => {
     const lenis = new Lenis({
-      autoRaf: true,
+      autoRaf: false,
       anchors: true,
       lerp: 0.1,
       smoothWheel: true,
+      syncTouch: true,
     });
+
+    let quadro = 0;
+    function atualizarLenis(tempo) {
+      lenis.raf(tempo);
+      quadro = window.requestAnimationFrame(atualizarLenis);
+    }
+    quadro = window.requestAnimationFrame(atualizarLenis);
 
     atualizarEfeitosDeRolagem();
     const removerListener = lenis.on("scroll", atualizarEfeitosDeRolagem);
     window.addEventListener("resize", atualizarEfeitosDeRolagem);
 
     return () => {
+      window.cancelAnimationFrame(quadro);
       removerListener();
       window.removeEventListener("resize", atualizarEfeitosDeRolagem);
       lenis.destroy();

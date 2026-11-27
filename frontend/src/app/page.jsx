@@ -9,7 +9,6 @@ import RolagemLenis from "@/components/Login/RolagemLenis";
 import RaiosDeLuz from "@/components/Login/RaiosDeLuz";
 import TituloAgua from "@/components/Login/TituloAgua";
 import VazamentoCano from "@/components/Login/VazamentoCano";
-import ContadorAguaPoupada from "@/components/ContadorAguaPoupada";
 
 
 const nivelDoReservatorio = 0.55;
@@ -34,18 +33,7 @@ export default async function Inicio() {
           <div className="inicio__conteudo">
             <TituloAgua>Sistema de controle de água</TituloAgua>
             <p className="inicio__descricao">Acompanhe o caminho da água, entenda seu consumo e encontre oportunidades para cuidar melhor de cada recurso.</p>
-
-            <div className="inicio__dado">
-              <MedidorAgua nivel={nivelDoReservatorio} />
-              <div className="inicio__dado-textos">
-                <ContadorAguaPoupada />
-                <span className="inicio__dado-texto">
-                  de água poupada estimada por dia
-                </span>
-                <small className="inicio__dado-nota">comparada aos limites diários cadastrados por setor</small>
-              </div>
-            </div>
-          </div>
+        </div>
 
           <div className="inicio__ilustracao">
             <AguaViva sufixo="inicio" />
